@@ -1,0 +1,56 @@
+p {
+  font-family: $font-neue-haas-regular;
+  font-size: rem(36px);
+  line-height: 1.3;
+
+  &.right {
+    text-align: right;
+  }
+
+  &.size-sm {
+    font-size: rem(30px);
+    line-height: 1;
+  }
+
+  &.size-md {
+    font-size: rem(36px);
+    line-height: 1;
+  }
+
+  &.size-lg {
+    font-size: rem(48px);
+    line-height: 1.2;
+  }
+
+  &.size-xl {
+    font-size: rem(90px);
+    line-height: 1.1;
+  }
+}
+
+p.upper,
+p .upper {
+  text-transform: uppercase;
+}
+
+p.bold,
+p b {
+  font-family: $font-neue-haas-medium;
+}
+
+p a,
+p .link {
+  color: inherit;
+  text-decoration: none;
+  position: relative;
+
+  &:after {
+    content: "";
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    position: absolute;
+    background-color: $color-black;
+    height: 4px;
+  }
+}

@@ -1,0 +1,43 @@
+html {
+  height: 100%;
+  width: 100%;
+
+  @include responsive-width(0, $break-lg) {
+    font-size: #{$rem-baseline - 4}px;
+    line-height: rem($rem-baseline - 4);
+
+    @media (-webkit-min-device-pixel-ratio: 2),
+      (min-resolution: 192dpi) {
+      font-size: #{$rem-baseline - 6}px;
+      line-height: rem($rem-baseline - 6px);
+    }
+  }
+
+  @include responsive-width($break-lg) {
+    font-size: #{$rem-baseline - 4}px;
+    line-height: rem($rem-baseline - 4px);
+
+    @media (-webkit-min-device-pixel-ratio: 2),
+      (min-resolution: 192dpi) {
+      font-size: #{$rem-baseline - 6}px;
+      line-height: rem($rem-baseline - 6px);
+    }
+  }
+}
+
+body {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  color: $color-black;
+  background-color: $color-white;
+  font-family: $font-neue-plak-extended-light;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  *,
+  *:before,
+  *:after {
+    box-sizing: border-box;
+  }
+}

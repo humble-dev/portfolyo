@@ -1,5 +1,5 @@
 {
-  "name": "davideperozzi-website-ts",
+  "name": "davideperozzi-website",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -13,12 +13,16 @@
     "vue-property-decorator": "^7.0.0"
   },
   "devDependencies": {
+    "@dorfjungs/scss-base": "^1.0.2",
+    "@smoovy/core": "0.0.10",
     "@vue/cli-plugin-babel": "^3.4.0",
     "@vue/cli-plugin-typescript": "^3.4.0",
     "@vue/cli-service": "^3.4.0",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.1.0",
+    "style-resources-loader": "^1.2.1",
     "typescript": "^3.0.0",
+    "vue-cli-plugin-style-resources-loader": "^0.1.3",
     "vue-template-compiler": "^2.5.21"
   }
 }

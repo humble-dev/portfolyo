@@ -1,0 +1,46 @@
+/** Color definitions */
+$color-white: #ffffff;
+$color-black: #000000;
+$color-red: #ff0d00;
+
+/** Font definitions */
+$font-neue-haas-medium: "Neue Haas Unica Pro Medium";
+$font-neue-haas-regular: "Neue Haas Unica Pro Regular";
+$font-neue-plak-extended-bold: "Neue Plak Extended Bold";
+$font-neue-plak-extended-extra-black: "Neue Plak Extended ExtraBlack";
+$font-neue-plak-extended-light: "Neue Plak Extended Light";
+$font-neue-plak-extended-regular: "Neue Plak Extended Regular";
+
+/** REM definitions */
+$rem-baseline: 18;
+
+/** Breakpoint definitions */
+$break-xs: 380px;
+$break-sm: 450px;
+$break-md: 768px;
+$break-lg: 1024px;
+$break-xl: 1360px;
+$break-xxl: 1440px;
+$break-xxxl: 1680px;
+$break-xxxxl: 1920px;
+
+/** Grid definitions */
+$fg-grid-columns: 18;
+$fg-grid-max-width: 1680px;
+$fg-grid-gutter-width: 0;
+
+$fg-grid-outer-margins: (
+  0px to-number(rem(10px)),
+  $break-sm to-number(rem(20px)),
+  $break-lg to-number(rem(50px)),
+  $break-xl to-number(rem(70px))
+);
+
+$fg-grid-breakpoints: (
+  xs $break-xs $break-xs,
+  sm $break-sm $break-sm,
+  md $break-md $break-md,
+  lg $break-lg $break-lg,
+  xl $break-xl $break-xl,
+  xxl $break-xxl $break-xxl
+);
