@@ -12,7 +12,7 @@ export default class IntroSection extends Vue {}
 </script>
 
 <template>
-  <Section>
+  <Section name="intro">
     <div class="fg-row">
       <p class="upper right fg-col-xs-2 fg-col-xs-offset-1">
         Available for AWESOME Freelance projects

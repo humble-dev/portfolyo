@@ -1,5 +1,5 @@
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
 import { map, tap } from 'rxjs/operators';
 
 import { ScrollerService } from '@/app/services/scroller.service';
@@ -23,12 +23,23 @@ import { ScrollerService } from '@/app/services/scroller.service';
 export default class Scrollbar extends Vue {
   private scrollerService = ScrollerService.getInstance();
   private progressY: number = 0;
+
+  @Watch('progressY')
+  private onProgressYChange(y: number, oldY: number) {
+    setTimeout(() => {
+      this.indicator.style.height = `${y}%`;
+    });
+  }
+
+  private get indicator(): HTMLElement {
+    return this.$refs.indicator as HTMLElement;
+  }
 }
 </script>
 
 <template>
   <div class="scrollbar-wrapper">
-    <div class="indicator" :style="{ height: `${progressY}%` }"></div>
+    <div class="indicator" ref="indicator"></div>
   </div>
 </template>
 
@@ -39,7 +50,7 @@ export default class Scrollbar extends Vue {
     top: 0;
     bottom: 0;
     width: 5px;
-    z-index: 0;
+    z-index: 2;
   }
 
   .indicator {

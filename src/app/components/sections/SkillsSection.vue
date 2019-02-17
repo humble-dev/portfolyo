@@ -11,7 +11,7 @@ export default class SkillsSection extends Vue {}
 </script>
 
 <template>
-  <Section title="Skillz & Awards!" titleAlign="right" number="3">
+  <Section name="skills" title="Skillz & Awards!" titleAlign="right" number="3">
     <div class="fg-row">
       <div class="fg-col-xs-18 fg-col-lg-9">
         <p class="bold size-lg">

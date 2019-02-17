@@ -12,7 +12,7 @@ export default class AboutSection extends Vue {}
 </script>
 
 <template>
-  <Section title="Guy behind these pixels" number="1" titleAlign="right">
+  <Section name="about" title="Guy behind these pixels" number="1" titleAlign="right">
     <div class="fg-row">
       <div class="fg-col-xs-18 fg-col-md-16">
         <p class=" bold size-xl">

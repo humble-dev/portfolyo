@@ -2,11 +2,17 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { Scroller } from '@smoovy/core';
 
+import * as PIXI from 'pixi.js';
+
 import { ScrollerService } from './services/scroller.service';
+import { CanvasDelegatorService } from './services/canvas-delegator.service';
+
+import { MainBackgroundContainer } from './canvas/containers/main-background.container';
 
 import Section from './components/Section.vue';
 import Header from './components/layout/Header.vue';
 import Footer from './components/layout/Footer.vue';
+import Canvas from './components/Canvas.vue';
 import Scrollbar from './components/layout/Scrollbar.vue';
 
 import IntroSection from './components/sections/IntroSection.vue';
@@ -22,6 +28,7 @@ import ProjectsSection from './components/sections/ProjectsSection.vue';
     Footer,
     Header,
     Scrollbar,
+    Canvas,
 
     /** Sections */
     IntroSection,
@@ -33,9 +40,29 @@ import ProjectsSection from './components/sections/ProjectsSection.vue';
 })
 export default class App extends Vue {
   private scrollerService = ScrollerService.getInstance();
+  private canvasDelegator = CanvasDelegatorService.getInstance();
+  private scroller = ScrollerService.getInstance();
 
   public mounted() {
+    PIXI.utils.skipHello();
+
     this.scrollerService.setRootElement(this.contentWrapper);
+    this.scrollerService.scrollAnimation$.subscribe(() => {
+      this.backgroundCanvas.renderSync();
+    });
+
+    setTimeout(() => {
+      this.canvasDelegator.addContainer(
+        'background',
+        new MainBackgroundContainer(
+          this.scroller.wrapper,
+        ),
+      );
+    });
+  }
+
+  private get backgroundCanvas(): Canvas {
+    return this.$refs.backgroundCanvas as Canvas;
   }
 
   private get contentWrapper(): HTMLElement {
@@ -48,6 +75,7 @@ export default class App extends Vue {
   <div class="page-wrapper">
     <Scrollbar></Scrollbar>
     <Header></Header>
+    <Canvas ref="backgroundCanvas" name="background"></Canvas>
     <div class="content-wrapper" ref="contentWrapper">
       <IntroSection></IntroSection>
       <AboutSection></AboutSection>
@@ -61,6 +89,10 @@ export default class App extends Vue {
 
 <style lang="scss">
   @import "@/styles/application.scss";
+
+  .canvas-wrapper--background {
+    z-index: 0;
+  }
 
   .page-wrapper {
     display: block;

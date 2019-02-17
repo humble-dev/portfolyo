@@ -1,14 +1,59 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { map, tap } from 'rxjs/operators';
 
-@Component
+import { NavigationService } from '@/app/services/navigation.service';
+import { ScrollerService } from '@/app/services/scroller.service';
+
+import detectSize from '@/app/directives/detect-size.directive';
+
+interface NavigationLink {
+  section: string;
+  label: string;
+}
+
+const navigationLinks: NavigationLink[] = [
+  { section: 'intro', label: 'Intro' },
+  { section: 'projects', label: 'Projects' },
+  { section: 'skills', label: 'Skillz' },
+  { section: 'contact', label: 'Contact' },
+];
+
+@Component<Header>({
+  directives: {
+    detectSize,
+  },
+  subscriptions(this) {
+    return {
+      navMinimized: this.scroller.scrollUser$.pipe(
+        map((state) => state.position.y > 200),
+      ),
+      activeSection: this.navigation.activeSections$.pipe(
+        map((sections) => {
+          const available = navigationLinks.map((l) => l.section);
+          const filtered = sections.filter((s) => available.includes(s));
+
+          return filtered[filtered.length - 1];
+        }),
+      ),
+    };
+  },
+})
 export default class Header extends Vue {
-  public navigationLinks = [
-    { section: 'intro', label: 'Intro' },
-    { section: 'projects', label: 'Projects' },
-    { section: 'skills', label: 'Skillz' },
-    { section: 'contact', label: 'Contact' },
-  ];
+  private scroller = ScrollerService.getInstance();
+  private navigation = NavigationService.getInstance();
+  private navigationLinks = navigationLinks;
+  private navMinimized: boolean = false;
+  private activeSection: string = '';
+
+  private handleLinkClick(
+    link: NavigationLink,
+    event: MouseEvent,
+  ) {
+    event.preventDefault();
+
+    this.navigation.requestSectionScroll(link.section);
+  }
 }
 </script>
 
@@ -18,13 +63,17 @@ export default class Header extends Vue {
       <div class="fg-row fg-between-xs">
         <h1>DavidePerozzi</h1>
         <div class="designation">Interactive developer</div>
-        <nav class="fx-layout fx-vertical fx-self-end">
+        <nav :class="{ minimized: navMinimized }" class="fx-layout fx-vertical fx-self-end">
           <a
+            v-detectSize.ignoreWidth
             v-for="link in navigationLinks"
+            class="nav-link"
+            :href="'#' + link.section"
             :key="link.section"
-            class="nav-link" :href="link.section"
+            :class="{ active: activeSection === link.section }"
+            @click="handleLinkClick(link, $event)"
           >
-            <span>{{link.label}}</span>
+            <span ref="link">{{link.label}}</span>
           </a>
         </nav>
       </div>
@@ -146,7 +195,7 @@ export default class Header extends Vue {
       width: calc(100% - 20px);
       border-radius: 0;
       left: 10px;
-      height: 3px;
+      height: 2px;
     }
   }
 </style>

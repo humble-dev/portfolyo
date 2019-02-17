@@ -90,8 +90,14 @@ export class ScrollerService {
           );
         },
       },
+      input: {
+        mouse: {
+          multiplier: 0.85,
+        },
+      },
       output: {
         default: {
+          speed: 2000,
           on: {
             animation: (position) => {
               this.triggerScroll(
@@ -105,6 +111,10 @@ export class ScrollerService {
     });
 
     this.initialized = true;
+  }
+
+  public get wrapperTop(): number {
+    return this.wrapper.getBoundingClientRect().top;
   }
 
   public get wrapperHeight(): number {

@@ -20,7 +20,6 @@ export default class Footer extends Vue {}
 <style scoped lang="scss">
   footer {
     display: block;
-    padding-bottom: 80px;
   }
 
   .footer-wrapper {

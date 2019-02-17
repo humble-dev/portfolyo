@@ -53,7 +53,7 @@ export default class ProjectsSection extends Vue {
 </script>
 
 <template>
-  <Section title="Some cool stuff I did" number="2">
+  <Section name="projects" title="Some cool stuff I did" number="2">
     <div class="project-row fg-row" v-for="project in projects" :key="project.id">
       <a
         class="project-wrapper"
