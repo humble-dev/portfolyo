@@ -1,6 +1,9 @@
 import * as PIXI from 'pixi.js';
 
+import { Resolver } from '../utils/promise.util';
+
 export abstract class DefaultContainer {
+  private readyResolver: Resolver = new Resolver();
   public context!: PIXI.Container;
   public viewportSize: { width: number, height: number } = {
     width: 0,
@@ -15,7 +18,14 @@ export abstract class DefaultContainer {
     return -1;
   }
 
-  public init() {}
+  public get ready(): Promise<void> {
+    return this.readyResolver.promise;
+  }
+
+  public init() {
+    this.readyResolver.resolve();
+  }
+
   public sync() {}
   public render() {}
   public destroy() {}

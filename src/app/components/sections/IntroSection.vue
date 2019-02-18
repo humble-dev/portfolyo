@@ -1,6 +1,13 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 
+import { CanvasDelegatorService } from '@/app/services/canvas-delegator.service';
+import {
+  RelatedTextContainer,
+  RelatedTextContainerConfig,
+  RelatedTextContainerStretch,
+} from '@/app/canvas/containers/related-text.container';
+
 import Section from '../Section.vue';
 
 @Component({
@@ -8,7 +15,43 @@ import Section from '../Section.vue';
     Section,
   },
 })
-export default class IntroSection extends Vue {}
+export default class IntroSection extends Vue {
+  private canvasDelegator = CanvasDelegatorService.getInstance();
+
+  public mounted() {
+    const headlineConfig: Partial<RelatedTextContainerConfig> = {
+      fontSize: 378,
+      fill: 0x00000,
+      fontFamily: 'Neue Plak Extended ExtraBlack',
+      stretchMode: RelatedTextContainerStretch.FIT_HEIGHT,
+    };
+
+    const text1 = new RelatedTextContainer(
+      this.$refs.desLine1 as HTMLElement,
+      'INTERACTIVE',
+      {
+        ...headlineConfig,
+      },
+    );
+
+    const text2 = new RelatedTextContainer(
+      this.$refs.desLine2 as HTMLElement,
+      'DEVELOPER',
+      {
+        ...headlineConfig,
+      },
+    );
+
+    text1.enableDisplacement(true);
+    text2.enableDisplacement(true);
+
+    // setTimeout(() => {
+    //   text1.enableDisplacement(false);
+    // }, 1500);
+
+    this.canvasDelegator.addContainer('background', text1, text2);
+  }
+}
 </script>
 
 <template>
@@ -17,18 +60,23 @@ export default class IntroSection extends Vue {}
       <p class="upper right fg-col-xs-2 fg-col-xs-offset-1">
         Available for AWESOME Freelance projects
       </p>
-      <div class="designation-line designation-line-1 fg-col-xs-14 fg-col-xs-offset-1"></div>
+      <div ref="desLine1" class="designation-line designation-line-1 fg-col-xs-14 fg-col-xs-offset-1"></div>
     </div>
     <div class="fg-row">
-      <div class="designation-line designation-line-2 fg-col-xs-18"></div>
+      <div ref="desLine2" class="designation-line designation-line-2 fg-col-xs-18"></div>
     </div>
   </Section>
 </template>
 
 <style scoped lang="scss">
+
   section {
     height: 100vh;
     position: relative;
+  }
+
+  .designation-line-2 {
+    margin-left: -50vw;
   }
 
   .designation-line-1 {

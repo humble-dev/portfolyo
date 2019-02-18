@@ -12,6 +12,7 @@
     "member-ordering": false,
     "quotemark": [true, "single"],
     "indent": [true, "spaces", 2],
+    "variable-name": false,
     "interface-name": false,
     "ordered-imports": false,
     "object-literal-sort-keys": false,

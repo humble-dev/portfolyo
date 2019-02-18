@@ -120,6 +120,8 @@ export default class Header extends Vue {
     pointer-events: all;
     padding-top: 6px;
     counter-reset: navigation;
+    backface-visibility: hidden;
+    transform: translate3d(0, 0, 0);
 
     /** Nav link */
     .nav-link {
@@ -134,6 +136,8 @@ export default class Header extends Vue {
       transition: height .5s;
       will-change: height;
       overflow: hidden;
+      backface-visibility: hidden;
+      transform: translate3d(0, 0, 0);
     }
 
     &.minimized:not(:hover) .nav-link:not(.active) {
@@ -156,6 +160,7 @@ export default class Header extends Vue {
       position: relative;
       display: inline-block;
       padding: 5px 10px;
+      transform: translate3d(0, 0, 0);
 
       &:after {
         content: "";
@@ -166,6 +171,7 @@ export default class Header extends Vue {
         left: -10px;
         width: 5px;
         height: 5px;
+        backface-visibility: hidden;
         transform: translate3d(0, -50%, 0);
         background-color: $color-red;
         opacity: 0;

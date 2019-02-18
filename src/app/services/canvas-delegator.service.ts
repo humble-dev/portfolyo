@@ -28,7 +28,9 @@ export class CanvasDelegatorService {
   ) {
     const subject = this.containerSubjects[name];
 
-    subject.next(subject.value.concat(containers));
+    if (subject) {
+      subject.next(subject.value.concat(containers));
+    }
   }
 
   public removeContainer(

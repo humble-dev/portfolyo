@@ -1,9 +1,10 @@
 import * as PIXI from 'pixi.js';
 
 import { RelatedContainer } from '../related.container';
+import { Ticker } from '@smoovy/core';
 
 export class MainBackgroundContainer extends RelatedContainer {
-  // protected crtFilter: PIXI.filters.CRTFilter;
+  protected noiseFilter!: PIXI.filters.NoiseFilter;
   protected sprite!: PIXI.extras.TilingSprite;
   protected texture!: PIXI.Texture;
 
@@ -24,16 +25,20 @@ export class MainBackgroundContainer extends RelatedContainer {
       this.size.height,
     );
 
-    // this.crtFilter = new PIXI.filters.CRTFilter({
-    //   curvature: 0.2,
-    //   vignetting: 0.2,
-    //   vignettingAlpha: 0.3,
-    //   verticalLine: 1,
-    //   lineWidth: 0.1,
-    //   lineContrast: 0.05,
-    // });
+    this.sprite.filters = [
+      this.noiseFilter = new PIXI.filters.NoiseFilter(
+        0.06,
+        Math.random(),
+      ),
+    ];
 
     this.context.addChild(this.sprite);
+  }
+
+  public render() {
+    super.render();
+
+    this.noiseFilter.seed = Math.random();
   }
 
   public sync() {

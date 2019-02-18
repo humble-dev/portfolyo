@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "gsap": "^2.0.2",
     "pixi.js": "^4.8.6",
     "rxjs": "^6.4.0",
     "vue": "^2.6.6",
@@ -18,7 +19,8 @@
   },
   "devDependencies": {
     "@dorfjungs/scss-base": "^1.0.2",
-    "@smoovy/core": "0.0.10",
+    "@smoovy/core": "0.0.15",
+    "@types/gsap": "^1.20.1",
     "@types/pixi.js": "^4.8.6",
     "@types/webfontloader": "^1.6.29",
     "@vue/cli-plugin-babel": "^3.4.0",
