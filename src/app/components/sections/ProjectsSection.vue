@@ -8,9 +8,9 @@ import {
   RelatedTextContainerStretch,
   RelatedTextContainerConfig,
 } from '@/app/canvas/containers/related-text.container';
+import { DisplacementConfig } from '@/app/canvas/extras/displacement.extra';
 
 import Section from '../Section.vue';
-import { DisplacementConfig } from '@/app/canvas/extras/displacement.extra';
 
 type Projects = Project[] ;
 interface Project {

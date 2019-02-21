@@ -133,11 +133,11 @@ export default class Header extends Vue {
       position: relative;
       text-decoration: none;
       color: inherit;
-      transition: height .5s;
       will-change: height;
       overflow: hidden;
       backface-visibility: hidden;
       transform: translate3d(0, 0, 0);
+      // transition: height .5s; -> Performance issue!!!
     }
 
     &.minimized:not(:hover) .nav-link:not(.active) {

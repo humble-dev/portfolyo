@@ -10,16 +10,22 @@ import { WebfontService } from '@/app/services/webfont.service';
 import { CanvasDelegator } from '@/app/interfaces/canvas-delegator.interface';
 import { DefaultContainer } from '@/app/canvas/default.container';
 import { ViewportProvider } from '@/app/providers/viewport.provider';
+import { ScrollerService } from '@/app/services/scroller.service';
+import { RelatedContainer } from '@/app/canvas/related.container';
+import { ElementState } from '@/app/providers/element-state.provider';
 
 @Component
 export default class Canvas extends Vue implements CanvasDelegator {
   private delegator = CanvasDelegatorService.getInstance();
+  private scroller = ScrollerService.getInstance();
   private webfont = WebfontService.getInstance();
   private viewport = ViewportProvider.getInstance();
   private pixiApp!: PIXI.Application;
   private containers: DefaultContainer[] = [];
   private destroySubject = new Subject<void>();
+  private elementState!: ElementState;
   private destroy$ = this.destroySubject.asObservable();
+  private scrollContainer: DefaultContainer = new DefaultContainer(false, 10);
 
   @Prop()
   public name!: string;
@@ -31,8 +37,17 @@ export default class Canvas extends Vue implements CanvasDelegator {
       );
     }
 
+    this.elementState = new ElementState(this.$el as HTMLElement);
+
     this.delegator.register(this);
     this.webfont.loaded.then(() => this.createPixiApp());
+
+    this.scroller.scrollAnimation$.subscribe((state) => {
+      this.scrollContainer.context.y = -state.position.y;
+      this.scrollContainer.context.x = -state.position.x;
+
+      this.pixiApp.render();
+    });
   }
 
   public beforeDestroy() {
@@ -41,12 +56,8 @@ export default class Canvas extends Vue implements CanvasDelegator {
     this.delegator.deregister(this);
   }
 
-  protected get elementBounds(): ClientRect {
-    return this.$el.getBoundingClientRect();
-  }
-
   public containersUpdated(containers: DefaultContainer[]) {
-    this.containers = containers;
+    this.containers = containers.concat([ this.scrollContainer ]);
   }
 
   public syncContainers(updateViewport: boolean) {
@@ -68,9 +79,13 @@ export default class Canvas extends Vue implements CanvasDelegator {
       autoResize: true,
       powerPreference: 'high-performance',
       view: this.$refs.stage as HTMLCanvasElement,
-      width: this.elementBounds.width,
-      height: this.elementBounds.height,
+      width: this.elementState.bounds.width,
+      height: this.elementState.bounds.height,
     });
+
+    this.pixiApp.stage.addChild(
+      this.scrollContainer.context = new PIXI.Container(),
+    );
 
     this.pixiApp.ticker.add(
       () => this.renderContainers(),
@@ -80,11 +95,11 @@ export default class Canvas extends Vue implements CanvasDelegator {
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         setTimeout(() => {
-          const bounds = this.$el.getBoundingClientRect();
+          this.elementState.update();
 
           this.pixiApp.renderer.resize(
-            bounds.width,
-            bounds.height,
+            this.elementState.bounds.width,
+            this.elementState.bounds.height,
           );
 
           this.syncContainers(true);
@@ -101,22 +116,34 @@ export default class Canvas extends Vue implements CanvasDelegator {
   }
 
   public renderContainers() {
-    this.containers.forEach((container) => {
+    for (let i = 0, len = this.containers.length; i < len; i++) {
+      const container = this.containers[i];
+
       if ( ! container.initialized) {
         this.updateContainerViewport(container);
         this.initContainer(container);
       }
 
       container.render();
-    });
+    }
   }
 
   protected initContainer(container: DefaultContainer) {
-    container.context = this.pixiApp.stage.addChild(
-      new PIXI.Container(),
-    );
+    const parent = container.syncWithScrollPosition
+      ? this.scrollContainer
+      : { context: this.pixiApp.stage };
 
-    this.pixiApp.stage.children.sort((a, b) => {
+    container.context = parent.context.addChild(new PIXI.Container());
+
+    this.sortContainersByIndex(this.pixiApp.stage);
+    this.sortContainersByIndex(this.scrollContainer.context);
+
+    container.init();
+    container.sync();
+  }
+
+  protected sortContainersByIndex(parent: PIXI.Container) {
+    parent.children.sort((a, b) => {
       const cA = this.containers.find((c) => c.context === a);
       const cB = this.containers.find((c) => c.context === b);
       const iA = cA ? cA.index || 0 : 0;
@@ -124,14 +151,11 @@ export default class Canvas extends Vue implements CanvasDelegator {
 
       return iA - iB;
     });
-
-    container.init();
-    container.sync();
   }
 
   protected updateContainerViewport(container: DefaultContainer) {
-    container.viewportSize.width = this.elementBounds.width;
-    container.viewportSize.height = this.elementBounds.height;
+    container.viewportSize.width = this.elementState.bounds.width;
+    container.viewportSize.height = this.elementState.bounds.height;
   }
 }
 </script>

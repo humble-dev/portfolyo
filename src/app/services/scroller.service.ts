@@ -2,6 +2,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import * as Smoovy from '@smoovy/core';
+import { ElementState } from '../providers/element-state.provider';
 
 export enum ScrollStateTriggerType {
   USER = 'user',
@@ -26,6 +27,8 @@ export class ScrollerService {
   private rootElement!: HTMLElement;
   private scroller!: Smoovy.Scroller;
   private initialized: boolean = false;
+  private wrapperState!: ElementState;
+  private containerState!: ElementState;
   private scrollSubject: BehaviorSubject<ScrollState> = new BehaviorSubject(initialState);
   public scroll$: Observable<ScrollState> = this.scrollSubject.asObservable().pipe(
     filter(() => this.initialized),
@@ -37,18 +40,6 @@ export class ScrollerService {
     }
 
     return this.instance;
-  }
-
-  public get wrapper(): HTMLElement {
-    return this.scroller
-      ? this.scroller.dom.getWrapper()
-      : this.rootElement;
-  }
-
-  public get container(): HTMLElement {
-    return this.scroller
-      ? this.scroller.dom.getContainer()
-      : this.rootElement;
   }
 
   public get scrollAnimation$(): Observable<ScrollState> {
@@ -110,19 +101,41 @@ export class ScrollerService {
       },
     });
 
+    this.wrapperState = new ElementState(
+      this.scroller.dom.getWrapper(),
+      {
+        includeBounds: true,
+      },
+    );
+
+    this.containerState = new ElementState(
+      this.scroller.dom.getContainer(),
+      {
+        includeBounds: true,
+      },
+    );
+
     this.initialized = true;
   }
 
-  public get wrapperTop(): number {
-    return this.wrapper.getBoundingClientRect().top;
+  public get wrapper(): HTMLElement {
+    return this.wrapperState.element;
+  }
+
+  public get container(): HTMLElement {
+    return this.containerState.element;
   }
 
   public get wrapperHeight(): number {
-    return this.wrapper.getBoundingClientRect().height;
+    return this.wrapperState.bounds.height;
+  }
+
+  public get wrapperWidth(): number {
+    return this.wrapperState.bounds.width;
   }
 
   public get containerHeight(): number {
-    return this.container.getBoundingClientRect().height;
+    return this.containerState.bounds.height;
   }
 
   public scrollToY(

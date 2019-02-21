@@ -6,6 +6,7 @@ import { NavigationService } from '@/app/services/navigation.service';
 import { ScrollerService } from '@/app/services/scroller.service';
 
 import Headline from './Headline.vue';
+import { ElementState } from '@/app/providers/element-state.provider';
 
 @Component<Section>({
   components: {
@@ -28,6 +29,7 @@ export default class Section extends Vue {
   protected initialized: boolean = false;
   private scroller = ScrollerService.getInstance();
   private navigation = NavigationService.getInstance();
+  private elementState!: ElementState;
   private navigationEnabled: boolean = false;
 
   @Prop()
@@ -44,13 +46,14 @@ export default class Section extends Vue {
 
   public mounted() {
     this.initialized = true;
+    this.elementState = new ElementState(this.$el as HTMLElement);
 
     setTimeout(() => {
       this.navigationEnabled = this.isNavigationEnbaled();
     });
 
     this.$observables.scrollIntoView.subscribe(() => {
-      this.scroller.scrollToY(this.elementBounds.top);
+      this.scroller.scrollToY(this.elementState.offset.y);
     });
   }
 
@@ -69,15 +72,7 @@ export default class Section extends Vue {
   protected isNavigationEnbaled(y: number = 0): boolean {
     const viewportHeight = this.scroller.containerHeight * .4;
 
-    return y + viewportHeight > this.offsetY;
-  }
-
-  protected get offsetY(): number {
-    return Math.ceil(this.elementBounds.top - this.scroller.wrapperTop);
-  }
-
-  protected get elementBounds(): ClientRect {
-    return this.$el.getBoundingClientRect();
+    return y + viewportHeight > this.elementState.offset.y;
   }
 }
 </script>

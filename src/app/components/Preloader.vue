@@ -50,7 +50,7 @@ export default class Preloader extends Vue {
     right: 0;
     bottom: 0;
     background-color: white;
-    z-index: 100;
+    z-index: 150;
     transition: bottom 1s;
     overflow: hidden;
 

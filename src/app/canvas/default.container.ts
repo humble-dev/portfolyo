@@ -18,7 +18,7 @@ export type ContainerExtraCtor = new (
   target: PIXI.Container,
 ) => ContainerExtra;
 
-export abstract class DefaultContainer {
+export class DefaultContainer {
   protected resources = ResourceProvider.getInstance();
   private readyResolver: Resolver = new Resolver();
   private extraResolvers: { [name: string]: Resolver<ContainerExtra> } = {};
@@ -28,12 +28,19 @@ export abstract class DefaultContainer {
     height: 0,
   };
 
+  public constructor(
+    public syncWithScrollPosition: boolean = false,
+    protected zIndex: number = -1,
+  ) {
+
+  }
+
   public get initialized() {
     return !!this.context;
   }
 
   public get index(): number {
-    return -1;
+    return this.zIndex;
   }
 
   public get ready(): Promise<void> {

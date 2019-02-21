@@ -9,10 +9,12 @@ import {
 } from '@/app/canvas/containers/related-text.container';
 
 import Section from '../Section.vue';
+import Parallax from '../Parallax.vue';
 
 @Component({
   components: {
     Section,
+    Parallax,
   },
 })
 export default class IntroSection extends Vue {
@@ -54,7 +56,7 @@ export default class IntroSection extends Vue {
   <Section name="intro">
     <div class="fg-row">
       <p class="upper right fg-col-xs-2 fg-col-xs-offset-1">
-        Available for AWESOME Freelance projects
+        <span>Available for AWESOME Freelance projects</span>
       </p>
       <div ref="desLine1" class="designation-line designation-line-1 fg-col-xs-14 fg-col-xs-offset-1"></div>
     </div>
@@ -65,7 +67,6 @@ export default class IntroSection extends Vue {
 </template>
 
 <style scoped lang="scss">
-
   section {
     height: 100vh;
     position: relative;

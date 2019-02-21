@@ -1,17 +1,15 @@
+import { ElementState } from '../providers/element-state.provider';
 import { DefaultContainer } from './default.container';
-import { ScrollerService } from '../services/scroller.service';
 
 export abstract class RelatedContainer extends DefaultContainer {
-  private scroller = ScrollerService.getInstance();
   protected position: { x: number, y: number } = { x: 0, y: 0 };
   protected size: { width: number, height: number } = { width: 0, height: 0 };
+  protected elementState!: ElementState;
 
-  private scrollPosition: { x: number, y: number } = { x: 0, y: 0 };
+  public constructor(element: HTMLElement) {
+    super(true);
 
-  public constructor(
-    private element: HTMLElement,
-  ) {
-    super();
+    this.elementState = new ElementState(element);
   }
 
   public init() {
@@ -22,8 +20,6 @@ export abstract class RelatedContainer extends DefaultContainer {
 
   public render() {
     super.render();
-
-    this.updateBounds();
   }
 
   public sync() {
@@ -33,11 +29,9 @@ export abstract class RelatedContainer extends DefaultContainer {
   }
 
   private updateBounds() {
-    const bounds = this.element.getBoundingClientRect();
-
-    this.size.width = bounds.width;
-    this.size.height = bounds.height;
-    this.context.x = this.position.x = bounds.left;
-    this.context.y = this.position.y = bounds.top;
+    this.size.width = this.elementState.bounds.width;
+    this.size.height = this.elementState.bounds.height;
+    this.context.x = this.position.x = this.elementState.offset.x;
+    this.context.y = this.position.y = this.elementState.offset.y;
   }
 }

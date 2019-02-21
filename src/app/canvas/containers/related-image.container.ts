@@ -66,10 +66,6 @@ export class RelatedImageContainer extends RelatedContainer {
     this.context.addChild(this.sprite);
   }
 
-  public render() {
-    super.render();
-  }
-
   public sync() {
     super.sync();
 

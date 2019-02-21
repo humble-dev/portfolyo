@@ -9,12 +9,17 @@ import { CanvasDelegatorService } from './services/canvas-delegator.service';
 
 import { MainBackgroundContainer } from './canvas/containers/main-background.container';
 
+import { ElementStateProvider } from '@/app/providers/element-state.provider';
+import { ViewportProvider } from '@/app/providers/viewport.provider';
+
 import Section from './components/Section.vue';
-import Header from './components/layout/Header.vue';
-import Footer from './components/layout/Footer.vue';
 import Canvas from './components/Canvas.vue';
 import Preloader from './components/Preloader.vue';
 import Scrollbar from './components/layout/Scrollbar.vue';
+import Parallax from './components/Parallax.vue';
+
+import Header from './components/layout/Header.vue';
+import Footer from './components/layout/Footer.vue';
 
 import IntroSection from './components/sections/IntroSection.vue';
 import SkillsSection from './components/sections/SkillsSection.vue';
@@ -24,13 +29,16 @@ import ProjectsSection from './components/sections/ProjectsSection.vue';
 
 @Component({
   components: {
-    /** Layout */
-    Section,
-    Footer,
-    Header,
+    /** Main */
     Scrollbar,
     Canvas,
+    Section,
     Preloader,
+    Parallax,
+
+    /** Layout */
+    Footer,
+    Header,
 
     /** Sections */
     IntroSection,
@@ -43,23 +51,27 @@ import ProjectsSection from './components/sections/ProjectsSection.vue';
 export default class App extends Vue {
   private scrollerService = ScrollerService.getInstance();
   private canvasDelegator = CanvasDelegatorService.getInstance();
+  private elementState = ElementStateProvider.getInstance();
+  private viewport = ViewportProvider.getInstance();
   private scroller = ScrollerService.getInstance();
 
   public mounted() {
     PIXI.utils.skipHello();
 
+    // Enable scroller
     this.scrollerService.setRootElement(this.contentWrapper);
-    this.scrollerService.scrollAnimation$.subscribe(() => {
-      // this.backgroundCanvas.renderSync();
-    });
 
-    setTimeout(() => {
-      this.canvasDelegator.addContainer(
-        'background',
-        new MainBackgroundContainer(
-          this.scroller.wrapper,
-        ),
-      );
+    // Add main background
+    this.canvasDelegator.addContainer(
+      'background',
+      new MainBackgroundContainer(),
+    );
+
+    // Manage element states
+    setTimeout(() => this.elementState.update());
+
+    this.viewport.changed(200).subscribe(() => {
+      this.elementState.update();
     });
   }
 

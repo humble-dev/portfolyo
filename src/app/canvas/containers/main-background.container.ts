@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js';
 
-import { RelatedContainer } from '../related.container';
+import { DefaultContainer } from '../default.container';
 
-export class MainBackgroundContainer extends RelatedContainer {
+export class MainBackgroundContainer extends DefaultContainer {
   protected noiseFilter!: PIXI.filters.NoiseFilter;
   protected sprite!: PIXI.extras.TilingSprite;
   protected texture!: PIXI.Texture;
@@ -15,11 +15,10 @@ export class MainBackgroundContainer extends RelatedContainer {
     super.init();
 
     this.texture = PIXI.Texture.from('main.background');
-
     this.sprite = new PIXI.extras.TilingSprite(
       this.texture,
-      this.size.width,
-      this.size.height,
+      this.viewportSize.width,
+      this.viewportSize.height,
     );
 
     this.sprite.filters = [
@@ -41,7 +40,7 @@ export class MainBackgroundContainer extends RelatedContainer {
   public sync() {
     super.sync();
 
-    this.sprite.width = this.size.width;
-    this.sprite.height = this.size.height;
+    this.sprite.width = this.viewportSize.width;
+    this.sprite.height = this.viewportSize.height;
   }
 }
