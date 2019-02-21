@@ -2,9 +2,11 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { DefaultContainer } from '../canvas/default.container';
 import { CanvasDelegator } from '../interfaces/canvas-delegator.interface';
+import { ResourceProvider } from '../providers/resource.provider';
 
 export class CanvasDelegatorService {
   private static instance: CanvasDelegatorService;
+  private resources = ResourceProvider.getInstance();
   private delegators: CanvasDelegator[] = [];
   private containerSubscriptions: {
     [name: string]: Subscription,
@@ -29,7 +31,9 @@ export class CanvasDelegatorService {
     const subject = this.containerSubjects[name];
 
     if (subject) {
-      subject.next(subject.value.concat(containers));
+      this.resources.loaded.then(() => {
+        subject.next(subject.value.concat(containers));
+      });
     }
   }
 

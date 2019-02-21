@@ -42,12 +42,8 @@ export default class IntroSection extends Vue {
       },
     );
 
-    text1.enableDisplacement(true);
-    text2.enableDisplacement(true);
-
-    // setTimeout(() => {
-    //   text1.enableDisplacement(false);
-    // }, 1500);
+    text1.enableDisplacement(true, { scaleX: 5, scaleY: 5 });
+    text2.enableDisplacement(true, { scaleX: 5, scaleY: 5 });
 
     this.canvasDelegator.addContainer('background', text1, text2);
   }

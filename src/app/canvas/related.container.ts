@@ -1,8 +1,12 @@
 import { DefaultContainer } from './default.container';
+import { ScrollerService } from '../services/scroller.service';
 
 export abstract class RelatedContainer extends DefaultContainer {
+  private scroller = ScrollerService.getInstance();
   protected position: { x: number, y: number } = { x: 0, y: 0 };
   protected size: { width: number, height: number } = { width: 0, height: 0 };
+
+  private scrollPosition: { x: number, y: number } = { x: 0, y: 0 };
 
   public constructor(
     private element: HTMLElement,

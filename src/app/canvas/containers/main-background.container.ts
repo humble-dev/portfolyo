@@ -1,7 +1,6 @@
 import * as PIXI from 'pixi.js';
 
 import { RelatedContainer } from '../related.container';
-import { Ticker } from '@smoovy/core';
 
 export class MainBackgroundContainer extends RelatedContainer {
   protected noiseFilter!: PIXI.filters.NoiseFilter;
@@ -15,9 +14,7 @@ export class MainBackgroundContainer extends RelatedContainer {
   public init() {
     super.init();
 
-    this.texture = PIXI.Texture.fromImage(
-      './images/main-background.jpg',
-    );
+    this.texture = PIXI.Texture.from('main.background');
 
     this.sprite = new PIXI.extras.TilingSprite(
       this.texture,

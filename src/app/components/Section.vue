@@ -92,7 +92,7 @@ export default class Section extends Vue {
         'fg-start-xs': titleAlign === 'left'
       }"
     >
-      <div class="fg-col-xs-8">
+      <div class="fg-col-xs-18 fg-col-md-12 fg-col-lg-8">
         <Headline :title="title" :number="number"></Headline>
       </div>
     </div>

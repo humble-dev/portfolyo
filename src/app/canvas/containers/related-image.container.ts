@@ -1,5 +1,6 @@
-// import { TweenMax } from 'gsap';
-
+import { Displacement } from '../extras/displacement.extra';
+import { MouseMotion } from '../extras/mouse-motion.extra';
+import { Visibility } from '../extras/visibility.extra';
 import { RelatedContainer } from '../related.container';
 
 export enum RelatedImageContainerStretch {
@@ -12,6 +13,7 @@ export enum RelatedImageContainerStretch {
 export interface RelatedImageContainerConfig {
   hidden: boolean;
   scale: number;
+  index: number;
   stretchMode: RelatedImageContainerStretch;
   centerHorizontal: boolean;
   centerVertical: boolean;
@@ -33,7 +35,7 @@ export class RelatedImageContainer extends RelatedContainer {
   }
 
   public get index() {
-    return 2;
+    return this.config.index !== undefined ? this.config.index : 5;
   }
 
   public init() {
@@ -51,8 +53,15 @@ export class RelatedImageContainer extends RelatedContainer {
     );
 
     if (this.config.hidden) {
-      this.hide();
+      this.enableVisibility(false, { duration: 0 });
     }
+
+    this.enableExtras(
+      this.sprite,
+      Displacement,
+      Visibility,
+      MouseMotion,
+    );
 
     this.context.addChild(this.sprite);
   }
@@ -105,41 +114,6 @@ export class RelatedImageContainer extends RelatedContainer {
       this.sprite.anchor.y = .5;
     } else {
       this.sprite.y = 0;
-    }
-  }
-
-  public setPosition(
-    x: number,
-    y: number,
-    duration: number = 0,
-  ) {
-    if (duration > 0) {
-      // TweenMax.to(this.sprite, duration, {
-      //   x, y
-      // });
-    } else {
-      this.sprite.x = x;
-      this.sprite.y = y;
-    }
-  }
-
-  public hide(duration: number = 0) {
-    if (duration > 0) {
-      // TweenMax.to(this.sprite, duration, {
-      //   alpha: 0
-      // });
-    } else {
-      this.sprite.alpha = 0;
-    }
-  }
-
-  public show(duration: number = 0) {
-    if (duration > 0) {
-      // TweenMax.to(this.sprite, duration, {
-      //   alpha: 1
-      // });
-    } else {
-      this.sprite.alpha = 1;
     }
   }
 }

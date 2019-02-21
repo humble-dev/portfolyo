@@ -24,17 +24,16 @@ $break-xxl: 1440px;
 $break-xxxl: 1680px;
 $break-xxxxl: 1920px;
 
+/** Fluid type definition */
+$min-width: $break-xs;
+$max-width: $break-xxl;
+
 /** Grid definitions */
 $fg-grid-columns: 18;
-$fg-grid-max-width: 1680px;
+$fg-grid-max-width: 1920px;
 $fg-grid-gutter-width: 0;
-
-$fg-grid-outer-margins: (
-  0px to-number(rem(10px)),
-  $break-sm to-number(rem(20px)),
-  $break-lg to-number(rem(50px)),
-  $break-xl to-number(rem(70px))
-);
+$fx-grid-outer-margin-min: 20px;
+$fx-grid-outer-margin-max: 80px;
 
 $fg-grid-breakpoints: (
   xs $break-xs $break-xs,

@@ -13,6 +13,7 @@ import Section from './components/Section.vue';
 import Header from './components/layout/Header.vue';
 import Footer from './components/layout/Footer.vue';
 import Canvas from './components/Canvas.vue';
+import Preloader from './components/Preloader.vue';
 import Scrollbar from './components/layout/Scrollbar.vue';
 
 import IntroSection from './components/sections/IntroSection.vue';
@@ -29,6 +30,7 @@ import ProjectsSection from './components/sections/ProjectsSection.vue';
     Header,
     Scrollbar,
     Canvas,
+    Preloader,
 
     /** Sections */
     IntroSection,
@@ -48,7 +50,7 @@ export default class App extends Vue {
 
     this.scrollerService.setRootElement(this.contentWrapper);
     this.scrollerService.scrollAnimation$.subscribe(() => {
-      this.backgroundCanvas.renderSync();
+      // this.backgroundCanvas.renderSync();
     });
 
     setTimeout(() => {
@@ -73,7 +75,7 @@ export default class App extends Vue {
 
 <template>
   <div class="page-wrapper">
-    <Scrollbar></Scrollbar>
+    <!-- <Scrollbar></Scrollbar> -->
     <Header></Header>
     <Canvas ref="backgroundCanvas" name="background"></Canvas>
     <div class="content-wrapper" ref="contentWrapper">
@@ -84,6 +86,7 @@ export default class App extends Vue {
       <ContactSection></ContactSection>
       <Footer></Footer>
     </div>
+    <Preloader></Preloader>
   </div>
 </template>
 

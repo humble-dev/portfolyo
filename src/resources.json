@@ -1,0 +1,68 @@
+[
+  {
+    "name": "main.background",
+    "type": "image",
+    "path": "/images/main-background.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "displacement.asteroid",
+    "type": "image",
+    "path": "/images/displacement/asteroid.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "displacement.fabric",
+    "type": "image",
+    "path": "/images/displacement/fabric.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "displacement.paper",
+    "type": "image",
+    "path": "/images/displacement/paper.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "displacement.sand",
+    "type": "image",
+    "path": "/images/displacement/sand.png",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "displacement.sea",
+    "type": "image",
+    "path": "/images/displacement/sea.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "displacement.water",
+    "type": "image",
+    "path": "/images/displacement/water.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "displacement.water2",
+    "type": "image",
+    "path": "/images/displacement/water2.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "projects.ammolite.title",
+    "type": "image",
+    "path": "/images/projects/ammolite/title.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "projects.mackmedia.title",
+    "type": "image",
+    "path": "/images/projects/mackmedia/title.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "projects.dorfjungs.title",
+    "type": "image",
+    "path": "/images/projects/dorfjungs/title.jpg",
+    "extras": [ "pixi" ]
+  }
+]

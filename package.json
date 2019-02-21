@@ -15,7 +15,8 @@
     "vue-class-component": "^6.0.0",
     "vue-property-decorator": "^7.0.0",
     "vue-rx": "^6.1.0",
-    "webfontloader": "^1.6.28"
+    "webfontloader": "^1.6.28",
+    "xhr": "^2.5.0"
   },
   "devDependencies": {
     "@dorfjungs/scss-base": "^1.0.2",

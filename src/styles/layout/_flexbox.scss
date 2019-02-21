@@ -2,11 +2,8 @@ $fg-grid-columns: 12 !default;
 $fg-grid-max-width: 1200px !default;
 $fg-grid-gutter-width: 1rem !default;
 
-$fg-grid-outer-margins: (
-  0px 1rem,
-  1024px 2rem,
-  1440px 4rem
-) !default;
+$fx-grid-outer-margin-min: 20px !default;
+$fx-grid-outer-margin-max: 80px !default;
 
 $fg-grid-breakpoints: (
   sm 48em 46rem,
@@ -23,40 +20,24 @@ $half-gutter-width: $fg-grid-gutter-width * .5;
   max-width: $fg-grid-max-width;
 }
 
-@mixin fx-container-fluid($margins) {
+@mixin fg-container-fluid($min-margin, $max-margin) {
   margin-right: auto;
   margin-left: auto;
 
-  @each $margin in $margins {
-    $break: nth($margin, 1);
-    $size: nth($margin, 2);
+  &:not(.fx-box-spacing) {
+    @include fluid-size(padding-left padding-right, $min-margin, $max-margin);
+  }
 
-    @media only screen and (min-width: $break) {
-      &:not(.fg-box-spacing) {
-        @if (unit($size) == '') {
-          padding-right: #{$size}rem;
-          padding-left: #{$size}rem;
-        }
-        @else {
-          padding-right: $size;
-          padding-left: $size;
-        }
-      }
-
-      &.fg-box-spacing {
-        @if (unit($size) == '') {
-          padding: #{$size}rem;
-        }
-        @else {
-          padding: $size;
-        }
-      }
-    }
+  &.fx-box-spacing {
+    @include fluid-size(padding, $min-margin, $max-margin);
   }
 }
 
 .fg-container-fluid {
-  @include fx-container-fluid($fg-grid-outer-margins);
+  @include fg-container-fluid(
+    $fx-grid-outer-margin-min,
+    $fx-grid-outer-margin-max
+  );
  }
 
 .fg-row {

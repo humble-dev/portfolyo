@@ -1,5 +1,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import * as PIXI from 'pixi.js';
 
@@ -7,13 +9,17 @@ import { CanvasDelegatorService } from '@/app/services/canvas-delegator.service'
 import { WebfontService } from '@/app/services/webfont.service';
 import { CanvasDelegator } from '@/app/interfaces/canvas-delegator.interface';
 import { DefaultContainer } from '@/app/canvas/default.container';
+import { ViewportProvider } from '@/app/providers/viewport.provider';
 
 @Component
 export default class Canvas extends Vue implements CanvasDelegator {
   private delegator = CanvasDelegatorService.getInstance();
   private webfont = WebfontService.getInstance();
+  private viewport = ViewportProvider.getInstance();
   private pixiApp!: PIXI.Application;
   private containers: DefaultContainer[] = [];
+  private destroySubject = new Subject<void>();
+  private destroy$ = this.destroySubject.asObservable();
 
   @Prop()
   public name!: string;
@@ -30,6 +36,8 @@ export default class Canvas extends Vue implements CanvasDelegator {
   }
 
   public beforeDestroy() {
+    this.destroySubject.next();
+    this.destroySubject.complete();
     this.delegator.deregister(this);
   }
 
@@ -57,6 +65,7 @@ export default class Canvas extends Vue implements CanvasDelegator {
     this.pixiApp = new PIXI.Application({
       transparent: true,
       forceFXAA: true,
+      autoResize: true,
       powerPreference: 'high-performance',
       view: this.$refs.stage as HTMLCanvasElement,
       width: this.elementBounds.width,
@@ -67,22 +76,28 @@ export default class Canvas extends Vue implements CanvasDelegator {
       () => this.renderContainers(),
     );
 
-    // this.viewportRuler.change()
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe(() => {
-    //     this.pixiApp.renderer.resize(
-    //       this.elementBounds.width,
-    //       this.elementBounds.height
-    //     );
+    this.viewport.changed(300)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        setTimeout(() => {
+          const bounds = this.$el.getBoundingClientRect();
 
-    //     this.syncContainers(true);
-    //     setTimeout(() => this.syncContainers(true), 10);
-    //   });
+          this.pixiApp.renderer.resize(
+            bounds.width,
+            bounds.height,
+          );
+
+          this.syncContainers(true);
+          setTimeout(() => this.syncContainers(true), 50);
+        });
+      });
   }
 
   public renderSync() {
-    this.renderContainers();
-    this.pixiApp.render();
+    if (this.pixiApp) {
+      this.renderContainers();
+      this.pixiApp.render();
+    }
   }
 
   public renderContainers() {
@@ -122,7 +137,7 @@ export default class Canvas extends Vue implements CanvasDelegator {
 </script>
 
 <template>
-  <div class="canvas-wrapper" :class="'canvas-wrapper--' + name">
+  <div class="canvas-wrapper" :class="`canvas-wrapper--${name}`">
     <canvas ref="stage"></canvas>
   </div>
 </template>

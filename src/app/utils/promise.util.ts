@@ -1,26 +1,26 @@
 export class Resolver<T = void, E = T> {
-  public promise: Promise<T|void>;
-  private _resolve!: (value: T|void) => void;
+  public promise: Promise<T>;
+  private _resolve!: (value: T) => void;
   private _reject!: (error: any) => void;
   private _completed!: boolean;
 
   public constructor() {
-    this.promise = new Promise<T|void>((resolve, reject) => {
+    this.promise = new Promise<T>((resolve, reject) => {
       this._resolve = resolve;
       this._reject = reject;
     });
   }
 
-  public resolve(value?: T|void) {
+  public resolve(value?: T) {
     if (this._completed) {
       throw new Error('Can\'t resolve promise. Already completed');
     }
 
     this._completed = true;
-    this._resolve(value);
+    this._resolve(value as T);
   }
 
-  public reject(value?: E|void) {
+  public reject(value?: E) {
     if (this._completed) {
       throw new Error('Can\'t reject promise. Already completed');
     }
