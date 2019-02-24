@@ -83,7 +83,7 @@ export class ScrollerService {
       },
       input: {
         mouse: {
-          multiplier: 0.85,
+          multiplier: 1,
         },
       },
       output: {

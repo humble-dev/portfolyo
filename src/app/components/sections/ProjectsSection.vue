@@ -78,7 +78,7 @@ export default class ProjectsSection extends Vue {
   private imageContainers: { [id: string]: RelatedImageContainer } = {};
 
   public mounted() {
-    this.wrappers.forEach((element) => {
+    this.wrappers.forEach((element, index) => {
       const id = element.getAttribute('data-id');
       const project = this.projects.find((p) => p.id === id);
 
@@ -97,6 +97,14 @@ export default class ProjectsSection extends Vue {
         );
 
         this.textContainers[id] = textContainer;
+
+        textContainer.enableParallax(
+          true,
+          {
+            speed: index % 2 === 0 ? 100 : -100,
+            direction: 'x'
+          }
+        );
 
         this.canvasDelegator.addContainer(
           'background',
@@ -120,6 +128,14 @@ export default class ProjectsSection extends Vue {
 
         this.imageContainers[id] = imageContainer;
 
+        imageContainer.enableParallax(
+          true,
+          {
+            speed: index % 2 === 0 ? 100 : -100,
+            direction: 'x'
+          }
+        );
+
         this.canvasDelegator.addContainer(
           'background',
           imageContainer,
@@ -136,17 +152,19 @@ export default class ProjectsSection extends Vue {
         fill: 'transparent',
         stroke: 0x00000,
         strokeThickness: 1,
-        fontSize: 210,
-        anchorX: 1,
-        anchorY: -0.03,
+        fontSize: 200,
         rotation: -90,
+        anchorX: 1,
+        anchorY: -0.2,
+        // Adjust the horizontal positioning due the rotation
+        sync: (text, context, viewportSize) => {
+          context.x = viewportSize.width - text.height;
+        }
       },
     );
 
-    headlineContainer.enableDisplacement(true, {
-      scaleX: 5,
-      scaleY: 5,
-    });
+    headlineContainer.enableDisplacement(true, { scaleX: 5, scaleY: 5 });
+    headlineContainer.enableParallax(true, { speed: 300, direction: 'y' });
 
     this.canvasDelegator.addContainer(
       'background',
@@ -223,18 +241,17 @@ export default class ProjectsSection extends Vue {
     <div class="project-section-wrapper">
       <h2 class="work-headline" ref="workHeadline">WORK</h2>
       <div class="project-row fg-row" v-for="project in projects" :key="project.id">
-        <a
+        <div
           class="project-wrapper"
-          target="_blank"
           ref="projectWrapper"
           @mouseenter="enableDisplacement(project, true)"
           @mouseleave="enableDisplacement(project, false)"
           :data-id="project.id"
-          :href="project.url"
           :class="offsetClasslist(project)"
         >
+          <a target="_blank" :href="project.url"></a>
           <span>{{project.name}}</span>
-        </a>
+        </div>
       </div>
     </div>
   </Section>
@@ -250,10 +267,27 @@ export default class ProjectsSection extends Vue {
     color: $color-black;
     text-decoration: none;
     display: block;
+    position: relative;
     text-transform: uppercase;
 
     @include fluid-size(padding-top padding-bottom, 20px, 40px);
     @include fluid-size(font-size, 50px, 130px);
+
+    > a {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: -100px;
+      right: -100px;
+    }
+
+    > span {
+      visibility: hidden;
+    }
+  }
+
+  .project-row:not(:last-child) {
+    @include fluid-size(margin-bottom, 40px, 200px);
   }
 
   .work-headline {
@@ -262,24 +296,15 @@ export default class ProjectsSection extends Vue {
     right: 0;
     font-size: 200px;
     color: $color-black;
-    top: -20%;
+    top: 5%;
     font-family: $font-neue-plak-extended-extra-black;
     transform-origin: 100% 100%;
     transform: rotate(-90deg);
-
 
     @include fluid-size(
       margin-right,
       -$fx-grid-outer-margin-min,
       -$fx-grid-outer-margin-max
     );
-  }
-
-  .project-wrapper span {
-    visibility: hidden;
-  }
-
-  .project-row:not(:last-child) {
-    @include fluid-size(margin-bottom, 40px, 200px);
   }
 </style>

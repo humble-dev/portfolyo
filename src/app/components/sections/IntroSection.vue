@@ -22,7 +22,7 @@ export default class IntroSection extends Vue {
 
   public mounted() {
     const headlineConfig: Partial<RelatedTextContainerConfig> = {
-      fontSize: 378,
+      fontSize: 300,
       fill: 0x00000,
       fontFamily: 'Neue Plak Extended ExtraBlack',
       stretchMode: RelatedTextContainerStretch.FIT_HEIGHT,
@@ -45,7 +45,10 @@ export default class IntroSection extends Vue {
     );
 
     text1.enableDisplacement(true, { scaleX: 5, scaleY: 5 });
+    text1.enableParallax(true, { speed: -300, direction: 'x' });
+
     text2.enableDisplacement(true, { scaleX: 5, scaleY: 5 });
+    text2.enableParallax(true, { speed: 400, direction: 'x' });
 
     this.canvasDelegator.addContainer('background', text1, text2);
   }
@@ -56,7 +59,9 @@ export default class IntroSection extends Vue {
   <Section name="intro">
     <div class="fg-row">
       <p class="upper right fg-col-xs-2 fg-col-xs-offset-1">
-        <span>Available for AWESOME Freelance projects</span>
+        <Parallax v-bind:speed="-150">
+          <span>Available for AWESOME Freelance projects</span>
+        </Parallax>
       </p>
       <div ref="desLine1" class="designation-line designation-line-1 fg-col-xs-14 fg-col-xs-offset-1"></div>
     </div>

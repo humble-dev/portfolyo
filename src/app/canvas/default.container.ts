@@ -5,6 +5,7 @@ import { Resolver } from '../utils/promise.util';
 import { DisplacementConfig, displacementExtraName } from './extras/displacement.extra';
 import { VisibilityConfig, visibilityExtraName } from './extras/visibility.extra';
 import { MouseMotionConfig, mouseMotionExtraName } from './extras/mouse-motion.extra';
+import { ParallaxConfig, parallaxExtraName } from './extras/parallax.extra';
 
 export interface ContainerExtraConfig {}
 
@@ -23,10 +24,7 @@ export class DefaultContainer {
   private readyResolver: Resolver = new Resolver();
   private extraResolvers: { [name: string]: Resolver<ContainerExtra> } = {};
   public context!: PIXI.Container;
-  public viewportSize: { width: number, height: number } = {
-    width: 0,
-    height: 0,
-  };
+  public viewportSize = { width: 0, height: 0 };
 
   public constructor(
     public syncWithScrollPosition: boolean = false,
@@ -90,7 +88,20 @@ export class DefaultContainer {
     });
   }
 
-  protected extra(name: string): Promise<ContainerExtra> {
+  public enableParallax(
+    enabled: boolean,
+    config?: Partial<ParallaxConfig>,
+  ) {
+    this.extra(parallaxExtraName).then((extra) => {
+      if (enabled) {
+        extra.activate(config);
+      } else {
+        extra.deactivate(config);
+      }
+    });
+  }
+
+  public extra(name: string): Promise<ContainerExtra> {
     let resolver = this.extraResolvers[name];
 
     if ( ! resolver) {

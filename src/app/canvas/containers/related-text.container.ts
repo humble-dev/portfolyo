@@ -2,6 +2,8 @@ import { Displacement } from '../extras/displacement.extra';
 import { Visibility } from '../extras/visibility.extra';
 import { RelatedContainer } from '../related.container';
 import { MouseMotion } from '../extras/mouse-motion.extra';
+import { Parallax } from '../extras/parallax.extra';
+import { DefaultContainer } from '../default.container';
 
 export enum RelatedTextContainerStretch {
   NONE = 0,
@@ -18,6 +20,16 @@ export interface RelatedTextContainerConfig extends PIXI.TextStyleOptions {
   anchorY: number;
   rotation: number;
   index: number;
+  created: (
+    text: PIXI.Text,
+    context: PIXI.Container,
+    viewportSize: DefaultContainer['viewportSize'],
+  ) => void;
+  sync: (
+    text: PIXI.Text,
+    context: PIXI.Container,
+    viewportSize: DefaultContainer['viewportSize'],
+  ) => void;
 }
 
 export class RelatedTextContainer extends RelatedContainer {
@@ -63,7 +75,21 @@ export class RelatedTextContainer extends RelatedContainer {
       MouseMotion,
     );
 
+    this.enableExtras(
+      this.context,
+      Parallax,
+    );
+
     this.context.addChild(this.text);
+
+    if (this.config.created) {
+      this.config.created.call(
+        this,
+        this.text,
+        this.context,
+        this.viewportSize,
+      );
+    }
   }
 
   public sync() {
@@ -106,5 +132,14 @@ export class RelatedTextContainer extends RelatedContainer {
 
     this.text.width *= ratio;
     this.text.height *= ratio;
+
+    if (this.config.sync) {
+      this.config.sync.call(
+        this,
+        this.text,
+        this.context,
+        this.viewportSize,
+      );
+    }
   }
 }

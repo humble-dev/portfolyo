@@ -6,6 +6,7 @@ import { NavigationService } from '@/app/services/navigation.service';
 import { ScrollerService } from '@/app/services/scroller.service';
 
 import detectSize from '@/app/directives/detect-size.directive';
+import Parallax from '@/app/components/Parallax.vue';
 
 interface NavigationLink {
   section: string;
@@ -22,6 +23,9 @@ const navigationLinks: NavigationLink[] = [
 @Component<Header>({
   directives: {
     detectSize,
+  },
+  components: {
+    Parallax,
   },
   subscriptions(this) {
     return {
@@ -62,7 +66,9 @@ export default class Header extends Vue {
     <div class="fg-container-fluid fg-wrapper-maxed">
       <div class="fg-row fg-between-xs">
         <h1>DavidePerozzi</h1>
-        <div class="designation">Interactive developer</div>
+        <div class="designation">
+          <span>Interactive developer</span>
+        </div>
         <nav :class="{ minimized: navMinimized }" class="fx-layout fx-vertical fx-self-end">
           <a
             v-detectSize.ignoreWidth

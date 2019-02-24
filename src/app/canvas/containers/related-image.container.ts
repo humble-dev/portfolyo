@@ -2,6 +2,7 @@ import { Displacement } from '../extras/displacement.extra';
 import { MouseMotion } from '../extras/mouse-motion.extra';
 import { Visibility } from '../extras/visibility.extra';
 import { RelatedContainer } from '../related.container';
+import { Parallax } from '../extras/parallax.extra';
 
 export enum RelatedImageContainerStretch {
   NONE = 0,
@@ -61,6 +62,11 @@ export class RelatedImageContainer extends RelatedContainer {
       Displacement,
       Visibility,
       MouseMotion,
+    );
+
+    this.enableExtras(
+      this.context,
+      Parallax,
     );
 
     this.context.addChild(this.sprite);

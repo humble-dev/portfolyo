@@ -62,10 +62,12 @@ export default class App extends Vue {
     this.scrollerService.setRootElement(this.contentWrapper);
 
     // Add main background
-    this.canvasDelegator.addContainer(
-      'background',
-      new MainBackgroundContainer(),
-    );
+    const background = new MainBackgroundContainer(this.scroller.wrapper);
+
+    background.enableParallax(true, { speed: 3000, direction: 'y' });
+    // background.enableDisplacement(true, { scaleX: 50, scaleY: 50 });
+
+    this.canvasDelegator.addContainer('background', background);
 
     // Manage element states
     setTimeout(() => this.elementState.update());

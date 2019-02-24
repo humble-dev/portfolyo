@@ -1,8 +1,10 @@
 import * as PIXI from 'pixi.js';
 
-import { DefaultContainer } from '../default.container';
+import { Parallax } from '../extras/parallax.extra';
+import { RelatedContainer } from '../related.container';
+import { Displacement } from '../extras/displacement.extra';
 
-export class MainBackgroundContainer extends DefaultContainer {
+export class MainBackgroundContainer extends RelatedContainer {
   protected noiseFilter!: PIXI.filters.NoiseFilter;
   protected sprite!: PIXI.extras.TilingSprite;
   protected texture!: PIXI.Texture;
@@ -17,16 +19,26 @@ export class MainBackgroundContainer extends DefaultContainer {
     this.texture = PIXI.Texture.from('main.background');
     this.sprite = new PIXI.extras.TilingSprite(
       this.texture,
-      this.viewportSize.width,
-      this.viewportSize.height,
+      this.size.width,
+      this.size.height,
     );
 
-    this.sprite.filters = [
+    this.context.filters = [
       this.noiseFilter = new PIXI.filters.NoiseFilter(
         0.06,
         Math.random(),
       ),
     ];
+
+    this.enableExtras(
+      this.sprite,
+      Displacement,
+    );
+
+    this.enableExtras(
+      this.context,
+      Parallax,
+    );
 
     this.context.addChild(this.sprite);
   }
@@ -40,7 +52,7 @@ export class MainBackgroundContainer extends DefaultContainer {
   public sync() {
     super.sync();
 
-    this.sprite.width = this.viewportSize.width;
-    this.sprite.height = this.viewportSize.height;
+    this.sprite.width = this.size.width;
+    this.sprite.height = this.size.height;
   }
 }
