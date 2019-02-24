@@ -73,6 +73,12 @@ export class ScrollerService {
 
     this.scroller = Smoovy.Scroller.init({
       container: this.rootElement,
+      mobileNative: false,
+      controllers: {
+        output: {
+          default: Smoovy.SectionController,
+        },
+      },
       on: {
         scroll: (position) => {
           this.triggerScroll(
@@ -83,14 +89,18 @@ export class ScrollerService {
       },
       input: {
         mouse: {
-          multiplier: 1,
+          multiplier: 0.9,
+        },
+        touch: {
+          multiplier: 3,
         },
       },
       output: {
         default: {
           speed: 2000,
+          selector: 'section,footer',
           on: {
-            animation: (position) => {
+            animation: (position: Smoovy.Position) => {
               this.triggerScroll(
                 position,
                 ScrollStateTriggerType.ANIMATION,

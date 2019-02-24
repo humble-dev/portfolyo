@@ -37,6 +37,8 @@ export default class Canvas extends Vue implements CanvasDelegator {
       );
     }
 
+    (window as any)['cc'] = this;
+
     this.elementState = new ElementState(this.$el as HTMLElement);
 
     this.delegator.register(this);
@@ -46,7 +48,8 @@ export default class Canvas extends Vue implements CanvasDelegator {
       this.scrollContainer.context.y = -state.position.y;
       this.scrollContainer.context.x = -state.position.x;
 
-      this.pixiApp.render();
+      // Performance issue:
+      // PIXI.ticker.shared.update();
     });
   }
 
@@ -77,6 +80,9 @@ export default class Canvas extends Vue implements CanvasDelegator {
       transparent: true,
       forceFXAA: true,
       autoResize: true,
+      sharedTicker: true,
+      antialias: false,
+      resolution: window.devicePixelRatio,
       powerPreference: 'high-performance',
       view: this.$refs.stage as HTMLCanvasElement,
       width: this.elementState.bounds.width,
@@ -106,13 +112,6 @@ export default class Canvas extends Vue implements CanvasDelegator {
           setTimeout(() => this.syncContainers(true), 50);
         });
       });
-  }
-
-  public renderSync() {
-    if (this.pixiApp) {
-      this.renderContainers();
-      this.pixiApp.render();
-    }
   }
 
   public renderContainers() {

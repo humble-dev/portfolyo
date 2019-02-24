@@ -143,7 +143,7 @@ export default class Header extends Vue {
       overflow: hidden;
       backface-visibility: hidden;
       transform: translate3d(0, 0, 0);
-      // transition: height .5s; -> Performance issue!!!
+      // transition: height .5s; // -> Performance issue!!!
     }
 
     &.minimized:not(:hover) .nav-link:not(.active) {

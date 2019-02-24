@@ -2,6 +2,7 @@ import { ScrollerService } from '@/app/services/scroller.service';
 import { parallax } from '@/app/utils/math.util';
 
 import { ContainerExtra, ContainerExtraConfig } from '../default.container';
+import { parallaxHelper } from '@/app/helpers/parallax.helper';
 
 export interface ParallaxConfig extends ContainerExtraConfig {
   speed: number;
@@ -30,27 +31,18 @@ export class Parallax implements ContainerExtra {
       this.scroller.scrollAnimation$.subscribe((state) => {
         const viewportHeight = this.scroller.containerHeight;
         const elementHeight = this.container.height;
-        const elementY = this.target.y;
-        const realSpeed = config.speed || 0;
-        const speed = Math.abs(realSpeed);
-        const minSpeed = realSpeed <= 0 ? speed : -speed;
-        const maxSpeed = realSpeed <= 0 ? -speed : speed;
-        const minOffset = config.direction === 'x' ? 0 : minSpeed;
-        const maxOffset = config.direction === 'x' ? 0 : maxSpeed;
-
-        const translation = parallax(
+        const elementPositionY = this.target.y;
+        const translation = parallaxHelper(
           state.position.y,
           viewportHeight,
           elementHeight,
-          elementY,
-          minSpeed,
-          maxSpeed,
-          minOffset,
-          maxOffset,
+          elementPositionY,
+          config.speed,
+          config.direction,
         );
 
-        this.container.x = config.direction === 'x' ?  translation : 0;
-        this.container.y = config.direction === 'y' ? translation : 0;
+        this.container.x = translation.x;
+        this.container.y = translation.y;
       });
     }
   }

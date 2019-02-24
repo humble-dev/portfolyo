@@ -6,5 +6,4 @@ export interface CanvasDelegator {
   containersUpdated(containers: DefaultContainer[]): void;
   syncContainers(updateViewport: boolean): void;
   renderContainers(): void;
-  renderSync(): void;
 }

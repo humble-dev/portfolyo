@@ -102,8 +102,8 @@ export default class ProjectsSection extends Vue {
           true,
           {
             speed: index % 2 === 0 ? 100 : -100,
-            direction: 'x'
-          }
+            direction: 'x',
+          },
         );
 
         this.canvasDelegator.addContainer(
@@ -132,8 +132,8 @@ export default class ProjectsSection extends Vue {
           true,
           {
             speed: index % 2 === 0 ? 100 : -100,
-            direction: 'x'
-          }
+            direction: 'x',
+          },
         );
 
         this.canvasDelegator.addContainer(
@@ -159,7 +159,7 @@ export default class ProjectsSection extends Vue {
         // Adjust the horizontal positioning due the rotation
         sync: (text, context, viewportSize) => {
           context.x = viewportSize.width - text.height;
-        }
+        },
       },
     );
 
@@ -249,7 +249,7 @@ export default class ProjectsSection extends Vue {
           :data-id="project.id"
           :class="offsetClasslist(project)"
         >
-          <a target="_blank" :href="project.url"></a>
+          <a target="_blank" rel="noopener" :href="project.url"></a>
           <span>{{project.name}}</span>
         </div>
       </div>
