@@ -3,6 +3,7 @@ import { MouseMotion } from '../extras/mouse-motion.extra';
 import { Visibility } from '../extras/visibility.extra';
 import { RelatedContainer } from '../related.container';
 import { Parallax } from '../extras/parallax.extra';
+import { MotionBlur } from '../extras/motion-blur.extra';
 
 export enum RelatedImageContainerStretch {
   NONE = 0,
@@ -67,6 +68,7 @@ export class RelatedImageContainer extends RelatedContainer {
     this.enableExtras(
       this.context,
       Parallax,
+      MotionBlur,
     );
 
     this.context.addChild(this.sprite);

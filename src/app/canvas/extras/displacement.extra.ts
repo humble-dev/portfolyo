@@ -1,5 +1,5 @@
-import { TweenLite } from 'gsap';
 import { Container } from 'pixi.js';
+import anime from 'animejs';
 
 import { ContainerExtraConfig, ContainerExtra } from '../default.container';
 
@@ -18,16 +18,21 @@ export class Displacement implements ContainerExtra {
   private active: boolean = false;
   private sprite?: PIXI.Sprite;
   private filter?: PIXI.filters.DisplacementFilter;
-  private tweens: TweenLite[] = [];
+  private animations: anime.AnimeInstance[] = [];
+  private scaleAnimation?: anime.AnimeInstance;
 
   public constructor(
     protected target: Container,
   ) {}
 
   private killTweens() {
-    this.tweens.forEach((tween) => tween.kill());
+    if (this.scaleAnimation) {
+      this.scaleAnimation.pause();
+    }
 
-    this.tweens = [];
+    this.animations.forEach((anim) => anim.pause());
+
+    this.animations = [];
   }
 
   public activate(config: Partial<DisplacementConfig> = {}) {
@@ -51,21 +56,45 @@ export class Displacement implements ContainerExtra {
         this.target.filters = [ this.filter ];
       }
 
-      this.tweens.push(
-        TweenLite.to(this.filter.scale, config.scaleDuration || .5, {
-          x: config.scaleX || 15,
-          y: config.scaleY || 15,
+      this.animations.push(
+        anime({
+          targets: this.filter.scale,
+          duration: config.scaleDuration || 500,
+          x: typeof config.scaleX === 'number' ? config.scaleX : 15,
+          y: typeof config.scaleY === 'number' ? config.scaleY : 15,
         }),
       );
 
-      this.tweens.push(
-        TweenLite.to(this.sprite, config.rotationDuration || 250, {
-          repeat: -1,
+      this.animations.push(
+        anime({
+          targets: this.sprite,
+          duration: config.rotationDuration || 250000,
           rotation: 360 * (Math.PI / 180),
+          easing: 'linear',
+          loop: true,
         }),
       );
 
       this.target.addChild(this.sprite);
+    }
+  }
+
+  public scaleFilter(
+    scaleX: number,
+    scaleY: number,
+    duration: number = .5,
+  ) {
+    if (this.filter) {
+      if (this.scaleAnimation) {
+        this.scaleAnimation.pause();
+      }
+
+      this.scaleAnimation = anime({
+        targets: this.filter.scale,
+        duration,
+        x: scaleX,
+        y: scaleY,
+      });
     }
   }
 
@@ -74,22 +103,24 @@ export class Displacement implements ContainerExtra {
       this.killTweens();
 
       this.active = false;
-      this.tweens.push(
-        TweenLite.to(this.filter.scale, config.scaleDuration || .5, {
-            x: 0,
-            y: 0,
-            onComplete: () => {
-              if (this.sprite && this.target.filters) {
-                this.target.removeChild(this.sprite);
+      this.animations.push(
+        anime({
+          targets: this.filter.scale,
+          duration: config.scaleDuration || 500,
+          x: 0,
+          y: 0,
+          complete: () => {
+            if (this.sprite && this.target.filters) {
+              this.target.removeChild(this.sprite);
 
-                this.target.filters = this.target.filters.filter((filter) => {
-                  return filter !== this.filter;
-                });
+              this.target.filters = this.target.filters.filter((filter) => {
+                return filter !== this.filter;
+              });
 
-                this.sprite = undefined;
-                this.filter = undefined;
-              }
-            },
+              this.sprite = undefined;
+              this.filter = undefined;
+            }
+          },
         }),
       );
     }

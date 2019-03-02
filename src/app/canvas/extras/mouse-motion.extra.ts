@@ -1,8 +1,8 @@
-import { TweenLite } from 'gsap';
 import { Container } from 'pixi.js';
 
 import { ViewportProvider } from '@/app/providers/viewport.provider';
 import { mapRange } from '@/app/utils/math.util';
+import { Ticker, Tween, easings } from '@smoovy/core';
 
 import { ContainerExtra, ContainerExtraConfig } from '../default.container';
 
@@ -21,9 +21,10 @@ export class MouseMotion implements ContainerExtra {
   private viewport = ViewportProvider.getInstance();
   private enabled = false;
   private startPosition!: { x: number, y: number };
-  private allowPositionReset: boolean = true;
+  private initialPosition!: { x: number, y: number };
   private moveListener!: (event: MouseEvent) => void;
-  private moveTween!: TweenLite;
+  private moveTween?: Tween;
+  private backTween?: Tween;
 
   public constructor(
     protected target: Container,
@@ -33,21 +34,24 @@ export class MouseMotion implements ContainerExtra {
     if ( ! this.enabled) {
       this.enabled = true;
 
-      if (this.moveTween) {
-        this.moveTween.kill();
-      }
-
-      if ( ! this.startPosition || this.allowPositionReset) {
-        this.startPosition = {
+      if ( ! this.initialPosition) {
+        this.initialPosition = {
           x: this.target.x,
           y: this.target.y,
         };
       }
 
+      this.startPosition = {
+        x: this.target.x,
+        y: this.target.y,
+      };
+
       window.addEventListener(
         'mousemove',
         this.moveListener = (event) => {
-          this.handleMouseMove(event, config);
+          Ticker.requestAnimationFrame(() => {
+            this.handleMouseMove(event, config);
+          });
         },
         false,
       );
@@ -59,18 +63,26 @@ export class MouseMotion implements ContainerExtra {
       this.enabled = false;
 
       if (this.moveTween) {
-        this.moveTween.kill();
+        this.moveTween.stop();
       }
 
-      this.allowPositionReset = false;
-
-      TweenLite.to(this.target, config.duration || 1, {
-        x: this.startPosition.x,
-        y: this.startPosition.y,
-        onComplete: () => {
-          this.allowPositionReset = true;
+      this.backTween = Tween.to(
+        {
+          x: this.target.x,
+          y: this.target.y,
         },
-      });
+        {
+          x: this.initialPosition.x,
+          y: this.initialPosition.y,
+        },
+        config.duration || 2000,
+        {
+          update: (pos) => {
+            this.target.x = pos.x;
+            this.target.y = pos.y;
+          },
+        },
+      );
 
       if (this.moveListener) {
         window.removeEventListener(
@@ -85,33 +97,57 @@ export class MouseMotion implements ContainerExtra {
     event: MouseEvent,
     config: Partial<MouseMotionConfig>,
   ) {
-    const viewportSize = this.viewport.size;
-    const minX = config.minX !== undefined ? config.minX : -20;
-    const maxX = config.maxX !== undefined ? config.maxX : 20;
-    const minY = config.minY !== undefined ? config.minY : -20;
-    const maxY = config.maxY !== undefined ? config.maxY : 20;
-
-    const moveX = mapRange(
-      event.clientX,
-      0,
-      viewportSize.width,
-      minX,
-      maxX,
-    );
-
-    const moveY = mapRange(
-      event.clientY,
-      0,
-      viewportSize.height,
-      minY,
-      maxY,
-    );
-
     if (this.enabled) {
-      this.moveTween = TweenLite.to(this.target, config.duration || 1, {
-        x: this.startPosition.x + moveX,
-        y: this.startPosition.y + moveY,
-      });
+      const viewportSize = this.viewport.size;
+      const minX = config.minX !== undefined ? config.minX : -20;
+      const maxX = config.maxX !== undefined ? config.maxX : 20;
+      const minY = config.minY !== undefined ? config.minY : -20;
+      const maxY = config.maxY !== undefined ? config.maxY : 20;
+
+      const moveX = mapRange(
+        event.clientX,
+        0,
+        viewportSize.width,
+        minX,
+        maxX,
+      );
+
+      const moveY = mapRange(
+        event.clientY,
+        0,
+        viewportSize.height,
+        minY,
+        maxY,
+      );
+
+      if (this.backTween) {
+        this.backTween.stop();
+        this.backTween = undefined;
+      }
+
+
+      if (this.moveTween) {
+        this.moveTween.stop();
+      }
+
+      this.moveTween = Tween.to(
+        {
+          x: this.target.x,
+          y: this.target.y,
+        },
+        {
+          x: this.startPosition.x + moveX,
+          y: this.startPosition.y + moveY,
+        },
+        config.duration || 2000,
+        {
+          easing: easings.Expo.out,
+          update: (pos) => {
+            this.target.x = pos.x;
+            this.target.y = pos.y;
+          },
+        },
+      );
     }
   }
 }

@@ -16,7 +16,7 @@ export function clamp(
   return Math.min(Math.max(value, min), max);
 }
 
-export function parallax(
+export function scrollTween(
   scrollPosition: number,
   viewportSize: number,
   elementSize: number,

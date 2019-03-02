@@ -1,5 +1,4 @@
 import { ScrollerService } from '@/app/services/scroller.service';
-import { parallax } from '@/app/utils/math.util';
 
 import { ContainerExtra, ContainerExtraConfig } from '../default.container';
 import { parallaxHelper } from '@/app/helpers/parallax.helper';

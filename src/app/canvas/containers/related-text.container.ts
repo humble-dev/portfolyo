@@ -1,9 +1,10 @@
+import { DefaultContainer } from '../default.container';
 import { Displacement } from '../extras/displacement.extra';
-import { Visibility } from '../extras/visibility.extra';
-import { RelatedContainer } from '../related.container';
+import { MotionBlur } from '../extras/motion-blur.extra';
 import { MouseMotion } from '../extras/mouse-motion.extra';
 import { Parallax } from '../extras/parallax.extra';
-import { DefaultContainer } from '../default.container';
+import { Visibility } from '../extras/visibility.extra';
+import { RelatedContainer } from '../related.container';
 
 export enum RelatedTextContainerStretch {
   NONE = 0,
@@ -77,6 +78,7 @@ export class RelatedTextContainer extends RelatedContainer {
 
     this.enableExtras(
       this.context,
+      MotionBlur,
       Parallax,
     );
 

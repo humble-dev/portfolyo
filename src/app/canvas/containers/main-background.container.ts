@@ -3,6 +3,7 @@ import * as PIXI from 'pixi.js';
 import { Parallax } from '../extras/parallax.extra';
 import { RelatedContainer } from '../related.container';
 import { Displacement } from '../extras/displacement.extra';
+import { MotionBlur } from '../extras/motion-blur.extra';
 
 export class MainBackgroundContainer extends RelatedContainer {
   protected noiseFilter!: PIXI.filters.NoiseFilter;
@@ -32,6 +33,7 @@ export class MainBackgroundContainer extends RelatedContainer {
 
     this.enableExtras(
       this.sprite,
+      MotionBlur,
       Displacement,
     );
 

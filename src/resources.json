@@ -18,6 +18,12 @@
     "extras": [ "pixi" ]
   },
   {
+    "name": "displacement.fabric2",
+    "type": "image",
+    "path": "/images/displacement/fabric2.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
     "name": "displacement.paper",
     "type": "image",
     "path": "/images/displacement/paper.jpg",

@@ -1,4 +1,4 @@
-import { parallax } from '../utils/math.util';
+import { scrollTween } from '../utils/math.util';
 
 export function parallaxHelper(
   scrollPosition: number,
@@ -26,7 +26,7 @@ export function parallaxHelper(
   // Position of the element. It's just a simplified function
   // using `mapRange` to move the position into a new range
   // of nubmers
-  const translation = parallax(
+  const translation = scrollTween(
     scrollPosition,
     viewportSize,
     elementSize,

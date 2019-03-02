@@ -14,7 +14,10 @@ import { ScrollerService } from '@/app/services/scroller.service';
         map((y) => {
           const maxScrollY = scroller.wrapperHeight - scroller.containerHeight;
 
-          return 100 * y / maxScrollY;
+          return y / maxScrollY;
+        }),
+        tap((progress) => {
+          this.indicator.style.transform = `scaleY(${progress})`;
         }),
       ),
     };
@@ -23,13 +26,6 @@ import { ScrollerService } from '@/app/services/scroller.service';
 export default class Scrollbar extends Vue {
   private scrollerService = ScrollerService.getInstance();
   private progressY: number = 0;
-
-  @Watch('progressY')
-  private onProgressYChange(y: number, oldY: number) {
-    setTimeout(() => {
-      this.indicator.style.height = `${y}%`;
-    });
-  }
 
   private get indicator(): HTMLElement {
     return this.$refs.indicator as HTMLElement;
@@ -49,12 +45,14 @@ export default class Scrollbar extends Vue {
     right: 0;
     top: 0;
     bottom: 0;
-    width: 5px;
+    width: 4px;
     z-index: 2;
   }
 
   .indicator {
-    width: 5px;
+    width: 100%;
+    height: 100%;
     background-color: $color-red;
+    transform: scaleY(0);
   }
 </style>

@@ -1,5 +1,10 @@
 import { getElementOffset } from '../utils/element.util';
 
+interface Position {
+  x: number;
+  y: number;
+}
+
 export class ElementStateProvider {
   private static instance: ElementStateProvider;
   private states: ElementState[] = [];
@@ -39,7 +44,7 @@ export interface ElementStateConfig {
 export class ElementState {
   private stateProvider = ElementStateProvider.getInstance();
   private _bounds?: { x: number, y: number, width: number, height: number };
-  private _offset?: { x: number, y: number };
+  private _offset?: Position;
 
   public constructor(
     public element: HTMLElement,
@@ -90,5 +95,33 @@ export class ElementState {
     if (this.config.includeOffset) {
       this._offset = getElementOffset(this.element);
     }
+  }
+
+  public inViewport(
+    scrollPosition: Position,
+    viewportSize: { width: number, height: number },
+    offset: number|Position = 0,
+    withoutBounds: boolean = false,
+  ): boolean {
+    offset = typeof offset === 'number' ? { x: offset, y: offset } : offset;
+
+    const belowViewport = (
+      this.offset.y + offset.y > scrollPosition.y + viewportSize.height
+    );
+
+    const aboveViewport = (
+      this.offset.y + offset.y + this.bounds.height < scrollPosition.y
+    );
+
+    const rightOfViewport = (
+      this.offset.x + offset.x > scrollPosition.x + viewportSize.width
+    );
+
+    const leftOfViewport = (
+      this.offset.x + offset.x + this.bounds.width < scrollPosition.x
+    );
+
+    return !belowViewport && !aboveViewport &&
+           !rightOfViewport && !leftOfViewport;
   }
 }

@@ -2,6 +2,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { Scroller } from '@smoovy/core';
 
+import anime from 'animejs';
 import * as PIXI from 'pixi.js';
 
 import { ScrollerService } from './services/scroller.service';
@@ -65,7 +66,6 @@ export default class App extends Vue {
     const background = new MainBackgroundContainer(this.scroller.wrapper);
 
     background.enableParallax(true, { speed: 3000, direction: 'y' });
-    // background.enableDisplacement(true, { scaleX: 50, scaleY: 50 });
 
     this.canvasDelegator.addContainer('background', background);
 
@@ -75,6 +75,21 @@ export default class App extends Vue {
     this.viewport.changed(200).subscribe(() => {
       this.elementState.update();
     });
+
+    // const obj = { x: 0, y: 100 };
+
+    // const animation = anime({
+    //   targets: obj,
+    //   x: 300,
+    //   y: 200,
+    //   duration: 5000,
+    //   easing: 'linear',
+    //   update: () => {
+    //     console.log(obj.y);
+    //   }
+    // });
+
+    // animation.pause();
   }
 
   private get backgroundCanvas(): Canvas {
@@ -89,7 +104,7 @@ export default class App extends Vue {
 
 <template>
   <div class="page-wrapper">
-    <!-- <Scrollbar></Scrollbar> -->
+    <Scrollbar></Scrollbar>
     <Header></Header>
     <Canvas ref="backgroundCanvas" name="background"></Canvas>
     <div class="content-wrapper" ref="contentWrapper">

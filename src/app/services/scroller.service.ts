@@ -1,7 +1,8 @@
 import { BehaviorSubject, Observable } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
 import * as Smoovy from '@smoovy/core';
+
 import { ElementState } from '../providers/element-state.provider';
 
 export enum ScrollStateTriggerType {
@@ -12,14 +13,17 @@ export enum ScrollStateTriggerType {
 export interface ScrollState {
   triggeredBy: ScrollStateTriggerType;
   position: Smoovy.Position;
+  lastPosition: Smoovy.Position;
+  currentTime: number;
+  lastTime: number;
 }
 
 const initialState: ScrollState = {
   triggeredBy: ScrollStateTriggerType.USER,
-  position: {
-    x: 0,
-    y: 0,
-  },
+  position: { x: 0, y: 0 },
+  lastPosition: { x: 0, y: 0 },
+  currentTime: Date.now(),
+  lastTime: Date.now(),
 };
 
 export class ScrollerService {
@@ -58,6 +62,19 @@ export class ScrollerService {
     );
   }
 
+  public scrollVelocity$ = this.scrollUser$.pipe(
+    map((state) => {
+      const deltaY = state.position.y - state.lastPosition.y;
+      const deltaX = state.position.x - state.lastPosition.x;
+      const deltaTime = state.currentTime - state.lastTime;
+
+      return {
+        x: Math.round(deltaX / deltaTime),
+        y: Math.round(deltaY / deltaTime),
+      };
+    }),
+  );
+
   public setRootElement(
     element: HTMLElement,
   ) {
@@ -76,14 +93,18 @@ export class ScrollerService {
       mobileNative: false,
       controllers: {
         output: {
-          default: Smoovy.SectionController,
+          default: Smoovy.TweenSectionController,
         },
       },
       on: {
-        scroll: (position) => {
+        scroll: (
+          position: Smoovy.Position,
+          lastPosition: Smoovy.Position,
+        ) => {
           this.triggerScroll(
-            position,
             ScrollStateTriggerType.USER,
+            position,
+            lastPosition,
           );
         },
       },
@@ -100,10 +121,14 @@ export class ScrollerService {
           speed: 2000,
           selector: 'section,footer',
           on: {
-            animation: (position: Smoovy.Position) => {
+            animation: (
+              position: Smoovy.Position,
+              lastPosition: Smoovy.Position,
+            ) => {
               this.triggerScroll(
-                position,
                 ScrollStateTriggerType.ANIMATION,
+                position,
+                lastPosition,
               );
             },
           },
@@ -158,12 +183,18 @@ export class ScrollerService {
   }
 
   private triggerScroll(
-    position: Smoovy.Position,
     triggeredBy: ScrollStateTriggerType,
+    position: Smoovy.Position,
+    lastPosition: Smoovy.Position = position,
   ) {
+    const last = this.scrollSubject.value;
+
     this.scrollSubject.next({
       triggeredBy,
       position,
+      lastPosition,
+      currentTime: Date.now(),
+      lastTime: last.currentTime,
     });
   }
 }

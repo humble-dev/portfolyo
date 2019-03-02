@@ -11,6 +11,7 @@ import {
 import { DisplacementConfig } from '@/app/canvas/extras/displacement.extra';
 
 import Section from '../Section.vue';
+import { ScrollerService } from '@/app/services/scroller.service';
 
 type Projects = Project[] ;
 interface Project {
@@ -74,6 +75,7 @@ const projects: Projects = [
 export default class ProjectsSection extends Vue {
   private projects: Projects = projects;
   private canvasDelegator = CanvasDelegatorService.getInstance();
+  private scrollerService = ScrollerService.getInstance();
   private textContainers: { [id: string]: RelatedTextContainer } = {};
   private imageContainers: { [id: string]: RelatedImageContainer } = {};
 
@@ -186,28 +188,30 @@ export default class ProjectsSection extends Vue {
   ) {
     const image = this.getImageContainer(project.id);
     const text = this.getTextContainer(project.id);
-    const displacement = { scaleDuration: 2 };
+    const displacement = {
+      scaleDuration: 5000,
+      scaleX: 5,
+      scaleY: 5,
+    };
 
     if (image) {
       image.enableVisibility(enabled);
       image.enableDisplacement(enabled, displacement);
       image.enableMouseMotion(enabled, {
-        duration: 1.5,
         minX: -80,
         maxX: 80,
-        minY: -50,
-        maxY: 50,
+        minY: -80,
+        maxY: 80,
       });
     }
 
     if (text) {
       text.enableDisplacement(enabled, displacement);
       text.enableMouseMotion(enabled, {
-        duration: 1.5,
         minX: -40,
         maxX: 40,
-        minY: -25,
-        maxY: 25,
+        minY: -40,
+        maxY: 40,
       });
     }
   }
@@ -237,7 +241,7 @@ export default class ProjectsSection extends Vue {
 </script>
 
 <template>
-  <Section name="projects" title="Some cool stuff I did" number="2">
+  <Section name="projects" v-bind:title="`Some cool \n stuff I did`" number="2">
     <div class="project-section-wrapper">
       <h2 class="work-headline" ref="workHeadline">WORK</h2>
       <div class="project-row fg-row" v-for="project in projects" :key="project.id">

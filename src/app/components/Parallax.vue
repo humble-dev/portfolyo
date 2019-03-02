@@ -3,7 +3,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 
 import { ScrollerService } from '@/app/services/scroller.service';
 import { ElementState } from '@/app/providers/element-state.provider';
-import { mapRange, clamp, parallax } from '@/app/utils/math.util';
+import { mapRange, clamp } from '@/app/utils/math.util';
 import * as Smoovy from '@smoovy/core';
 import { parallaxHelper } from '@/app/helpers/parallax.helper';
 

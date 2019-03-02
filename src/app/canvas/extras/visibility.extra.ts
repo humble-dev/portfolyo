@@ -1,7 +1,7 @@
 import { Container } from 'pixi.js';
+import anime from 'animejs';
 
 import { ContainerExtra, ContainerExtraConfig } from '../default.container';
-import { TweenLite } from 'gsap';
 
 export interface VisibilityConfig extends ContainerExtraConfig {
   duration: number;
@@ -12,6 +12,7 @@ export const visibilityExtraName = 'visibility';
 export class Visibility implements ContainerExtra {
   public name = visibilityExtraName;
   private visible: boolean = true;
+  private visibleAnimation!: anime.AnimeInstance;
 
   public constructor(
     protected target: Container,
@@ -21,10 +22,17 @@ export class Visibility implements ContainerExtra {
     if ( ! this.visible) {
       this.visible = true;
 
-      const duration = config.duration !== undefined ? config.duration : 1;
+      const duration = config.duration !== undefined ? config.duration : 1500;
 
-      TweenLite.to(this.target, duration, {
+      if (this.visibleAnimation) {
+        this.visibleAnimation.pause();
+      }
+
+      this.visibleAnimation = anime({
+        targets: this.target,
+        duration,
         alpha: 1,
+        easing: 'easeOutCirc',
       });
     }
   }
@@ -33,10 +41,17 @@ export class Visibility implements ContainerExtra {
     if (this.visible) {
       this.visible = false;
 
-      const duration = config.duration !== undefined ? config.duration : 1;
+      const duration = config.duration !== undefined ? config.duration : 1500;
 
-      TweenLite.to(this.target, duration, {
+      if (this.visibleAnimation) {
+        this.visibleAnimation.pause();
+      }
+
+      this.visibleAnimation = anime({
+        targets: this.target,
+        duration,
         alpha: 0,
+        easing: 'easeOutCirc',
       });
     }
   }

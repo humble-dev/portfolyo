@@ -45,10 +45,10 @@ export default class IntroSection extends Vue {
     );
 
     text1.enableDisplacement(true, { scaleX: 5, scaleY: 5 });
-    text1.enableParallax(true, { speed: -300, direction: 'x' });
+    text1.enableParallax(true, { speed: -500, direction: 'x' });
 
     text2.enableDisplacement(true, { scaleX: 5, scaleY: 5 });
-    text2.enableParallax(true, { speed: 400, direction: 'x' });
+    text2.enableParallax(true, { speed: 800, direction: 'x' });
 
     this.canvasDelegator.addContainer('background', text1, text2);
   }

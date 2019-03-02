@@ -37,8 +37,6 @@ export default class Canvas extends Vue implements CanvasDelegator {
       );
     }
 
-    (window as any)['cc'] = this;
-
     this.elementState = new ElementState(this.$el as HTMLElement);
 
     this.delegator.register(this);
@@ -48,8 +46,7 @@ export default class Canvas extends Vue implements CanvasDelegator {
       this.scrollContainer.context.y = -state.position.y;
       this.scrollContainer.context.x = -state.position.x;
 
-      // Performance issue:
-      // PIXI.ticker.shared.update();
+      // PIXI.ticker.shared.update(); // -> Performance issue
     });
   }
 

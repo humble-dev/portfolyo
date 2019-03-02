@@ -2,10 +2,11 @@ import * as PIXI from 'pixi.js';
 
 import { ResourceProvider } from '../providers/resource.provider';
 import { Resolver } from '../utils/promise.util';
-import { DisplacementConfig, displacementExtraName } from './extras/displacement.extra';
-import { VisibilityConfig, visibilityExtraName } from './extras/visibility.extra';
-import { MouseMotionConfig, mouseMotionExtraName } from './extras/mouse-motion.extra';
-import { ParallaxConfig, parallaxExtraName } from './extras/parallax.extra';
+import { DisplacementConfig, displacementExtraName, Displacement } from './extras/displacement.extra';
+import { VisibilityConfig, visibilityExtraName, Visibility } from './extras/visibility.extra';
+import { MouseMotionConfig, mouseMotionExtraName, MouseMotion } from './extras/mouse-motion.extra';
+import { ParallaxConfig, parallaxExtraName, Parallax } from './extras/parallax.extra';
+import { MotionBlurConfig, MotionBlur, motionBlurExtraName } from './extras/motion-blur.extra';
 
 export interface ContainerExtraConfig {}
 
@@ -49,56 +50,79 @@ export class DefaultContainer {
     this.readyResolver.resolve();
   }
 
-  public enableMouseMotion(
+  public async enableMotionBlur(
+    enabled: boolean,
+    config?: Partial<MotionBlurConfig>,
+  ) {
+    const extra = await this.extra(motionBlurExtraName);
+
+    if (enabled) {
+      extra.activate(config);
+    } else {
+      extra.deactivate(config);
+    }
+
+    return extra as MotionBlur;
+  }
+
+  public async enableMouseMotion(
     enabled: boolean,
     config?: Partial<MouseMotionConfig>,
   ) {
-    this.extra(mouseMotionExtraName).then((extra) => {
-      if (enabled) {
-        extra.activate(config);
-      } else {
-        extra.deactivate(config);
-      }
-    });
+    const extra = await this.extra(mouseMotionExtraName);
+
+    if (enabled) {
+      extra.activate(config);
+    } else {
+      extra.deactivate(config);
+    }
+
+    return extra as MouseMotion;
   }
 
-  public enableDisplacement(
+  public async enableDisplacement(
     enabled: boolean,
     config?: Partial<DisplacementConfig>,
   ) {
-    this.extra(displacementExtraName).then((extra) => {
-      if (enabled) {
-        extra.activate(config);
-      } else {
-        extra.deactivate(config);
-      }
-    });
+    const extra = await this.extra(displacementExtraName);
+
+    if (enabled) {
+      extra.activate(config);
+    } else {
+      extra.deactivate(config);
+    }
+
+    return extra as Displacement;
   }
 
-  public enableVisibility(
+  public async enableVisibility(
     enabled: boolean,
     config?: Partial<VisibilityConfig>,
   ) {
-    this.extra(visibilityExtraName).then((extra) => {
-      if (enabled) {
-        extra.activate(config);
-      } else {
-        extra.deactivate(config);
-      }
-    });
+    const extra = await this.extra(visibilityExtraName);
+
+    if (enabled) {
+      extra.activate(config);
+    } else {
+      extra.deactivate(config);
+    }
+
+    return extra as Visibility;
   }
 
-  public enableParallax(
+  public async enableParallax(
     enabled: boolean,
     config?: Partial<ParallaxConfig>,
   ) {
-    this.extra(parallaxExtraName).then((extra) => {
-      if (enabled) {
-        extra.activate(config);
-      } else {
-        extra.deactivate(config);
-      }
-    });
+    const extra = await this.extra(parallaxExtraName);
+
+    if (enabled) {
+      extra.activate(config);
+    } else {
+      extra.deactivate(config);
+    }
+
+    return extra as Parallax;
   }
 
   public extra(name: string): Promise<ContainerExtra> {
