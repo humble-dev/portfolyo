@@ -1,12 +1,14 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, startWith } from 'rxjs/operators';
+import anime from 'animejs';
 
 import { NavigationService } from '@/app/services/navigation.service';
 import { ScrollerService } from '@/app/services/scroller.service';
 
 import detectSize from '@/app/directives/detect-size.directive';
 import Parallax from '@/app/components/Parallax.vue';
+import { ElementState } from '@/app/providers/element-state.provider';
 
 interface NavigationLink {
   section: string;
@@ -19,6 +21,12 @@ const navigationLinks: NavigationLink[] = [
   { section: 'skills', label: 'Skillz' },
   { section: 'contact', label: 'Contact' },
 ];
+
+interface LinkRefState {
+  ref: HTMLElement;
+  section: string;
+  state: ElementState;
+}
 
 @Component<Header>({
   directives: {
@@ -36,8 +44,27 @@ const navigationLinks: NavigationLink[] = [
         map((sections) => {
           const available = navigationLinks.map((l) => l.section);
           const filtered = sections.filter((s) => available.includes(s));
+          const refLinks = this.linkRefStates;
+          const activeSection = filtered[filtered.length - 1];
+          let moveTop = 0;
 
-          return filtered[filtered.length - 1];
+          for (let i = 0, len = refLinks.length; i < len; i++) {
+            const link = refLinks[i];
+
+            if (link.section === activeSection) {
+              break;
+            }
+
+            moveTop += link.state.bounds.height;
+          }
+
+          if (this.$refs.navLinksWrapper) {
+            (this.$refs.navLinksWrapper as HTMLElement).style.transform = `
+              translate3d(0, ${-moveTop}px, 0)
+            `;
+          }
+
+          return activeSection;
         }),
       ),
     };
@@ -49,6 +76,7 @@ export default class Header extends Vue {
   private navigationLinks = navigationLinks;
   private navMinimized: boolean = false;
   private activeSection: string = '';
+  private linkRefStates: LinkRefState[] = [];
 
   private handleLinkClick(
     link: NavigationLink,
@@ -57,6 +85,18 @@ export default class Header extends Vue {
     event.preventDefault();
 
     this.navigation.requestSectionScroll(link.section);
+  }
+
+  public mounted() {
+    this.linkRefStates = (this.$refs.navLink as HTMLElement[] || []).map(
+      (ref) => {
+       return {
+         ref,
+         section: ref.getAttribute('data-section') || '',
+         state: new ElementState(ref.firstElementChild as HTMLElement),
+       };
+      },
+    );
   }
 }
 </script>
@@ -69,18 +109,27 @@ export default class Header extends Vue {
         <div class="designation">
           <span>Interactive developer</span>
         </div>
-        <nav :class="{ minimized: navMinimized }" class="fx-layout fx-vertical fx-self-end">
-          <a
-            v-detectSize.ignoreWidth
-            v-for="link in navigationLinks"
-            class="nav-link"
-            :href="'#' + link.section"
-            :key="link.section"
-            :class="{ active: activeSection === link.section }"
-            @click="handleLinkClick(link, $event)"
-          >
-            <span ref="link">{{link.label}}</span>
-          </a>
+        <nav v-detectSize.ignoreWidth :class="{ minimized: navMinimized }">
+          <div class="nav-links-wrapper fx-layout fx-vertical fx-self-end" ref="navLinksWrapper">
+            <a
+              v-for="link in navigationLinks"
+              ref="navLink"
+              class="nav-link"
+              v-bind:data-section="link.section"
+              :href="'#' + link.section"
+              :key="link.section"
+              :class="{ active: activeSection === link.section }"
+              @click="handleLinkClick(link, $event)"
+            >
+              <span ref="link">
+                <span>
+                  <span class="label-top"><span>{{link.label}}</span></span>
+                  <span class="label-base">{{link.label}}</span>
+                  <span class="label-bottom"><span>{{link.label}}</span></span>
+                </span>
+              </span>
+            </a>
+          </div>
         </nav>
       </div>
     </div>
@@ -122,12 +171,27 @@ export default class Header extends Vue {
     }
   }
 
+  $nav-link-height: 40px;
+
   nav {
     pointer-events: all;
-    padding-top: 6px;
     counter-reset: navigation;
+    overflow: hidden;
     backface-visibility: hidden;
     transform: translate3d(0, 0, 0);
+    transition: height .5s;
+
+    &.minimized:not(:hover) {
+      height: $nav-link-height !important;
+    }
+
+    .nav-links-wrapper {
+      transition: transform .5s;
+    }
+
+    &:hover .nav-links-wrapper {
+      transform: translate3d(0, 0, 0) !important;
+    }
 
     /** Nav link */
     .nav-link {
@@ -135,19 +199,19 @@ export default class Header extends Vue {
       text-transform: uppercase;
       font-family: $font-neue-haas-regular;
       font-size: rem(30px);
+      height: $nav-link-height;
       text-align: right;
       position: relative;
       text-decoration: none;
       color: inherit;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-end;
       will-change: height;
       overflow: hidden;
       backface-visibility: hidden;
       transform: translate3d(0, 0, 0);
-      // transition: height .5s; // -> Performance issue!!!
-    }
-
-    &.minimized:not(:hover) .nav-link:not(.active) {
-      height: 0 !important;
     }
 
     .nav-link:after {
@@ -157,26 +221,30 @@ export default class Header extends Vue {
       font-family: inherit;
       font-size: rem(12px);
       right: 0;
-      top: 3px;
+      top: 6px;
       transform-origin: 0 0;
       transform: translate3d(0, -50%, 0);
     }
 
-    .nav-link span {
+    .nav-link > span {
       position: relative;
       display: inline-block;
-      padding: 5px 10px;
+      height: 100%;
+      padding: 5px 10px 5px 15px;
       transform: translate3d(0, 0, 0);
 
-      &:after {
+      > span {
+        position: relative;
+      }
+
+      > span:after {
         content: "";
         position: absolute;
         display: block;
         top: 50%;
-        border-radius: 50%;
         left: -10px;
-        width: 5px;
-        height: 5px;
+        width: 8px;
+        height: 2px;
         backface-visibility: hidden;
         transform: translate3d(0, -50%, 0);
         background-color: $color-red;
@@ -186,28 +254,62 @@ export default class Header extends Vue {
           left .5s,
           opacity .3s,
           height .3s,
-          width .3s,
-          border-radius .3s;
+          width .3s;
       }
     }
 
-    .nav-link:not(:last-child) span {
-      margin-bottom: 10px;
+    .nav-link > span .label {
+      &-top,
+      &-bottom {
+        position: absolute;
+        overflow: hidden;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: transform .3s;
+      }
+
+      &-top {
+        clip: rect(0 auto 20px 0);
+        transform-origin: 50% 100%;
+      }
+
+      &-bottom {
+        clip: rect(20px auto auto 0);
+        transform-origin: 50% 0;
+      }
+
+      &-base {
+        visibility: hidden;
+      }
     }
 
-    .nav-link:hover span:after,
-    &.minimized:not(:hover) .nav-link.active span:after {
-      left: 0;
+    .nav-link:hover > span > span:after,
+    &.minimized:not(:hover) .nav-link.active > span > span:after {
+      left: -15px;
       opacity: 1;
     }
 
-    &:not(.minimized) .nav-link.active span:after,
-    &:hover .nav-link.active span:after {
-      opacity: 1;
-      width: calc(100% - 20px);
-      border-radius: 0;
-      left: 10px;
-      height: 2px;
+    &:not(.minimized) .nav-link.active > span > span,
+    &:hover .nav-link.active > span > span {
+      &:after {
+        opacity: 1;
+        width: calc(100% + 10px);
+        left: -5px;
+      }
+
+      .label-top {
+        transform: translate3d(-2px, -2px, 0);
+      }
+
+      .label-bottom {
+        transform: translate3d(2px, -1px, 0);
+      }
     }
   }
 </style>

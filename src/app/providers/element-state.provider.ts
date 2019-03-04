@@ -58,6 +58,7 @@ export class ElementState {
 
   public attach() {
     this.stateProvider.add(this);
+    this.update();
   }
 
   public detach() {

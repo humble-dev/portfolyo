@@ -59,6 +59,13 @@ export default class App extends Vue {
   public mounted() {
     PIXI.utils.skipHello();
 
+    // Prevent from tab scrolling
+    document.addEventListener('keydown', (event) => {
+      if (event.keyCode === 9) {
+        event.preventDefault();
+      }
+    });
+
     // Enable scroller
     this.scrollerService.setRootElement(this.contentWrapper);
 
@@ -75,21 +82,6 @@ export default class App extends Vue {
     this.viewport.changed(200).subscribe(() => {
       this.elementState.update();
     });
-
-    // const obj = { x: 0, y: 100 };
-
-    // const animation = anime({
-    //   targets: obj,
-    //   x: 300,
-    //   y: 200,
-    //   duration: 5000,
-    //   easing: 'linear',
-    //   update: () => {
-    //     console.log(obj.y);
-    //   }
-    // });
-
-    // animation.pause();
   }
 
   private get backgroundCanvas(): Canvas {

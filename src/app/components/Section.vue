@@ -7,6 +7,7 @@ import { ScrollerService } from '@/app/services/scroller.service';
 
 import Headline from './Headline.vue';
 import { ElementState } from '@/app/providers/element-state.provider';
+import { ViewportProvider } from '@/app/providers/viewport.provider';
 
 @Component<Section>({
   components: {
@@ -29,6 +30,7 @@ export default class Section extends Vue {
   protected initialized: boolean = false;
   private scroller = ScrollerService.getInstance();
   private navigation = NavigationService.getInstance();
+  private viewport = ViewportProvider.getInstance();
   private elementState!: ElementState;
   private navigationEnabled: boolean = false;
 
@@ -70,7 +72,7 @@ export default class Section extends Vue {
   }
 
   protected isNavigationEnbaled(y: number = 0): boolean {
-    const viewportHeight = this.scroller.containerHeight * .4;
+    const viewportHeight = this.viewport.size.height * .4;
 
     return y + viewportHeight > this.elementState.offset.y;
   }
