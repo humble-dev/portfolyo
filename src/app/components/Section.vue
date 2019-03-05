@@ -99,8 +99,8 @@ export default class Section extends Vue {
 
 <style scoped lang="scss">
   section {
-    padding-top: 200px;
-    padding-bottom: 200px;
     min-height: 100%;
+
+    @include fluid-size(padding-bottom, 80px, 220px);
   }
 </style>

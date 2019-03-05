@@ -4,6 +4,7 @@ import { filter, map, tap } from 'rxjs/operators';
 import * as Smoovy from '@smoovy/core';
 
 import { ElementState } from '../providers/element-state.provider';
+import { easings } from '@smoovy/core';
 
 export enum ScrollStateTriggerType {
   USER = 'user',
@@ -110,7 +111,7 @@ export class ScrollerService {
       },
       input: {
         mouse: {
-          multiplier: 0.9,
+          multiplier: 0.6,
         },
         touch: {
           multiplier: 3,
@@ -118,7 +119,8 @@ export class ScrollerService {
       },
       output: {
         default: {
-          speed: 2000,
+          speed: 1800,
+          easing: easings.Quart.out,
           selector: 'section,footer',
           on: {
             animation: (

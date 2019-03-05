@@ -46,7 +46,7 @@ export default class Canvas extends Vue implements CanvasDelegator {
       this.scrollContainer.context.y = -state.position.y;
       this.scrollContainer.context.x = -state.position.x;
 
-      // PIXI.ticker.shared.update(); // -> Performance issue
+      // this.pixiApp.render(); // -> Performance issue
     });
   }
 
@@ -78,7 +78,7 @@ export default class Canvas extends Vue implements CanvasDelegator {
       forceFXAA: true,
       autoResize: true,
       sharedTicker: true,
-      antialias: false,
+      // antialias: true,
       resolution: window.devicePixelRatio,
       powerPreference: 'high-performance',
       view: this.$refs.stage as HTMLCanvasElement,

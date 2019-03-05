@@ -45,6 +45,16 @@ const projects: Projects = [
     },
   },
   {
+    id: 'grape-garage',
+    name: 'Grape Garage',
+    url: 'https://grapegarage.de/',
+    offset: {
+      xs: 0,
+      lg: 1,
+      xxl: 2,
+    },
+  },
+  {
     id: 'dorfjungs',
     name: 'Dorfjungs',
     url: 'https://dorfjungs.com/',
@@ -56,9 +66,9 @@ const projects: Projects = [
     },
   },
   {
-    id: 'cheers-yummy-yeah',
-    name: 'YummyStories',
-    url: 'https://cheers-yummy-yeah.com/',
+    id: 'bandevier',
+    name: 'MUELLER',
+    url: 'https://bandevier.de/',
     offset: {
       xs: 0,
       lg: 1,
@@ -154,6 +164,7 @@ export default class ProjectsSection extends Vue {
         fill: 'transparent',
         stroke: 0x00000,
         strokeThickness: 1,
+        padding: 4,
         fontSize: 200,
         rotation: -90,
         anchorX: 1,

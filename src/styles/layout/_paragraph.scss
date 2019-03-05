@@ -45,10 +45,10 @@ p .link {
   text-decoration: none;
   position: relative;
 
-  &:after {
+  &:not(.no-underline):after {
     content: "";
     left: 0;
-    bottom: 0;
+    bottom: 10%;
     width: 100%;
     position: absolute;
     background-color: $color-black;

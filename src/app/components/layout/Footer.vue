@@ -1,8 +1,17 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { ScrollerService } from '@/app/services/scroller.service';
 
 @Component
-export default class Footer extends Vue {}
+export default class Footer extends Vue {
+  private scroller = ScrollerService.getInstance();
+
+  private scrollUp(event: Event) {
+    event.preventDefault();
+
+    this.scroller.scrollToY(0);
+  }
+}
 </script>
 
 <template>
@@ -10,8 +19,10 @@ export default class Footer extends Vue {}
     <div class="footer-container fg-container-fluid fg-wrapper-maxed">
       <div class="footer-wrapper fg-row fg-between-xs fg-middle-xs">
         <p class="size-md bold">Website &copy; 2019</p>
-        <p class="size-sm">Norman Dubois (design) and Davide Perozzi (dev)</p>
-        <p class="size-sm">scroll up</p>
+        <p class="size-sm">des. Norman Dubois, dev. Davide Perozzi</p>
+        <p class="size-sm">
+          <a href="#" @click="scrollUp" class="no-underline">scroll up</a>
+        </p>
       </div>
     </div>
   </footer>

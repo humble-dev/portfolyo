@@ -94,9 +94,10 @@ export default class Headline extends Vue {
   .headline {
     display: block;
     color: $color-black;
-    padding: 20px 0;
-    margin-bottom: 200px;
     position: relative;
+
+    @include fluid-size(padding-top, 10px, 15px);
+    @include fluid-size(margin-bottom, 80px, 220px);
   }
 
   .border-top {
@@ -112,10 +113,6 @@ export default class Headline extends Vue {
 
   .text-content > p {
     font-family: $font-neue-plak-extended-regular;
-  }
-
-  h2 {
-    width: 37.5%;
   }
 
   h2 > p {
