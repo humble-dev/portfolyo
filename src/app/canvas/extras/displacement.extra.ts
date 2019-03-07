@@ -59,9 +59,16 @@ export class Displacement implements ContainerExtra {
       this.animations.push(
         anime({
           targets: this.filter.scale,
-          duration: config.scaleDuration || 500,
-          x: typeof config.scaleX === 'number' ? config.scaleX : 15,
-          y: typeof config.scaleY === 'number' ? config.scaleY : 15,
+          easing: 'easeOutCubic',
+          duration: typeof config.scaleDuration === 'number'
+            ? config.scaleDuration
+            : 500,
+          x: typeof config.scaleX === 'number'
+            ? config.scaleX
+            : 15,
+          y: typeof config.scaleY === 'number'
+            ? config.scaleY
+            : 15,
         }),
       );
 
@@ -82,7 +89,7 @@ export class Displacement implements ContainerExtra {
   public scaleFilter(
     scaleX: number,
     scaleY: number,
-    duration: number = .5,
+    duration: number = 500,
   ) {
     if (this.filter) {
       if (this.scaleAnimation) {
@@ -94,6 +101,7 @@ export class Displacement implements ContainerExtra {
         duration,
         x: scaleX,
         y: scaleY,
+        easing: 'easeOutCubic',
       });
     }
   }

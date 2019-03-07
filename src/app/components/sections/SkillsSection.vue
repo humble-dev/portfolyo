@@ -76,6 +76,15 @@ export default class SkillsSection extends Vue {
     </div>
     <div class="fg-row awards-entry-wrapper">
       <div class="fg-col-xs-18 fg-col-lg-4 fg-col-lg-offset-2 titles">
+        <p class="bold upper size-md">CSS Design Awards</p>
+      </div>
+      <div class="fg-col-xs-18 fg-col-lg-11 fg-col-lg-offset-1">
+        <p class="bold size-md">Special Kudos - MackMedia</p>
+        <p class="bold size-md">Special Kudos - Ammolite Restaurant</p>
+      </div>
+    </div>
+    <div class="fg-row awards-entry-wrapper">
+      <div class="fg-col-xs-18 fg-col-lg-4 fg-col-lg-offset-2 titles">
         <p class="bold upper size-md">CSS AWARDS</p>
       </div>
       <div class="fg-col-xs-18 fg-col-lg-11 fg-col-lg-offset-1">

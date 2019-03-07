@@ -22,10 +22,11 @@ export class Parallax implements ContainerExtra {
 
   public activate(config: Partial<ParallaxConfig> = {}) {
     if ( ! this.enabled) {
-      this.target.addChild(this.container);
-      this.target.children.forEach((child) => {
+      this.target.children.slice().forEach((child) => {
         this.container.addChild(child);
       });
+
+      this.target.addChild(this.container);
 
       this.scroller.scrollAnimation$.subscribe((state) => {
         const viewportHeight = this.scroller.containerHeight;

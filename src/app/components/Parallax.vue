@@ -22,8 +22,27 @@ export default class Parallax extends Vue {
   @Prop({ default: 'y' })
   private direction!: 'x' | 'y';
 
+  @Prop()
+  private reflectFrom!: [
+    { [id: string]: HTMLElement[] },
+    string,
+    number
+  ];
+
   public mounted() {
-    this.elementState = new ElementState(this.$el as HTMLElement);
+    let reflectFrom;
+
+    if (this.reflectFrom) {
+      const refs = this.reflectFrom[0];
+      const name = this.reflectFrom[1];
+      const index = this.reflectFrom[2];
+
+      reflectFrom = refs[name][index];
+    }
+
+    this.elementState = new ElementState(
+      reflectFrom || this.$el as HTMLElement
+    );
 
     setTimeout(() => this.updatePosition(), 100);
 
@@ -62,7 +81,7 @@ export default class Parallax extends Vue {
       0
     )`;
 
-    this.elementState.element.style.transform = translate3d;
+    (this.$el as HTMLElement).style.transform = translate3d;
   }
 }
 </script>

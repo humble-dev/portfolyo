@@ -1,6 +1,6 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { Scroller } from '@smoovy/core';
+import { Scroller, Ticker } from '@smoovy/core';
 
 import anime from 'animejs';
 import * as PIXI from 'pixi.js';
@@ -59,6 +59,10 @@ export default class App extends Vue {
   public mounted() {
     PIXI.utils.skipHello();
 
+    // Sync PIXI ticker with smoovy ticker
+    Ticker.override = true;
+    PIXI.ticker.shared.add(() => Ticker.nextTick());
+
     // Prevent from tab scrolling
     document.addEventListener('keydown', (event) => {
       if (event.keyCode === 9) {
@@ -100,8 +104,8 @@ export default class App extends Vue {
     <Header></Header>
     <Canvas ref="backgroundCanvas" name="background"></Canvas>
     <div class="content-wrapper" ref="contentWrapper">
-      <IntroSection></IntroSection>
-      <AboutSection></AboutSection>
+      <!-- <IntroSection></IntroSection>
+      <AboutSection></AboutSection> -->
       <ProjectsSection></ProjectsSection>
       <SkillsSection></SkillsSection>
       <ContactSection></ContactSection>

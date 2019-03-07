@@ -151,6 +151,6 @@ export class DefaultContainer {
   }
 
   public sync() {}
-  public render() {}
+  public render(delta?: number) {}
   public destroy() {}
 }

@@ -41,10 +41,11 @@ export interface ElementStateConfig {
   includeBounds: boolean;
 }
 
-export class ElementState {
+export class ElementState<D extends object = any> {
   private stateProvider = ElementStateProvider.getInstance();
   private _bounds?: { x: number, y: number, width: number, height: number };
   private _offset?: Position;
+  public data: D = {} as D;
 
   public constructor(
     public element: HTMLElement,

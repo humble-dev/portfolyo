@@ -13,6 +13,7 @@ import { ViewportProvider } from '@/app/providers/viewport.provider';
 import { ScrollerService } from '@/app/services/scroller.service';
 import { RelatedContainer } from '@/app/canvas/related.container';
 import { ElementState } from '@/app/providers/element-state.provider';
+import { Ticker } from '@smoovy/core';
 
 @Component
 export default class Canvas extends Vue implements CanvasDelegator {
@@ -40,13 +41,13 @@ export default class Canvas extends Vue implements CanvasDelegator {
     this.elementState = new ElementState(this.$el as HTMLElement);
 
     this.delegator.register(this);
-    this.webfont.loaded.then(() => this.createPixiApp());
+    this.webfont.loaded.then(() => {
+      this.createPixiApp();
 
-    this.scroller.scrollAnimation$.subscribe((state) => {
-      this.scrollContainer.context.y = -state.position.y;
-      this.scrollContainer.context.x = -state.position.x;
-
-      // this.pixiApp.render(); // -> Performance issue
+      this.scroller.scrollAnimation$.subscribe((state) => {
+        this.scrollContainer.context.y = -state.position.y;
+        this.scrollContainer.context.x = -state.position.x;
+      });
     });
   }
 
@@ -77,8 +78,6 @@ export default class Canvas extends Vue implements CanvasDelegator {
       transparent: true,
       forceFXAA: true,
       autoResize: true,
-      sharedTicker: true,
-      // antialias: true,
       resolution: window.devicePixelRatio,
       powerPreference: 'high-performance',
       view: this.$refs.stage as HTMLCanvasElement,
@@ -91,7 +90,7 @@ export default class Canvas extends Vue implements CanvasDelegator {
     );
 
     this.pixiApp.ticker.add(
-      () => this.renderContainers(),
+      (delta) => this.renderContainers(delta),
     );
 
     this.viewport.changed(300)
@@ -111,7 +110,7 @@ export default class Canvas extends Vue implements CanvasDelegator {
       });
   }
 
-  public renderContainers() {
+  public renderContainers(delta?: number) {
     for (let i = 0, len = this.containers.length; i < len; i++) {
       const container = this.containers[i];
 
@@ -120,7 +119,7 @@ export default class Canvas extends Vue implements CanvasDelegator {
         this.initContainer(container);
       }
 
-      container.render();
+      container.render(delta);
     }
   }
 

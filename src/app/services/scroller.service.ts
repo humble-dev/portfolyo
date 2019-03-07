@@ -119,8 +119,7 @@ export class ScrollerService {
       },
       output: {
         default: {
-          speed: 1800,
-          easing: easings.Quart.out,
+          speed: 1500,
           selector: 'section,footer',
           on: {
             animation: (

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Watch, Vue } from 'vue-property-decorator';
 
 import { RelatedImageContainer, RelatedImageContainerStretch } from '@/app/canvas/containers/related-image.container';
 import { CanvasDelegatorService } from '@/app/services/canvas-delegator.service';
@@ -9,15 +9,19 @@ import {
   RelatedTextContainerConfig,
 } from '@/app/canvas/containers/related-text.container';
 import { DisplacementConfig } from '@/app/canvas/extras/displacement.extra';
-
-import Section from '../Section.vue';
 import { ScrollerService } from '@/app/services/scroller.service';
 
-type Projects = Project[] ;
+import Parallax from '../Parallax.vue';
+import Section from '../Section.vue';
+import KeywordList from './Projects/KeywordList.vue';
+import { Resolver } from '@/app/utils/promise.util';
+
+type Projects = Project[];
 interface Project {
   id: string;
   name: string;
   url: string;
+  keywords: string[];
   offset?: { [bp: string]: number };
   image?: string;
 }
@@ -28,6 +32,7 @@ const projects: Projects = [
     name: 'MackMedia',
     url: 'https://mackmedia.de/',
     image: 'projects.mackmedia.title',
+    keywords: [ 'Angular', 'Animation', 'Backend', 'Greensock', 'Google Closure' ],
     offset: {
       xs: 0,
       lg: 1,
@@ -39,6 +44,7 @@ const projects: Projects = [
     name: 'Ammolite',
     url: 'https://www.ammolite-restaurant.de/',
     image: 'projects.ammolite.title',
+    keywords: [ 'Angular', 'Animation', 'Backend', 'Greensock', 'Google Closure' ],
     offset: {
       xs: 0,
       lg: 1,
@@ -48,6 +54,7 @@ const projects: Projects = [
     id: 'grape-garage',
     name: 'Grape Garage',
     url: 'https://grapegarage.de/',
+    keywords: [ 'Angular', 'Animation', 'Backend', 'Greensock', 'Google Closure' ],
     offset: {
       xs: 0,
       lg: 1,
@@ -59,6 +66,7 @@ const projects: Projects = [
     name: 'Dorfjungs',
     url: 'https://dorfjungs.com/',
     image: 'projects.dorfjungs.title',
+    keywords: [ 'Angular', 'Animation', 'Backend', 'Greensock', 'Google Closure' ],
     offset: {
       xs: 0,
       lg: 1,
@@ -69,6 +77,7 @@ const projects: Projects = [
     id: 'bandevier',
     name: 'MUELLER',
     url: 'https://bandevier.de/',
+    keywords: [ 'Angular', 'Animation', 'Backend', 'Greensock', 'Google Closure' ],
     offset: {
       xs: 0,
       lg: 1,
@@ -80,6 +89,8 @@ const projects: Projects = [
 @Component({
   components: {
     Section,
+    Parallax,
+    KeywordList,
   },
 })
 export default class ProjectsSection extends Vue {
@@ -90,7 +101,9 @@ export default class ProjectsSection extends Vue {
   private imageContainers: { [id: string]: RelatedImageContainer } = {};
 
   public mounted() {
-    this.wrappers.forEach((element, index) => {
+    const wrappers = this.$refs.projectWrapper as HTMLElement[];
+
+    wrappers.forEach((element, index) => {
       const id = element.getAttribute('data-id');
       const project = this.projects.find((p) => p.id === id);
 
@@ -199,31 +212,44 @@ export default class ProjectsSection extends Vue {
   ) {
     const image = this.getImageContainer(project.id);
     const text = this.getTextContainer(project.id);
-    const displacement = {
-      scaleDuration: 5000,
-      scaleX: 5,
-      scaleY: 5,
-    };
 
     if (image) {
-      image.enableVisibility(enabled);
-      image.enableDisplacement(enabled, displacement);
-      image.enableMouseMotion(enabled, {
-        minX: -80,
-        maxX: 80,
-        minY: -80,
-        maxY: 80,
+      image.enableDisplacement(
+        enabled,
+        {
+          scaleX: 50,
+          scaleY: 50,
+          scaleDuration: 0,
+        }
+      ).then((extra) => {
+        extra.scaleFilter(
+          5,
+          5,
+          800
+        );
       });
+
+      image.enableVisibility(enabled);
+      image.enableMouseMotion(
+        enabled,
+        {
+          minX: -40,
+          maxX: 40,
+          minY: -40,
+          maxY: 40,
+        }
+      );
     }
 
     if (text) {
-      text.enableDisplacement(enabled, displacement);
-      text.enableMouseMotion(enabled, {
-        minX: -40,
-        maxX: 40,
-        minY: -40,
-        maxY: 40,
-      });
+      text.enableDisplacement(
+        enabled,
+        {
+          scaleX: 10,
+          scaleY: 10,
+          scaleDuration: 2000,
+        }
+      );
     }
   }
 
@@ -244,10 +270,6 @@ export default class ProjectsSection extends Vue {
   private get workHeadline(): HTMLElement {
     return this.$refs.workHeadline as HTMLElement;
   }
-
-  private get wrappers(): HTMLElement[] {
-    return this.$refs.projectWrapper as HTMLElement[];
-  }
 }
 </script>
 
@@ -255,17 +277,26 @@ export default class ProjectsSection extends Vue {
   <Section name="projects" v-bind:title="`Some cool \n stuff I did`" number="2">
     <div class="project-section-wrapper">
       <h2 class="work-headline" ref="workHeadline">WORK</h2>
-      <div class="project-row fg-row" v-for="project in projects" :key="project.id">
+      <div class="project-row fg-row" v-for="(project, index) in projects" :key="project.id">
         <div
           class="project-wrapper"
-          ref="projectWrapper"
           @mouseenter="enableDisplacement(project, true)"
           @mouseleave="enableDisplacement(project, false)"
-          :data-id="project.id"
           :class="offsetClasslist(project)"
         >
           <a target="_blank" rel="noopener" :href="project.url"></a>
-          <span>{{project.name}}</span>
+          <div
+            ref="projectWrapper"
+            :data-id="project.id"
+            class="project-label"
+          >{{project.name}}</div>
+          <Parallax class="keyword-container" v-bind="{
+            reflectFrom: [ $refs, 'projectWrapper', index ],
+            speed: index % 2 === 0 ? 100 : -100,
+            direction: 'x'
+          }">
+            <KeywordList :keywords="project.keywords" />
+          </Parallax>
         </div>
       </div>
     </div>
@@ -277,16 +308,25 @@ export default class ProjectsSection extends Vue {
     position: relative;
   }
 
+  .keyword-container {
+    width: 100%;
+  }
+
   .project-wrapper {
-    font-family: $font-neue-plak-extended-extra-black;
-    color: $color-black;
     text-decoration: none;
     display: block;
     position: relative;
     text-transform: uppercase;
 
     @include fluid-size(padding-top padding-bottom, 20px, 40px);
-    @include fluid-size(font-size, 50px, 130px);
+
+    .project-label {
+      visibility: hidden;
+      font-family: $font-neue-plak-extended-extra-black;
+      color: $color-black;
+
+      @include fluid-size(font-size, 50px, 130px);
+    }
 
     > a {
       position: absolute;
@@ -294,10 +334,6 @@ export default class ProjectsSection extends Vue {
       bottom: 0;
       left: -100px;
       right: -100px;
-    }
-
-    > span {
-      visibility: hidden;
     }
   }
 
