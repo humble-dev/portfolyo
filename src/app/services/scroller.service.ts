@@ -111,7 +111,7 @@ export class ScrollerService {
       },
       input: {
         mouse: {
-          multiplier: 0.6,
+          multiplier: 0.4,
         },
         touch: {
           multiplier: 3,
@@ -119,7 +119,7 @@ export class ScrollerService {
       },
       output: {
         default: {
-          speed: 1500,
+          speed: 2200,
           selector: 'section,footer',
           on: {
             animation: (

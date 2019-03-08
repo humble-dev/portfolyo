@@ -5,13 +5,13 @@ import { ElementState } from '@/app/providers/element-state.provider';
 import { elementInViewport } from '@/app/helpers/element-viewport.helper';
 
 interface KeywordData {
-  x: number
+  x: number;
 }
 
 @Component
 export default class KeywordList extends Vue {
   private wrapperState!: ElementState;
-  private keywordStates: ElementState<KeywordData>[] = [];
+  private keywordStates: Array<ElementState<KeywordData>> = [];
   private visible: boolean = false;
 
   @Prop({ default: [] })
@@ -31,24 +31,19 @@ export default class KeywordList extends Vue {
       this.visible = visible;
     });
 
-    let lastTime = Date.now();
 
-    Ticker.tick(() => {
-      const now = Date.now();
-
+    Ticker.tick((delta) => {
       if (this.visible) {
-        this.animate((now - lastTime) / 10);
+        this.animate(delta);
       }
-
-      lastTime = now;
     });
   }
 
   private animate(delta: number = 1) {
     const wrapperWidth = this.wrapperState.bounds.width;
     const resetIndicies = [];
-    const gutter = 10;
-    const speed = .5;
+    const gutter = 15;
+    const speed = 10;
 
     for (let i = 0, len = this.keywordStates.length; i < len; i++) {
       const keyword = this.keywordStates[i];
@@ -64,11 +59,17 @@ export default class KeywordList extends Vue {
         keywordData.x += wrapperWidth - keywordWidth;
       }
 
-      keywordData.x += speed * delta;
+      keywordData.x += speed / delta;
 
-      keyword.element.style.transform = `
-        translate3d(${keywordData.x}px, 0, 0)
-      `;
+      if (keywordData.x + keyword.bounds.width > 0) {
+        keyword.element.style.transform = `
+          translate3d(${keywordData.x}px, 0, 0)
+        `;
+      } else {
+        keyword.element.style.transform = `
+          translate3d(-105%, 0, 0)
+        `;
+      }
 
       if (keywordData.x > wrapperWidth) {
         resetIndicies.push(i);
@@ -87,7 +88,7 @@ export default class KeywordList extends Vue {
   private get concattedKeywords() {
     return this.keywords.slice().concat(
       this.keywords.slice(),
-      this.keywords.slice()
+      this.keywords.slice(),
     );
   }
 }
@@ -115,7 +116,15 @@ export default class KeywordList extends Vue {
   .keyword {
     color: $color-red;
     position: absolute;
+    font-family: $font-neue-haas-regular;
+    letter-spacing: 1px;
     left: 0;
     top: 0;
+
+    @include fluid-size(
+      font-size,
+      14px,
+      16px
+    );
   }
 </style>

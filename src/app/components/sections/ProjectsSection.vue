@@ -32,7 +32,18 @@ const projects: Projects = [
     name: 'MackMedia',
     url: 'https://mackmedia.de/',
     image: 'projects.mackmedia.title',
-    keywords: [ 'Angular', 'Animation', 'Backend', 'Greensock', 'Google Closure' ],
+    keywords: [
+      'Google Closure',
+      'JavaScript',
+      'PHP',
+      'SCSS',
+      'Parallax',
+      'Page-Transitions',
+      'Twig',
+      'Animations',
+      'Wordpress',
+      'GreenSock',
+    ],
     offset: {
       xs: 0,
       lg: 1,
@@ -44,7 +55,17 @@ const projects: Projects = [
     name: 'Ammolite',
     url: 'https://www.ammolite-restaurant.de/',
     image: 'projects.ammolite.title',
-    keywords: [ 'Angular', 'Animation', 'Backend', 'Greensock', 'Google Closure' ],
+    keywords: [
+      'Wordpress',
+      'Animations',
+      'JavaScript',
+      'Twig',
+      'Parallax',
+      'Google Closure',
+      'PHP',
+      'GreenSock',
+      'SCSS',
+    ],
     offset: {
       xs: 0,
       lg: 1,
@@ -54,7 +75,17 @@ const projects: Projects = [
     id: 'grape-garage',
     name: 'Grape Garage',
     url: 'https://grapegarage.de/',
-    keywords: [ 'Angular', 'Animation', 'Backend', 'Greensock', 'Google Closure' ],
+    keywords: [
+      'Animations',
+      'JavaScript',
+      'Google Closure',
+      'Twig',
+      'Parallax',
+      'Fancy forms',
+      'PHP',
+      'GreenSock',
+      'SCSS',
+    ],
     offset: {
       xs: 0,
       lg: 1,
@@ -66,7 +97,17 @@ const projects: Projects = [
     name: 'Dorfjungs',
     url: 'https://dorfjungs.com/',
     image: 'projects.dorfjungs.title',
-    keywords: [ 'Angular', 'Animation', 'Backend', 'Greensock', 'Google Closure' ],
+    keywords: [
+      'Laravel',
+      'Google Closure',
+      'PHP',
+      'Twig',
+      'Animations',
+      'JavaScript',
+      'GreenSock',
+      'Made in 2 days',
+      'SCSS',
+    ],
     offset: {
       xs: 0,
       lg: 1,
@@ -77,7 +118,15 @@ const projects: Projects = [
     id: 'bandevier',
     name: 'MUELLER',
     url: 'https://bandevier.de/',
-    keywords: [ 'Angular', 'Animation', 'Backend', 'Greensock', 'Google Closure' ],
+    keywords: [
+      'Google Closure',
+      'Animations',
+      'Parallax',
+      'JavaScript',
+      'GreenSock',
+      'Version 3',
+      'SCSS',
+    ],
     offset: {
       xs: 0,
       lg: 1,
@@ -162,7 +211,7 @@ export default class ProjectsSection extends Vue {
         );
 
         this.canvasDelegator.addContainer(
-          'background',
+          'foreground',
           imageContainer,
         );
       }
@@ -220,12 +269,12 @@ export default class ProjectsSection extends Vue {
           scaleX: 50,
           scaleY: 50,
           scaleDuration: 0,
-        }
+        },
       ).then((extra) => {
         extra.scaleFilter(
           5,
           5,
-          800
+          800,
         );
       });
 
@@ -237,7 +286,7 @@ export default class ProjectsSection extends Vue {
           maxX: 40,
           minY: -40,
           maxY: 40,
-        }
+        },
       );
     }
 
@@ -248,7 +297,7 @@ export default class ProjectsSection extends Vue {
           scaleX: 10,
           scaleY: 10,
           scaleDuration: 2000,
-        }
+        },
       );
     }
   }

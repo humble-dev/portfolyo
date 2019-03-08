@@ -28,6 +28,9 @@ export default class Canvas extends Vue implements CanvasDelegator {
   private destroy$ = this.destroySubject.asObservable();
   private scrollContainer: DefaultContainer = new DefaultContainer(false, 10);
 
+  @Prop({ default: 0 })
+  public index!: number;
+
   @Prop()
   public name!: string;
 
@@ -84,6 +87,12 @@ export default class Canvas extends Vue implements CanvasDelegator {
       width: this.elementState.bounds.width,
       height: this.elementState.bounds.height,
     });
+
+    // this.pixiApp.ticker.stop();
+
+    // Ticker.tick((timestamp) => {
+    //   this.pixiApp.ticker.update(timestamp);
+    // });
 
     this.pixiApp.stage.addChild(
       this.scrollContainer.context = new PIXI.Container(),
@@ -156,7 +165,11 @@ export default class Canvas extends Vue implements CanvasDelegator {
 </script>
 
 <template>
-  <div class="canvas-wrapper" :class="`canvas-wrapper--${name}`">
+  <div
+    class="canvas-wrapper"
+    :class="`canvas-wrapper--${name}`"
+    :style="{ zIndex: index }"
+  >
     <canvas ref="stage"></canvas>
   </div>
 </template>
@@ -167,8 +180,8 @@ export default class Canvas extends Vue implements CanvasDelegator {
     position: fixed;
     left: 0;
     top: 0;
-    z-index: 0;
     right: 0;
     bottom: 0;
+    pointer-events: none;
   }
 </style>

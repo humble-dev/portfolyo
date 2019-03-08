@@ -41,7 +41,7 @@ export default class Parallax extends Vue {
     }
 
     this.elementState = new ElementState(
-      reflectFrom || this.$el as HTMLElement
+      reflectFrom || this.$el as HTMLElement,
     );
 
     setTimeout(() => this.updatePosition(), 100);

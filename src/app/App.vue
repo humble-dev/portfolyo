@@ -60,8 +60,8 @@ export default class App extends Vue {
     PIXI.utils.skipHello();
 
     // Sync PIXI ticker with smoovy ticker
-    Ticker.override = true;
-    PIXI.ticker.shared.add(() => Ticker.nextTick());
+    // Ticker.override = true;
+    // PIXI.ticker.shared.add(() => Ticker.nextTick());
 
     // Prevent from tab scrolling
     document.addEventListener('keydown', (event) => {
@@ -71,7 +71,9 @@ export default class App extends Vue {
     });
 
     // Enable scroller
-    this.scrollerService.setRootElement(this.contentWrapper);
+    this.scrollerService.setRootElement(
+      this.$refs.contentWrapper as HTMLElement,
+    );
 
     // Add main background
     const background = new MainBackgroundContainer(this.scroller.wrapper);
@@ -87,14 +89,6 @@ export default class App extends Vue {
       this.elementState.update();
     });
   }
-
-  private get backgroundCanvas(): Canvas {
-    return this.$refs.backgroundCanvas as Canvas;
-  }
-
-  private get contentWrapper(): HTMLElement {
-    return this.$refs.contentWrapper as HTMLElement;
-  }
 }
 </script>
 
@@ -102,10 +96,11 @@ export default class App extends Vue {
   <div class="page-wrapper">
     <Scrollbar></Scrollbar>
     <Header></Header>
-    <Canvas ref="backgroundCanvas" name="background"></Canvas>
+    <Canvas index="0" name="background"></Canvas>
+    <Canvas index="10" name="foreground"></Canvas>
     <div class="content-wrapper" ref="contentWrapper">
-      <!-- <IntroSection></IntroSection>
-      <AboutSection></AboutSection> -->
+      <IntroSection></IntroSection>
+      <AboutSection></AboutSection>
       <ProjectsSection></ProjectsSection>
       <SkillsSection></SkillsSection>
       <ContactSection></ContactSection>
@@ -117,10 +112,6 @@ export default class App extends Vue {
 
 <style lang="scss">
   @import "@/styles/application.scss";
-
-  .canvas-wrapper--background {
-    z-index: 0;
-  }
 
   .page-wrapper {
     display: block;
