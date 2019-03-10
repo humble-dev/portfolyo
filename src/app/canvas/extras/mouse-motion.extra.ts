@@ -1,8 +1,7 @@
 import { Container } from 'pixi.js';
 
-import { ViewportProvider } from '@/app/providers/viewport.provider';
 import { mapRange } from '@/app/utils/math.util';
-import { Ticker, Tween, easings } from '@smoovy/core';
+import { easings, Tween } from '@smoovy/core';
 
 import { ContainerExtra, ContainerExtraConfig } from '../default.container';
 
@@ -18,9 +17,9 @@ export const mouseMotionExtraName = 'mouse-motion';
 
 export class MouseMotion implements ContainerExtra {
   public name = mouseMotionExtraName;
-  private viewport = ViewportProvider.getInstance();
   private enabled = false;
   private startPosition!: { x: number, y: number };
+  private globalStartPosition!: { x: number, y: number };
   private initialPosition!: { x: number, y: number };
   private moveListener!: (event: MouseEvent) => void;
   private moveTween?: Tween;
@@ -46,12 +45,17 @@ export class MouseMotion implements ContainerExtra {
         y: this.target.y,
       };
 
+      const globalPosition = this.target.getGlobalPosition();
+
+      this.globalStartPosition = {
+        x: globalPosition.x,
+        y: globalPosition.y,
+      };
+
       window.addEventListener(
         'mousemove',
         this.moveListener = (event) => {
-          Ticker.requestAnimationFrame(() => {
-            this.handleMouseMove(event, config);
-          });
+          this.handleMouseMove(event, config);
         },
         false,
       );
@@ -98,24 +102,23 @@ export class MouseMotion implements ContainerExtra {
     config: Partial<MouseMotionConfig>,
   ) {
     if (this.enabled) {
-      const viewportSize = this.viewport.size;
       const minX = config.minX !== undefined ? config.minX : -20;
       const maxX = config.maxX !== undefined ? config.maxX : 20;
       const minY = config.minY !== undefined ? config.minY : -20;
       const maxY = config.maxY !== undefined ? config.maxY : 20;
 
       const moveX = mapRange(
-        event.clientX,
+        event.clientX - this.globalStartPosition.x + this.target.width / 2,
         0,
-        viewportSize.width,
+        this.target.width,
         minX,
         maxX,
       );
 
       const moveY = mapRange(
-        event.clientY,
+        event.clientY - this.globalStartPosition.y + this.target.height / 2,
         0,
-        viewportSize.height,
+        this.target.height,
         minY,
         maxY,
       );
@@ -124,7 +127,6 @@ export class MouseMotion implements ContainerExtra {
         this.backTween.stop();
         this.backTween = undefined;
       }
-
 
       if (this.moveTween) {
         this.moveTween.stop();

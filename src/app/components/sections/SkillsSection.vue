@@ -1,6 +1,8 @@
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Inject } from 'vue-property-decorator';
+
 import Section from '../Section.vue';
+import Parallax from '../Parallax.vue';
 
 import { CanvasDelegatorService } from '@/app/services/canvas-delegator.service';
 import { RelatedTextContainer, RelatedTextContainerStretch } from '@/app/canvas/containers/related-text.container';
@@ -8,16 +10,20 @@ import { RelatedTextContainer, RelatedTextContainerStretch } from '@/app/canvas/
 @Component({
   components: {
     Section,
+    Parallax,
   },
 })
 export default class SkillsSection extends Vue {
   private canvasDelegator = CanvasDelegatorService.getInstance();
 
+  @Inject('glConfig')
+  private glConfig!: { enabled: boolean };
+
   public mounted() {
     const awardsHeadline = this.$refs.awardsHeadline as HTMLElement;
     const awardsHeadlineContainer = new RelatedTextContainer(
       awardsHeadline,
-      awardsHeadline.innerHTML,
+      'AWARDS',
       {
         fontFamily: 'Neue Plak Extended ExtraBlack',
         stretchMode: RelatedTextContainerStretch.FIT_HEIGHT,
@@ -62,7 +68,16 @@ export default class SkillsSection extends Vue {
     </div>
     <div class="fg-row headline-row">
       <div class="fg-col-xs-18 fg-col-lg-14">
-        <h2 class="awards-headline" ref="awardsHeadline">AWARDS</h2>
+        <h2
+          class="awards-headline"
+          ref="awardsHeadline"
+        >
+          <span v-if="glConfig.enabled">AWARDS</span>
+          <Parallax
+            v-bind="{ speed: 30, direction: 'x' }"
+            v-if="!glConfig.enabled"
+          >AWARDS</Parallax>
+        </h2>
       </div>
     </div>
     <div class="fg-row awards-entry-wrapper">
@@ -96,14 +111,33 @@ export default class SkillsSection extends Vue {
 
 <style scoped lang="scss">
   .awards-headline {
-    visibility: hidden;
+    html:not(.gl-disabled) & {
+      visibility: hidden;
 
-    @include fluid-size(font-size, 120px, 250px);
-    @include fluid-size(margin-top, 50px, 120px);
+      @include fluid-size(font-size, 120px, 250px);
+      @include fluid-size(margin-top, 50px, 120px);
+    }
+
+    html.gl-disabled & {
+      -webkit-text-stroke: 1px;
+      -webkit-text-stroke-color: black;
+      color: transparent;
+      font-family: $font-neue-plak-extended-bold;
+
+      @include fluid-size(margin-top, 20px, 30px);
+      @include fluid-size(font-size, 80px, 180px);
+      @include fluid-size(margin-left, -30px, -20px);
+    }
   }
 
   .headline-row + .fg-row {
-    @include fluid-size(margin-top, -50px, -70px);
+    html:not(.gl-disabled) & {
+      @include fluid-size(margin-top, -50px, -70px);
+    }
+
+    html.gl-disabled & {
+      @include fluid-size(margin-top, -15px, -20px);
+    }
   }
 
   .awards-entry-wrapper {

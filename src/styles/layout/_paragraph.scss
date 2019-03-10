@@ -23,7 +23,7 @@ p {
   }
 
   &.size-xl {
-    @include fluid-size(font-size, 40px, 80px);
+    @include fluid-size(font-size, 30px, 80px);
 
     line-height: 1.1;
   }
@@ -52,6 +52,13 @@ p .link {
     width: 100%;
     position: absolute;
     background-color: $color-black;
-    height: 4px;
+
+    @include responsive-width(0, $break-md) {
+      height: 2px;
+    }
+
+    @include responsive-width($break-md) {
+      height: 4px;
+    }
   }
 }

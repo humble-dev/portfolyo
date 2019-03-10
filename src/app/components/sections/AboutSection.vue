@@ -3,9 +3,12 @@ import { Component, Vue } from 'vue-property-decorator';
 
 import { ElementState } from '@/app/providers/element-state.provider';
 import { elementInViewport, elementInViewportOnce } from '@/app/helpers/element-viewport.helper';
+import { CanvasDelegatorService } from '@/app/services/canvas-delegator.service';
+import { RelatedImageContainer, RelatedImageContainerStretch } from '@/app/canvas/containers/related-image.container';
 
 import Section from '../Section.vue';
 import Parallax from '../Parallax.vue';
+import { Displacement } from '@/app/canvas/extras/displacement.extra';
 
 @Component({
   components: {
@@ -13,7 +16,58 @@ import Parallax from '../Parallax.vue';
     Parallax,
   },
 })
-export default class AboutSection extends Vue {}
+export default class AboutSection extends Vue {
+  private canvasDelegator = CanvasDelegatorService.getInstance();
+  private myselfEnabled: boolean = false;
+  private displacement!: Displacement;
+  private image!: RelatedImageContainer;
+
+  public mounted() {
+    this.image = new RelatedImageContainer(
+      this.$refs.name as HTMLElement,
+      'about.me',
+      {
+        scale: 1.1,
+        stretchMode: RelatedImageContainerStretch.FIT_WIDTH,
+        centerHorizontal: true,
+        centerVertical: true,
+      }
+    );
+
+    this.image.enableParallax(true, { speed: 25 });
+    this.image.enableVisibility(false);
+    this.image.enableDisplacement(
+      true,
+      {
+        scaleX: 50,
+        scaleY: 50
+      }
+    ).then((extra) => this.displacement = extra);
+
+    this.canvasDelegator.addContainer('background', this.image);
+  }
+
+  private enableMyself(enabled: boolean) {
+    if (enabled != this.myselfEnabled) {
+      this.myselfEnabled = enabled;
+
+      this.image.enableMouseTwist(enabled, { angle: 10, radius: 100 });
+      this.image.enableVisibility(enabled);
+
+      if (this.displacement) {
+        if (enabled) {
+          this.displacement.scaleFilter(0, 0, 1500);
+        } else {
+          this.displacement.scaleFilter(50, 50, 1500);
+        }
+      }
+    }
+  }
+
+  private handleNameTranslation(position: { x: number, y: number }) {
+    this.enableMyself(position.y >= -0.5);
+  }
+}
 </script>
 
 <template>
@@ -21,7 +75,13 @@ export default class AboutSection extends Vue {}
     <div class="fg-row">
       <div class="fg-col-xs-18 fg-col-md-16">
         <p class="bold size-xl" ref="text">
-          Hello. I am Davide, a creative developer based
+          Hello. I am
+          <span class="name" :class="{ active: myselfEnabled }" ref="name">
+            <Parallax
+              @translate="handleNameTranslation"
+              v-bind="{ speed: 45, minValue: 0 }"
+            >Davide</Parallax>
+          </span>, a creative developer based
           in Karlsruhe where I create awesome digital
           projects together with a cool team at <a href="https://dorfjungs.com/" target="_blank">Dorfjungs.</a>
         </p>
@@ -31,4 +91,24 @@ export default class AboutSection extends Vue {}
 </template>
 
 <style scoped lang="scss">
+.name {
+  html.gl-disabled & {
+    display: inline;
+
+    > div {
+      display: inline;
+      transform: translate3d(0, 0, 0) !important;
+    }
+  }
+
+  html:not(.gl-disabled) & {
+    display: inline-block;
+    color: $color-black;
+    transition: color .8s;
+
+    &.active {
+      color: $color-white;
+    }
+  }
+}
 </style>

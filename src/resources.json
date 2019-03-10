@@ -6,6 +6,18 @@
     "extras": [ "pixi" ]
   },
   {
+    "name": "about.me",
+    "type": "image",
+    "path": "/images/me.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "displacement.scratches",
+    "type": "image",
+    "path": "/images/displacement/scratches.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
     "name": "displacement.asteroid",
     "type": "image",
     "path": "/images/displacement/asteroid.jpg",
@@ -69,6 +81,12 @@
     "name": "projects.dorfjungs.title",
     "type": "image",
     "path": "/images/projects/dorfjungs/title.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "projects.portfolio.title",
+    "type": "image",
+    "path": "/images/projects/portfolio/title.jpg",
     "extras": [ "pixi" ]
   }
 ]

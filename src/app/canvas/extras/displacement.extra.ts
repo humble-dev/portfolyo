@@ -1,5 +1,5 @@
 import { Container } from 'pixi.js';
-import anime from 'animejs';
+import anime, { EasingOptions } from 'animejs';
 
 import { ContainerExtraConfig, ContainerExtra } from '../default.container';
 
@@ -53,7 +53,10 @@ export class Displacement implements ContainerExtra {
       if ( ! this.filter) {
         this.filter = new PIXI.filters.DisplacementFilter(this.sprite, 0);
 
-        this.target.filters = [ this.filter ];
+        this.target.filters = [
+          this.filter,
+          ...(this.target.filters || []),
+        ];
       }
 
       this.animations.push(
@@ -90,6 +93,7 @@ export class Displacement implements ContainerExtra {
     scaleX: number,
     scaleY: number,
     duration: number = 500,
+    easing: EasingOptions = 'easeOutCubic',
   ) {
     if (this.filter) {
       if (this.scaleAnimation) {
@@ -101,7 +105,7 @@ export class Displacement implements ContainerExtra {
         duration,
         x: scaleX,
         y: scaleY,
-        easing: 'easeOutCubic',
+        easing,
       });
     }
   }
@@ -114,6 +118,7 @@ export class Displacement implements ContainerExtra {
       this.animations.push(
         anime({
           targets: this.filter.scale,
+          easing: 'easeOutCubic',
           duration: config.scaleDuration || 500,
           x: 0,
           y: 0,

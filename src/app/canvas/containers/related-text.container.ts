@@ -5,6 +5,7 @@ import { MouseMotion } from '../extras/mouse-motion.extra';
 import { Parallax } from '../extras/parallax.extra';
 import { Visibility } from '../extras/visibility.extra';
 import { RelatedContainer } from '../related.container';
+import { MouseTwist } from '../extras/mouse-twist.extra';
 
 export enum RelatedTextContainerStretch {
   NONE = 0,
@@ -73,6 +74,7 @@ export class RelatedTextContainer extends RelatedContainer {
       this.text,
       Visibility,
       Displacement,
+      MouseTwist,
       MouseMotion,
     );
 

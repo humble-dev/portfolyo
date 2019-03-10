@@ -1,5 +1,5 @@
 import { BehaviorSubject, Observable } from 'rxjs';
-import { filter, map, tap } from 'rxjs/operators';
+import { filter, map, tap, startWith } from 'rxjs/operators';
 
 import * as Smoovy from '@smoovy/core';
 
@@ -69,9 +69,13 @@ export class ScrollerService {
       const deltaX = state.position.x - state.lastPosition.x;
       const deltaTime = state.currentTime - state.lastTime;
 
+      if (deltaTime === 0 && deltaY === 0) {
+        return { x: 0, y: 0 };
+      }
+
       return {
-        x: Math.round(deltaX / deltaTime),
-        y: Math.round(deltaY / deltaTime),
+        x: Math.floor(deltaX),
+        y: Math.floor(deltaY),
       };
     }),
   );
@@ -111,10 +115,10 @@ export class ScrollerService {
       },
       input: {
         mouse: {
-          multiplier: 0.4,
+          multiplier: 0.75,
         },
         touch: {
-          multiplier: 3,
+          multiplier: 2,
         },
       },
       output: {
@@ -124,12 +128,10 @@ export class ScrollerService {
           on: {
             animation: (
               position: Smoovy.Position,
-              lastPosition: Smoovy.Position,
             ) => {
               this.triggerScroll(
                 ScrollStateTriggerType.ANIMATION,
                 position,
-                lastPosition,
               );
             },
           },

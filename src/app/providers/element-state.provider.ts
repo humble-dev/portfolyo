@@ -108,7 +108,7 @@ export class ElementState<D extends object = any> {
     offset = typeof offset === 'number' ? { x: offset, y: offset } : offset;
 
     const belowViewport = (
-      this.offset.y + offset.y > scrollPosition.y + viewportSize.height
+      this.offset.y - offset.y > scrollPosition.y + viewportSize.height
     );
 
     const aboveViewport = (
@@ -116,7 +116,7 @@ export class ElementState<D extends object = any> {
     );
 
     const rightOfViewport = (
-      this.offset.x + offset.x > scrollPosition.x + viewportSize.width
+      this.offset.x - offset.x > scrollPosition.x + viewportSize.width
     );
 
     const leftOfViewport = (

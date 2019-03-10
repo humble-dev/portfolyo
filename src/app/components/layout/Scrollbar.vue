@@ -45,8 +45,15 @@ export default class Scrollbar extends Vue {
     right: 0;
     top: 0;
     bottom: 0;
-    width: 4px;
     z-index: 2;
+
+    @include responsive-width(0, $break-lg) {
+      width: 2px;
+    }
+
+    @include responsive-width($break-lg) {
+      width: 4px;
+    }
   }
 
   .indicator {

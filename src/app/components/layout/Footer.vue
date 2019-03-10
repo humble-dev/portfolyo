@@ -17,7 +17,7 @@ export default class Footer extends Vue {
 <template>
   <footer>
     <div class="footer-container fg-container-fluid fg-wrapper-maxed">
-      <div class="footer-wrapper fg-row fg-between-xs fg-middle-xs">
+      <div class="footer-wrapper fg-row fg-between-lg fg-middle-lg">
         <p class="size-md bold">Website &copy; 2019</p>
         <p class="size-sm">des. Norman Dubois, dev. Davide Perozzi</p>
         <p class="size-sm">
@@ -35,6 +35,14 @@ export default class Footer extends Vue {
 
   .footer-wrapper {
     border-top: 3px solid $color-black;
-    padding: 20px 0;
+
+    @include fluid-size(padding-top padding-bottom, 15px, 20px);
+    @include responsive-width(0, $break-lg) {
+      flex-direction: column;
+
+      > p {
+        @include fluid-size(margin-top margin-bottom, 5px, 10px);
+      }
+    }
   }
 </style>

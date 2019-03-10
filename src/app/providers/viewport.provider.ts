@@ -36,6 +36,11 @@ export class ViewportProvider {
   }
 
   public get size(): ViewportSize {
-    return this.changeSubject.value;
+    return this.changeSubject
+      ? this.changeSubject.value
+      : {
+        width: window.innerWidth,
+        height: window.innerHeight,
+      };
   }
 }

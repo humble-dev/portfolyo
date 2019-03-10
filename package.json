@@ -10,6 +10,7 @@
   "dependencies": {
     "@pixi/filter-glitch": "^2.7.0",
     "@pixi/filter-motion-blur": "^2.7.0",
+    "@pixi/filter-twist": "^2.7.0",
     "animejs": "^3.0.1",
     "pixi.js": "^4.8.6",
     "rxjs": "^6.4.0",
@@ -22,7 +23,7 @@
   },
   "devDependencies": {
     "@dorfjungs/scss-base": "^1.0.2",
-    "@smoovy/core": "0.0.25",
+    "@smoovy/core": "0.0.26",
     "@types/animejs": "^2.0.1",
     "@types/pixi.js": "^4.8.6",
     "@types/webfontloader": "^1.6.29",

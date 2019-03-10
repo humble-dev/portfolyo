@@ -1,28 +1,6 @@
 html {
   height: 100%;
   width: 100%;
-
-  @include responsive-width(0, $break-lg) {
-    font-size: #{$rem-baseline - 4}px;
-    line-height: rem($rem-baseline - 4);
-
-    @media (-webkit-min-device-pixel-ratio: 2),
-      (min-resolution: 192dpi) {
-      font-size: #{$rem-baseline - 6}px;
-      line-height: rem($rem-baseline - 6px);
-    }
-  }
-
-  @include responsive-width($break-lg) {
-    font-size: #{$rem-baseline - 4}px;
-    line-height: rem($rem-baseline - 4px);
-
-    @media (-webkit-min-device-pixel-ratio: 2),
-      (min-resolution: 192dpi) {
-      font-size: #{$rem-baseline - 6}px;
-      line-height: rem($rem-baseline - 6px);
-    }
-  }
 }
 
 body {

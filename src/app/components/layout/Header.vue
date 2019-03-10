@@ -1,6 +1,6 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { map, tap, startWith } from 'rxjs/operators';
+import { map, tap, startWith, distinctUntilChanged, filter } from 'rxjs/operators';
 import anime from 'animejs';
 
 import { NavigationService } from '@/app/services/navigation.service';
@@ -20,6 +20,18 @@ const navigationLinks: NavigationLink[] = [
   { section: 'projects', label: 'Projects' },
   { section: 'skills', label: 'Skillz' },
   { section: 'contact', label: 'Contact' },
+];
+
+const designationLines: string[] = [
+  'Interactive developer',
+  'Fuck Nazis!',
+  'Wow. Such smooth. Much Parallax',
+  'Displacement everywhere',
+  'Full Stack developer',
+  'Enjoying my portfolio?',
+  'I hope your fan ain\'t getting too loud',
+  'Look mum no hands!',
+  'No, the "e" in my name isn\'t silent',
 ];
 
 interface LinkRefState {
@@ -66,6 +78,13 @@ interface LinkRefState {
 
           return activeSection;
         }),
+        distinctUntilChanged(),
+        filter((section) => !!section),
+        tap((section) => {
+          if (section === navigationLinks[0]['section']) {
+            this.activeDesignationLine = 0;
+          }
+        })
       ),
     };
   },
@@ -74,9 +93,11 @@ export default class Header extends Vue {
   private scroller = ScrollerService.getInstance();
   private navigation = NavigationService.getInstance();
   private navigationLinks = navigationLinks;
+  private designationLines = designationLines;
   private navMinimized: boolean = false;
   private activeSection: string = '';
   private linkRefStates: LinkRefState[] = [];
+  private activeDesignationLine: number = 0;
 
   private handleLinkClick(
     link: NavigationLink,
@@ -85,6 +106,10 @@ export default class Header extends Vue {
     event.preventDefault();
 
     this.navigation.requestSectionScroll(link.section);
+  }
+
+  private getRandomDesignationLine() {
+    return Math.floor(Math.random() * this.designationLines.length);
   }
 
   public mounted() {
@@ -97,6 +122,19 @@ export default class Header extends Vue {
        };
       },
     );
+
+    setInterval(() => {
+      if (this.activeSection === navigationLinks[0]['section']) {
+        this.activeDesignationLine = 0;
+      } else {
+        let randomLine = this.getRandomDesignationLine();
+
+        do { randomLine = this.getRandomDesignationLine(); }
+        while (randomLine === this.activeDesignationLine);
+
+        this.activeDesignationLine = randomLine;
+      }
+    }, 5000);
   }
 }
 </script>
@@ -106,8 +144,17 @@ export default class Header extends Vue {
     <div class="fg-container-fluid fg-wrapper-maxed">
       <div class="fg-row fg-between-xs">
         <h1>DavidePerozzi</h1>
-        <div class="designation">
-          <span>Interactive developer</span>
+        <div
+          class="designation-container"
+          :class="`active-${activeDesignationLine}`"
+        >
+          <div class="designation-wrapper fx-layout fx-vertical">
+            <div
+              class="designation-line"
+              v-for="(line, index) in designationLines"
+              v-bind:key="index"
+            >{{line}}</div>
+          </div>
         </div>
         <nav v-detectSize.ignoreWidth :class="{ minimized: navMinimized }">
           <div class="nav-links-wrapper fx-layout fx-vertical fx-self-end" ref="navLinksWrapper">
@@ -144,8 +191,9 @@ export default class Header extends Vue {
     display: block;
     width: 100%;
     z-index: 110;
-    padding: 80px 0;
     pointer-events: none;
+
+    @include fluid-size(padding-top padding-bottom, 20px, 80px);
   }
 
   h1 {
@@ -153,21 +201,41 @@ export default class Header extends Vue {
     pointer-events: all;
     font-family: $font-neue-plak-extended-light;
     text-transform: uppercase;
-    font-size: rem(40px);
+
+    @include fluid-size(font-size, 20px, 30px);
 
     span {
       color: $color-red;
     }
   }
 
-  .designation {
-    padding-top: 5px;
+  $designation-height: 40px;
+
+  .designation-container {
     text-transform: uppercase;
+    height: $designation-height;
+    overflow: hidden;
     font-family: $font-neue-haas-regular;
-    font-size: rem(30px);
+
+    @include fluid-size(font-size, 14px, 20px);
 
     @include responsive-width(0, $break-md) {
       display: none;
+    }
+
+    .designation-wrapper {
+      transition: transform 1.5s;
+    }
+
+    @for $i from 0 through 12 {
+      &.active-#{$i} .designation-wrapper {
+        transform: translate3d(0, -$designation-height * $i, 0);
+      }
+    }
+
+    .designation-line {
+      height: 40px;
+      line-height: 40px;
     }
   }
 
@@ -198,7 +266,6 @@ export default class Header extends Vue {
       counter-increment: navigation;
       text-transform: uppercase;
       font-family: $font-neue-haas-regular;
-      font-size: rem(30px);
       height: $nav-link-height;
       text-align: right;
       position: relative;
@@ -212,6 +279,8 @@ export default class Header extends Vue {
       overflow: hidden;
       backface-visibility: hidden;
       transform: translate3d(0, 0, 0);
+
+      @include fluid-size(font-size, 16px, 20px);
     }
 
     .nav-link:after {
@@ -219,11 +288,12 @@ export default class Header extends Vue {
       display: block;
       position: absolute;
       font-family: inherit;
-      font-size: rem(12px);
       right: 0;
       top: 6px;
       transform-origin: 0 0;
       transform: translate3d(0, -50%, 0);
+
+      @include fluid-size(font-size, 8px, 10px);
     }
 
     .nav-link > span {
@@ -235,6 +305,8 @@ export default class Header extends Vue {
 
       > span {
         position: relative;
+        display: block;
+        height: 100%;
       }
 
       > span:after {
@@ -275,12 +347,12 @@ export default class Header extends Vue {
       }
 
       &-top {
-        clip: rect(0 auto 20px 0);
+        clip: rect(0 auto 15px 0);
         transform-origin: 50% 100%;
       }
 
       &-bottom {
-        clip: rect(20px auto auto 0);
+        clip: rect(15px auto auto 0);
         transform-origin: 50% 0;
       }
 
@@ -304,7 +376,7 @@ export default class Header extends Vue {
       }
 
       .label-top {
-        transform: translate3d(-2px, -2px, 0);
+        transform: translate3d(-2px, -1px, 0);
       }
 
       .label-bottom {

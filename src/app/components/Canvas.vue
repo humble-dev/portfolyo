@@ -88,12 +88,6 @@ export default class Canvas extends Vue implements CanvasDelegator {
       height: this.elementState.bounds.height,
     });
 
-    // this.pixiApp.ticker.stop();
-
-    // Ticker.tick((timestamp) => {
-    //   this.pixiApp.ticker.update(timestamp);
-    // });
-
     this.pixiApp.stage.addChild(
       this.scrollContainer.context = new PIXI.Container(),
     );

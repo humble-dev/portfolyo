@@ -1,10 +1,11 @@
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Provide } from 'vue-property-decorator';
 import { Scroller, Ticker } from '@smoovy/core';
 
 import anime from 'animejs';
 import * as PIXI from 'pixi.js';
 
+import { BrowserSupport } from '@smoovy/core';
 import { ScrollerService } from './services/scroller.service';
 import { CanvasDelegatorService } from './services/canvas-delegator.service';
 
@@ -56,12 +57,30 @@ export default class App extends Vue {
   private viewport = ViewportProvider.getInstance();
   private scroller = ScrollerService.getInstance();
 
+  @Provide()
+  private glConfig = {
+    enabled: false
+  };
+
+  private isGlEnabled() {
+    return ! BrowserSupport.IS_MOBILE_OR_TABLET &&
+      this.viewport.size.width > 768;
+  }
+
+  public created() {
+    this.glConfig.enabled = this.isGlEnabled();
+
+    if ( ! this.glConfig.enabled) {
+      document.documentElement.classList.add('gl-disabled');
+    }
+  }
+
   public mounted() {
     PIXI.utils.skipHello();
 
-    // Sync PIXI ticker with smoovy ticker
-    // Ticker.override = true;
-    // PIXI.ticker.shared.add(() => Ticker.nextTick());
+    // Sync smoovy ticker with pixi ticker
+    Ticker.override = true;
+    PIXI.ticker.shared.add((delta) => Ticker.nextTick());
 
     // Prevent from tab scrolling
     document.addEventListener('keydown', (event) => {
@@ -78,11 +97,12 @@ export default class App extends Vue {
     // Add main background
     const background = new MainBackgroundContainer(this.scroller.wrapper);
 
-    background.enableParallax(true, { speed: 3000, direction: 'y' });
+    // background.enableParallax(true, { speed: 3000, direction: 'y' });
 
     this.canvasDelegator.addContainer('background', background);
 
     // Manage element states
+    this.elementState.update();
     setTimeout(() => this.elementState.update());
 
     this.viewport.changed(200).subscribe(() => {
@@ -96,8 +116,8 @@ export default class App extends Vue {
   <div class="page-wrapper">
     <Scrollbar></Scrollbar>
     <Header></Header>
-    <Canvas index="0" name="background"></Canvas>
-    <Canvas index="10" name="foreground"></Canvas>
+    <Canvas v-if="glConfig.enabled" index="0" name="background"></Canvas>
+    <Canvas v-if="glConfig.enabled" index="10" name="foreground"></Canvas>
     <div class="content-wrapper" ref="contentWrapper">
       <IntroSection></IntroSection>
       <AboutSection></AboutSection>
@@ -112,6 +132,10 @@ export default class App extends Vue {
 
 <style lang="scss">
   @import "@/styles/application.scss";
+
+  .gl-disabled .page-wrapper {
+    background-color: $color-beige;
+  }
 
   .page-wrapper {
     display: block;

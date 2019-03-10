@@ -1,6 +1,6 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
-import { Ticker } from '@smoovy/core';
+import { Ticker, TickerThread } from '@smoovy/core';
 import { ElementState } from '@/app/providers/element-state.provider';
 import { elementInViewport } from '@/app/helpers/element-viewport.helper';
 
@@ -13,6 +13,7 @@ export default class KeywordList extends Vue {
   private wrapperState!: ElementState;
   private keywordStates: Array<ElementState<KeywordData>> = [];
   private visible: boolean = false;
+  private lastThread?: TickerThread;
 
   @Prop({ default: [] })
   private keywords!: string[];
@@ -27,14 +28,14 @@ export default class KeywordList extends Vue {
       return state;
     });
 
-    elementInViewport(this.wrapperState).subscribe((visible) => {
+    elementInViewport(this.wrapperState, 50).subscribe((visible) => {
       this.visible = visible;
-    });
 
-
-    Ticker.tick((delta) => {
-      if (this.visible) {
-        this.animate(delta);
+      if (this.visible && ! this.lastThread) {
+        this.lastThread = Ticker.tick((delta) => this.animate(delta));
+      } else if ( ! this.visible && this.lastThread) {
+        this.lastThread.kill();
+        this.lastThread = undefined;
       }
     });
   }

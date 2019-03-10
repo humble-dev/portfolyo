@@ -23,6 +23,9 @@ export default class Parallax extends Vue {
   private direction!: 'x' | 'y';
 
   @Prop()
+  private minValue!: number;
+
+  @Prop()
   private reflectFrom!: [
     { [id: string]: HTMLElement[] },
     string,
@@ -56,22 +59,29 @@ export default class Parallax extends Vue {
   }
 
   private updatePosition(scrollPosition: number = 0) {
-      const viewportHeight = this.scroller.containerHeight;
-      const elementHeight = this.elementState.bounds.height;
-      const elementPositionY = this.elementState.offset.y;
-      const translation = parallaxHelper(
-        scrollPosition,
-        viewportHeight,
-        elementHeight,
-        elementPositionY,
-        this.speed,
-        this.direction,
-      );
+    const viewportHeight = this.scroller.containerHeight;
+    const elementHeight = this.elementState.bounds.height;
+    const elementPositionY = this.elementState.offset.y;
+    const translation = parallaxHelper(
+      scrollPosition,
+      viewportHeight,
+      elementHeight,
+      elementPositionY,
+      this.speed,
+      this.direction,
+    );
 
-      this.translation.x = translation.x;
-      this.translation.y = translation.y;
+    this.translation.x = translation.x;
+    this.translation.y = translation.y;
 
-      this.updateTranslation();
+    if (typeof this.minValue === 'number') {
+      this.translation.x = Math.min(this.translation.x, this.minValue);
+      this.translation.y = Math.min(this.translation.y, this.minValue);
+    }
+
+    this.$emit('translate', this.translation);
+
+    this.updateTranslation();
   }
 
   private updateTranslation() {

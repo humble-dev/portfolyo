@@ -21,7 +21,6 @@ export function parallaxHelper(
   const minOffset = direction === 'x' ? 0 : minSpeed;
   const maxOffset = direction === 'x' ? 0 : maxSpeed;
 
-
   // Use the parallax helper which will calculate the current
   // Position of the element. It's just a simplified function
   // using `mapRange` to move the position into a new range

@@ -82,17 +82,29 @@ export default class ContactSection extends Vue {
 
     @include fluid-size(font-size, 100px, 250px);
 
+    .gl-disabled & {
+      display: none;
+    }
+
     span {
       display: block;
     }
 
-    span:not(:first-child) {
-      @include fluid-size(margin-top, -20px, -50px);
+    html:not(.gl-disabled) & {
+      span:not(:first-child) {
+        @include fluid-size(margin-top, -20px, -50px);
+      }
     }
   }
 
   .link-wrapper {
-    @include fluid-size(margin-top, -40px, -60px);
+    html:not(.gl-disabled) & {
+      @include fluid-size(margin-top, -40px, -60px);
+    }
+
+    html.gl-disabled & {
+      @include fluid-size(margin-top, 20px, 30px);
+    }
 
     a {
       display: block;

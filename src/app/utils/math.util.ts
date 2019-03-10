@@ -26,6 +26,7 @@ export function scrollTween(
   minOffset: number = minValue,
   maxOffset: number = maxValue,
 ): number {
+  const viewportDelta = Math.max(elementPosition - viewportSize, 0);
   const inStart = Math.max(elementPosition - viewportSize + minOffset, 0);
   const inEnd = elementPosition + elementSize + maxOffset;
 
@@ -34,7 +35,7 @@ export function scrollTween(
       scrollPosition,
       inStart,
       inEnd,
-      inStart === 0 ? 0 : minValue,
+      viewportDelta === 0 ? 0 : minValue,
       maxValue,
     ),
     Math.min(minValue, maxValue),

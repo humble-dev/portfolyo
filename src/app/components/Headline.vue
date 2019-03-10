@@ -97,7 +97,7 @@ export default class Headline extends Vue {
     position: relative;
 
     @include fluid-size(padding-top, 10px, 15px);
-    @include fluid-size(margin-bottom, 80px, 220px);
+    @include fluid-size(margin-bottom, 50px, 220px);
   }
 
   .border-top {
@@ -105,10 +105,17 @@ export default class Headline extends Vue {
     left: 0;
     top: 0;
     right: 0;
-    height: 3px;
     background-color: $color-black;
     transform: scaleX(0);
     transform-origin: 0 50%;
+
+    @include responsive-width(0, $break-lg) {
+      height: 2px;
+    }
+
+    @include responsive-width($break-lg) {
+      height: 3px;
+    }
   }
 
   .text-content > p {

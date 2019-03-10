@@ -29,7 +29,7 @@ interface Project {
 const projects: Projects = [
   {
     id: 'mackmedia',
-    name: 'MackMedia',
+    name: 'Mack&shy;Media',
     url: 'https://mackmedia.de/',
     image: 'projects.mackmedia.title',
     keywords: [
@@ -46,7 +46,7 @@ const projects: Projects = [
     ],
     offset: {
       xs: 0,
-      lg: 1,
+      lg: 0,
       xxl: 3,
     },
   },
@@ -68,7 +68,7 @@ const projects: Projects = [
     ],
     offset: {
       xs: 0,
-      lg: 1,
+      lg: 3,
     },
   },
   {
@@ -80,6 +80,7 @@ const projects: Projects = [
       'JavaScript',
       'Google Closure',
       'Twig',
+      'Blockhain',
       'Parallax',
       'Fancy forms',
       'PHP',
@@ -88,7 +89,7 @@ const projects: Projects = [
     ],
     offset: {
       xs: 0,
-      lg: 1,
+      lg: 0,
       xxl: 2,
     },
   },
@@ -103,6 +104,7 @@ const projects: Projects = [
       'PHP',
       'Twig',
       'Animations',
+      'What\'s better than cat videos!?',
       'JavaScript',
       'GreenSock',
       'Made in 2 days',
@@ -110,7 +112,7 @@ const projects: Projects = [
     ],
     offset: {
       xs: 0,
-      lg: 1,
+      lg: 2,
       xl: 4,
     },
   },
@@ -129,8 +131,32 @@ const projects: Projects = [
     ],
     offset: {
       xs: 0,
-      lg: 1,
+      lg: 0,
       xxl: 2,
+    },
+  },
+  {
+    id: 'portfolio',
+    name: 'My portfolio',
+    url: 'https://davideperozzi.de/',
+    image: 'projects.portfolio.title',
+    keywords: [
+      'Vue',
+      'WebGL',
+      'Animations',
+      'Parallax',
+      'Random buzzword',
+      'Smooth scrolling',
+      'Displacement',
+      'Developer',
+      'JavaScript',
+      'aminejs',
+      'SCSS',
+    ],
+    offset: {
+      xs: 0,
+      lg: 2,
+      xxl: 4,
     },
   },
 ];
@@ -159,7 +185,7 @@ export default class ProjectsSection extends Vue {
       if (id && project && ! this.textContainers.hasOwnProperty(id)) {
         const textContainer = new RelatedTextContainer(
           element,
-          project.name.toUpperCase(),
+          project.name.toUpperCase().replace(/&shy;/gi, ''),
           {
             centerVertical: true,
             stretchMode: RelatedTextContainerStretch.FIT_WIDTH,
@@ -179,6 +205,12 @@ export default class ProjectsSection extends Vue {
             direction: 'x',
           },
         );
+
+        textContainer.enableMouseTwist(true, {
+          radius: 250,
+          padding: 500,
+          angle: 30
+        });
 
         this.canvasDelegator.addContainer(
           'background',
@@ -266,8 +298,8 @@ export default class ProjectsSection extends Vue {
       image.enableDisplacement(
         enabled,
         {
-          scaleX: 50,
-          scaleY: 50,
+          scaleX: 100,
+          scaleY: 100,
           scaleDuration: 0,
         },
       ).then((extra) => {
@@ -278,25 +310,32 @@ export default class ProjectsSection extends Vue {
         );
       });
 
+      image.enableMouseTwist(enabled, {
+        radius: 150,
+        padding: 150,
+        angle: 30
+      });
+
       image.enableVisibility(enabled);
       image.enableMouseMotion(
         enabled,
         {
-          minX: -40,
-          maxX: 40,
-          minY: -40,
-          maxY: 40,
+          minX: -20,
+          maxX: 20,
+          minY: -20,
+          maxY: 20,
         },
       );
     }
 
     if (text) {
-      text.enableDisplacement(
+      text.enableMouseMotion(
         enabled,
         {
-          scaleX: 10,
-          scaleY: 10,
-          scaleDuration: 2000,
+          minX: -10,
+          maxX: 10,
+          minY: 0,
+          maxY: 0,
         },
       );
     }
@@ -338,7 +377,8 @@ export default class ProjectsSection extends Vue {
             ref="projectWrapper"
             :data-id="project.id"
             class="project-label"
-          >{{project.name}}</div>
+            v-html="project.name"
+          ></div>
           <Parallax class="keyword-container" v-bind="{
             reflectFrom: [ $refs, 'projectWrapper', index ],
             speed: index % 2 === 0 ? 100 : -100,
@@ -359,6 +399,12 @@ export default class ProjectsSection extends Vue {
 
   .keyword-container {
     width: 100%;
+
+    .gl-disabled & {
+      transform: translate3d(0, 0, 0) !important;
+
+      @include fluid-size(margin-top, 10px, 20px);
+    }
   }
 
   .project-wrapper {
@@ -369,12 +415,22 @@ export default class ProjectsSection extends Vue {
 
     @include fluid-size(padding-top padding-bottom, 20px, 40px);
 
+    .gl-disabled & {
+      @include responsive-width(0, $break-md) {
+        width: 100%;
+      }
+    }
+
     .project-label {
-      visibility: hidden;
       font-family: $font-neue-plak-extended-extra-black;
       color: $color-black;
 
-      @include fluid-size(font-size, 50px, 130px);
+      @include fluid-size(font-size, 40px, 130px);
+
+      html:not(.gl-disabled) & {
+        white-space: nowrap;
+        visibility: hidden;
+      }
     }
 
     > a {

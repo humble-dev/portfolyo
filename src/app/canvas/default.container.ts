@@ -7,6 +7,7 @@ import { VisibilityConfig, visibilityExtraName, Visibility } from './extras/visi
 import { MouseMotionConfig, mouseMotionExtraName, MouseMotion } from './extras/mouse-motion.extra';
 import { ParallaxConfig, parallaxExtraName, Parallax } from './extras/parallax.extra';
 import { MotionBlurConfig, MotionBlur, motionBlurExtraName } from './extras/motion-blur.extra';
+import { MouseTwistConfig, mouseTwistExtraName, MouseTwist } from './extras/mouse-twist.extra';
 
 export interface ContainerExtraConfig {}
 
@@ -123,6 +124,21 @@ export class DefaultContainer {
     }
 
     return extra as Parallax;
+  }
+
+  public async enableMouseTwist(
+    enabled: boolean,
+    config?: Partial<MouseTwistConfig>,
+  ) {
+    const extra = await this.extra(mouseTwistExtraName);
+
+    if (enabled) {
+      extra.activate(config);
+    } else {
+      extra.deactivate(config);
+    }
+
+    return extra as MouseTwist;
   }
 
   public extra(name: string): Promise<ContainerExtra> {
