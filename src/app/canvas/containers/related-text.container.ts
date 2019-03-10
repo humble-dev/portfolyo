@@ -80,7 +80,6 @@ export class RelatedTextContainer extends RelatedContainer {
 
     this.enableExtras(
       this.context,
-      MotionBlur,
       Parallax,
     );
 

@@ -209,7 +209,7 @@ export default class ProjectsSection extends Vue {
         textContainer.enableMouseTwist(true, {
           radius: 250,
           padding: 500,
-          angle: 30
+          angle: 20,
         });
 
         this.canvasDelegator.addContainer(
@@ -300,20 +300,30 @@ export default class ProjectsSection extends Vue {
         {
           scaleX: 100,
           scaleY: 100,
-          scaleDuration: 0,
+          scaleDuration: enabled ? 0 : 1500,
         },
       ).then((extra) => {
-        extra.scaleFilter(
-          5,
-          5,
-          800,
-        );
+        setTimeout(() => {
+          if (enabled) {
+            extra.scaleFilter(
+              5,
+              5,
+              1000,
+            );
+          } else {
+            extra.scaleFilter(
+              100,
+              100,
+              1500,
+            );
+          }
+        });
       });
 
       image.enableMouseTwist(enabled, {
         radius: 150,
         padding: 150,
-        angle: 30
+        angle: 30,
       });
 
       image.enableVisibility(enabled);

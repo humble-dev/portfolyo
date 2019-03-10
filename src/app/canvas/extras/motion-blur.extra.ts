@@ -1,6 +1,7 @@
 import { ContainerExtra, ContainerExtraConfig } from '../default.container';
 import { MotionBlurFilter } from '@pixi/filter-motion-blur';
 import anime from 'animejs';
+import { Tween, easings } from '@smoovy/core';
 
 export interface MotionBlurConfig extends ContainerExtraConfig {}
 
@@ -10,7 +11,7 @@ export class MotionBlur implements ContainerExtra {
   public name = motionBlurExtraName;
   private enabled: boolean = false;
   private filter?: MotionBlurFilter;
-  private velocityAnimation?: anime.AnimeInstance;
+  private velocityTween?: Tween;
 
   public constructor(
     protected target: PIXI.Container,
@@ -33,18 +34,36 @@ export class MotionBlur implements ContainerExtra {
     }
   }
 
-  public setVelocity(x: number, y: number) {
+  public setVelocity(
+    x: number,
+    y: number,
+    duration: number = 500,
+  ) {
     if (this.filter) {
-      if (this.velocityAnimation) {
-        this.velocityAnimation.pause();
+      if (this.velocityTween) {
+        this.velocityTween.stop();
       }
 
-      this.velocityAnimation = anime({
-        targets: this.filter.velocity,
-        duration: 500,
-        x,
-        y,
-      });
+      this.velocityTween = Tween.to(
+        {
+          x: this.filter.velocity.x,
+          y: this.filter.velocity.y,
+        },
+        {
+          x,
+          y,
+        },
+        duration,
+        {
+          easing: easings.Sine.out,
+          update: (velocity) => {
+            if (this.filter) {
+              this.filter.velocity.x = velocity.x;
+              this.filter.velocity.y = velocity.y;
+            }
+          },
+        },
+      );
     }
   }
 

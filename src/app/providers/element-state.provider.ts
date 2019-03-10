@@ -107,20 +107,22 @@ export class ElementState<D extends object = any> {
   ): boolean {
     offset = typeof offset === 'number' ? { x: offset, y: offset } : offset;
 
+    const elementPosition = {  ...this.offset };
+
     const belowViewport = (
-      this.offset.y - offset.y > scrollPosition.y + viewportSize.height
+      elementPosition.y - offset.y > scrollPosition.y + viewportSize.height
     );
 
     const aboveViewport = (
-      this.offset.y + offset.y + this.bounds.height < scrollPosition.y
+      elementPosition.y + offset.y + this.bounds.height < scrollPosition.y
     );
 
     const rightOfViewport = (
-      this.offset.x - offset.x > scrollPosition.x + viewportSize.width
+      elementPosition.x - offset.x > scrollPosition.x + viewportSize.width
     );
 
     const leftOfViewport = (
-      this.offset.x + offset.x + this.bounds.width < scrollPosition.x
+      elementPosition.x + offset.x + this.bounds.width < scrollPosition.x
     );
 
     return !belowViewport && !aboveViewport &&

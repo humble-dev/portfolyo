@@ -24,18 +24,12 @@ export class MainBackgroundContainer extends RelatedContainer {
       this.size.height,
     );
 
-    this.context.filters = [
-      this.noiseFilter = new PIXI.filters.NoiseFilter(
-        0.06,
-        Math.random(),
-      ),
-    ];
-
-    this.enableExtras(
-      this.sprite,
-      MotionBlur,
-      Displacement,
-    );
+    // this.context.filters = [
+    //   this.noiseFilter = new PIXI.filters.NoiseFilter(
+    //     0.06,
+    //     Math.random(),
+    //   ),
+    // ];
 
     this.enableExtras(
       this.context,
@@ -48,7 +42,7 @@ export class MainBackgroundContainer extends RelatedContainer {
   public render() {
     super.render();
 
-    this.noiseFilter.seed = Math.random();
+    // this.noiseFilter.seed = Math.random();
   }
 
   public sync() {

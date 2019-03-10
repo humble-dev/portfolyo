@@ -1,6 +1,6 @@
 import { Observable, Subject } from 'rxjs';
 import {
-  auditTime, distinctUntilChanged, map, takeWhile, finalize, tap, switchMap, startWith,
+  auditTime, distinctUntilChanged, map, takeWhile, finalize, tap, switchMap, startWith, takeUntil,
 } from 'rxjs/operators';
 
 import { ElementState } from '../providers/element-state.provider';
@@ -47,8 +47,13 @@ export function elementInViewportOnce(
   const visible$ = subject.asObservable();
 
   return elementInViewport(elementState, offset, debounce).pipe(
-    tap((visible) => subject.next(visible)),
-    takeWhile((visible) => false === visible),
-    switchMap((visible) => visible$.pipe(startWith(visible))),
+    takeUntil(visible$),
+    tap((visible) => {
+      if (true === visible) {
+        setTimeout(() => {
+          subject.next(visible);
+        });
+      }
+    }),
   );
 }

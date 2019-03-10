@@ -95,8 +95,8 @@ export class MouseTwist implements ContainerExtra {
       this.moved = false;
 
       if (this.target.filters) {
-        this.target.filters = this.target.filters.filter((filter) => {
-          return filter !== this.filter;
+        this.target.filters = this.target.filters.filter((f) => {
+          return f !== this.filter;
         });
       }
     }

@@ -10,6 +10,7 @@ import { ScrollerService } from './services/scroller.service';
 import { CanvasDelegatorService } from './services/canvas-delegator.service';
 
 import { MainBackgroundContainer } from './canvas/containers/main-background.container';
+import { MainCursorContainer } from './canvas/containers/main-cursor.container';
 
 import { ElementStateProvider } from '@/app/providers/element-state.provider';
 import { ViewportProvider } from '@/app/providers/viewport.provider';
@@ -59,7 +60,7 @@ export default class App extends Vue {
 
   @Provide()
   private glConfig = {
-    enabled: false
+    enabled: false,
   };
 
   private isGlEnabled() {
@@ -101,6 +102,9 @@ export default class App extends Vue {
 
     this.canvasDelegator.addContainer('background', background);
 
+    // Add custom cursoir
+    this.canvasDelegator.addContainer('foreground', new MainCursorContainer());
+
     // Manage element states
     this.elementState.update();
     setTimeout(() => this.elementState.update());
@@ -117,7 +121,7 @@ export default class App extends Vue {
     <Scrollbar></Scrollbar>
     <Header></Header>
     <Canvas v-if="glConfig.enabled" index="0" name="background"></Canvas>
-    <Canvas v-if="glConfig.enabled" index="10" name="foreground"></Canvas>
+    <Canvas v-if="glConfig.enabled" index="200" name="foreground"></Canvas>
     <div class="content-wrapper" ref="contentWrapper">
       <IntroSection></IntroSection>
       <AboutSection></AboutSection>
@@ -132,6 +136,14 @@ export default class App extends Vue {
 
 <style lang="scss">
   @import "@/styles/application.scss";
+
+  html:not(.gl-disabled) {
+    cursor: none;
+
+    * {
+      cursor: none !important;
+    }
+  }
 
   .gl-disabled .page-wrapper {
     background-color: $color-beige;

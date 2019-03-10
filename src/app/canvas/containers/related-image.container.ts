@@ -70,7 +70,6 @@ export class RelatedImageContainer extends RelatedContainer {
     this.enableExtras(
       this.context,
       Parallax,
-      MotionBlur,
     );
 
     this.context.addChild(this.sprite);

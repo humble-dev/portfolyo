@@ -31,7 +31,7 @@ export default class AboutSection extends Vue {
         stretchMode: RelatedImageContainerStretch.FIT_WIDTH,
         centerHorizontal: true,
         centerVertical: true,
-      }
+      },
     );
 
     this.image.enableParallax(true, { speed: 25 });
@@ -40,15 +40,15 @@ export default class AboutSection extends Vue {
       true,
       {
         scaleX: 50,
-        scaleY: 50
-      }
+        scaleY: 50,
+      },
     ).then((extra) => this.displacement = extra);
 
     this.canvasDelegator.addContainer('background', this.image);
   }
 
   private enableMyself(enabled: boolean) {
-    if (enabled != this.myselfEnabled) {
+    if (enabled !== this.myselfEnabled) {
       this.myselfEnabled = enabled;
 
       this.image.enableMouseTwist(enabled, { angle: 10, radius: 100 });

@@ -75,15 +75,15 @@ export class Displacement implements ContainerExtra {
         }),
       );
 
-      this.animations.push(
-        anime({
-          targets: this.sprite,
-          duration: config.rotationDuration || 250000,
-          rotation: 360 * (Math.PI / 180),
-          easing: 'linear',
-          loop: true,
-        }),
-      );
+      // this.animations.push(
+        // anime({
+        //   targets: this.sprite,
+        //   duration: config.rotationDuration || 250000,
+        //   rotation: 360 * (Math.PI / 180),
+        //   easing: 'linear',
+        //   loop: true,
+        // }),
+      // );
 
       this.target.addChild(this.sprite);
     }

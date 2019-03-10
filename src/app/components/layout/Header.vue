@@ -81,10 +81,10 @@ interface LinkRefState {
         distinctUntilChanged(),
         filter((section) => !!section),
         tap((section) => {
-          if (section === navigationLinks[0]['section']) {
+          if (section === navigationLinks[0].section) {
             this.activeDesignationLine = 0;
           }
-        })
+        }),
       ),
     };
   },
@@ -124,7 +124,7 @@ export default class Header extends Vue {
     );
 
     setInterval(() => {
-      if (this.activeSection === navigationLinks[0]['section']) {
+      if (this.activeSection === navigationLinks[0].section) {
         this.activeDesignationLine = 0;
       } else {
         let randomLine = this.getRandomDesignationLine();

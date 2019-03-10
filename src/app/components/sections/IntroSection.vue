@@ -50,18 +50,23 @@ export default class IntroSection extends Vue {
       },
     );
 
-    const minDisplacement = 8;
+    const minDisplacement = 10;
+    const maxDisplacement = 80;
 
-    text1.enableParallax(true, { speed: -300, direction: 'x' });
+    text1.enableParallax(true, { speed: -100, direction: 'x' });
     text1.enableDisplacement(
       true,
       {
         scaleX: minDisplacement,
-        scaleY: minDisplacement
-      }
+        scaleY: minDisplacement,
+      },
     ).then((extra) => {
       this.scroller.scrollAnimation$.subscribe((state) => {
-        const scaleValue = clamp(state.position.y / 10, minDisplacement, 20);
+        const scaleValue = clamp(
+          state.position.y / 5,
+          minDisplacement,
+          maxDisplacement,
+        );
 
         extra.scaleFilter(
           scaleValue,
@@ -71,16 +76,20 @@ export default class IntroSection extends Vue {
       });
     });
 
-    text2.enableParallax(true, { speed: 400, direction: 'x' });
+    text2.enableParallax(true, { speed: 150, direction: 'x' });
     text2.enableDisplacement(
       true,
       {
         scaleX: minDisplacement,
-        scaleY: minDisplacement
-      }
+        scaleY: minDisplacement,
+      },
     ).then((extra) => {
       this.scroller.scrollAnimation$.subscribe((state) => {
-        const scaleValue = clamp(state.position.y / 10, minDisplacement, 20);
+        const scaleValue = clamp(
+          state.position.y / 5,
+          minDisplacement,
+          maxDisplacement,
+        );
 
         extra.scaleFilter(
           scaleValue,

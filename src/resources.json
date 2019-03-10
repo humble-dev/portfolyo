@@ -18,6 +18,12 @@
     "extras": [ "pixi" ]
   },
   {
+    "name": "displacement.glitch",
+    "type": "image",
+    "path": "/images/displacement/glitch.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
     "name": "displacement.asteroid",
     "type": "image",
     "path": "/images/displacement/asteroid.jpg",
