@@ -114,16 +114,13 @@ export class ScrollerService {
         },
       },
       input: {
-        mouse: {
-          multiplier: 0.75,
-        },
+        mouse: {},
         touch: {
           multiplier: 2,
         },
       },
       output: {
         default: {
-          speed: 2200,
           selector: 'section,footer',
           on: {
             animation: (

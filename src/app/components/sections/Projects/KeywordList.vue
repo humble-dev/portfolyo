@@ -32,7 +32,7 @@ export default class KeywordList extends Vue {
       this.visible = visible;
 
       if (this.visible && ! this.lastThread) {
-        this.lastThread = Ticker.tick((delta) => this.animate(delta));
+        this.lastThread = Ticker.add((delta) => this.animate(delta));
       } else if ( ! this.visible && this.lastThread) {
         this.lastThread.kill();
         this.lastThread = undefined;
@@ -44,7 +44,7 @@ export default class KeywordList extends Vue {
     const wrapperWidth = this.wrapperState.bounds.width;
     const resetIndicies = [];
     const gutter = 15;
-    const speed = 10;
+    const speed = .8;
 
     for (let i = 0, len = this.keywordStates.length; i < len; i++) {
       const keyword = this.keywordStates[i];
@@ -60,7 +60,7 @@ export default class KeywordList extends Vue {
         keywordData.x += wrapperWidth - keywordWidth;
       }
 
-      keywordData.x += speed / delta;
+      keywordData.x += speed * delta;
 
       if (keywordData.x + keyword.bounds.width > 0) {
         keyword.element.style.transform = `

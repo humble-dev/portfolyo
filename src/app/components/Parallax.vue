@@ -11,6 +11,7 @@ import { parallaxHelper } from '@/app/helpers/parallax.helper';
 export default class Parallax extends Vue {
   private scroller = ScrollerService.getInstance();
   private translation = { x: 0, y: 0 };
+  private lastTranslation = { x: 0, y: 0 };
   private elementState!: ElementState;
 
   @Prop({ default: 50 })
@@ -79,9 +80,16 @@ export default class Parallax extends Vue {
       this.translation.y = Math.min(this.translation.y, this.minValue);
     }
 
-    this.$emit('translate', this.translation);
+    const changed = this.translation.x !== this.lastTranslation.x ||
+                    this.translation.y !== this.lastTranslation.y;
 
-    this.updateTranslation();
+    if (changed) {
+      this.$emit('translate', this.translation);
+      this.updateTranslation();
+    }
+
+    this.lastTranslation.y = this.translation.y;
+    this.lastTranslation.x = this.translation.x;
   }
 
   private updateTranslation() {
@@ -90,6 +98,7 @@ export default class Parallax extends Vue {
       ${this.translation.y}px,
       0
     )`;
+
 
     (this.$el as HTMLElement).style.transform = translate3d;
   }

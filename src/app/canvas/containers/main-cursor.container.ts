@@ -18,7 +18,9 @@ export class MainCursorContainer extends DefaultContainer {
   private innerCircle!: PIXI.Sprite;
   private outerMoveTween?: Tween;
   private innerMoveTween?: Tween;
+  private outerRotationTween?: Tween;
   private mouseMoveResetTimer = -1;
+  private lastRotationDiff = 0;
   private outerVelocityTween?: Tween;
   private mousePosition = { x: 0, y: 0 };
   private trackedMousePosition = { x: 0, y: 0 };
@@ -26,6 +28,7 @@ export class MainCursorContainer extends DefaultContainer {
   private cursorColor = '#ff0d00';
   private motionBlur?: MotionBlur;
   private cursorSize = 90;
+  private cursorScale = .8;
   private strokeSize = 2;
 
   private outerPath = `
@@ -119,13 +122,44 @@ export class MainCursorContainer extends DefaultContainer {
     const velY = clamp(dY * 1.1 / this.velocityFrequency, -10, 10);
     const scaleX = clamp(Math.abs(velX), 1, 2);
     const scaleY = clamp(Math.abs(velY), 1, 2);
+    const scale = Math.max(scaleX, scaleY);
 
     if (this.motionBlur) {
       this.motionBlur.setVelocity(
-        Math.pow(velX, 3) * (velX < 0 ? -1 : 1),
-        Math.pow(velY, 3) * (velY < 0 ? -1 : 1),
+        Math.min(Math.pow(velX, 3) * (velX < 0 ? -1 : 1), 50),
+        Math.min(Math.pow(velY, 3) * (velY < 0 ? -1 : 1), 50),
         100,
       );
+    }
+
+    const rotation = Math.atan2(dY, dX);
+    const lastRotation = this.outerCircle.rotation;
+    const rotationDiff = Math.abs(rotation - lastRotation);
+    const rotationDelta = Math.abs(rotationDiff - this.lastRotationDiff);
+
+    this.lastRotationDiff = rotationDiff;
+
+    if (this.outerRotationTween) {
+      this.outerRotationTween.stop();
+    }
+
+    if (rotationDelta < 90 * Math.PI / 180) {
+      this.outerRotationTween = Tween.to(
+        {
+          rotation: this.outerCircle.rotation,
+        },
+        {
+          rotation,
+        },
+        150,
+        {
+          update: (props) => {
+            this.outerCircle.rotation = props.rotation;
+          },
+        },
+      );
+    } else {
+      this.outerCircle.rotation = rotation;
     }
 
     if (this.outerVelocityTween) {
@@ -135,18 +169,15 @@ export class MainCursorContainer extends DefaultContainer {
     this.outerVelocityTween = Tween.to(
       {
         width: this.outerCircle.width,
-        height: this.outerCircle.height,
       },
       {
-        width: this.cursorSize * .8 * scaleX,
-        height: this.cursorSize * .8 * scaleY,
+        width: this.cursorSize * this.cursorScale * scale,
       },
       300,
       {
         update: (size) => {
           setTimeout(() => {
             this.outerCircle.width = size.width;
-            this.outerCircle.height = size.height;
           });
         },
       },
@@ -172,7 +203,9 @@ export class MainCursorContainer extends DefaultContainer {
     this.outerCircleContext.lineWidth = this.strokeSize;
     this.outerCircleContext.stroke(new Path2D(this.outerPath));
     this.outerCircleTexture.update();
-    // this.outerCircle.scale.set(.5);
+
+    this.outerCircle.height = this.cursorSize * this.cursorScale;
+    this.outerCircle.width = this.cursorSize * this.cursorScale;
 
     this.innerCircleContext.fillStyle = this.cursorColor;
     this.innerCircleContext.fill(new Path2D(this.innerPath));

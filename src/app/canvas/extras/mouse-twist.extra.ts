@@ -29,55 +29,55 @@ export class MouseTwist implements ContainerExtra {
   ) {}
 
   public activate(config: Partial<MouseTwistConfig> = {}) {
-    if ( ! this.enabled) {
-      this.enabled = true;
+    // if ( ! this.enabled) {
+    //   this.enabled = true;
 
-      this.filter = new TwistFilter(
-        config.radius,
-        typeof config.angle === 'number'
-          ? (config.angle * Math.PI / 180)
-          : undefined,
-        config.padding,
-      );
+    //   this.filter = new TwistFilter(
+    //     config.radius,
+    //     typeof config.angle === 'number'
+    //       ? (config.angle * Math.PI / 180)
+    //       : undefined,
+    //     config.padding,
+    //   );
 
-      this.target.filters = [
-        this.filter,
-        ...(this.target.filters || []),
-      ];
+    //   this.target.filters = [
+    //     this.filter,
+    //     ...(this.target.filters || []),
+    //   ];
 
-      fromEvent(window, 'blur')
-        .subscribe(() => {
-          if (this.lastTween) {
-            this.lastTween.stop();
-          }
+    //   fromEvent(window, 'blur')
+    //     .subscribe(() => {
+    //       if (this.lastTween) {
+    //         this.lastTween.stop();
+    //       }
 
-          this.filter.offset.x = -99999;
-          this.filter.offset.y = -99999;
+    //       this.filter.offset.x = -99999;
+    //       this.filter.offset.y = -99999;
 
-          this.moved = false;
-        });
+    //       this.moved = false;
+    //     });
 
-      this.moveSubscription = fromEvent<MouseEvent>(window, 'mousemove')
-        .pipe(
-          tap((position) => {
-            if ( ! this.moved) {
-              this.filter.offset.x = position.x;
-              this.filter.offset.y = position.y;
-            }
-          }),
-          map((event) => {
-            this.moved = true;
+    //   this.moveSubscription = fromEvent<MouseEvent>(window, 'mousemove')
+    //     .pipe(
+    //       tap((position) => {
+    //         if ( ! this.moved) {
+    //           this.filter.offset.x = position.x;
+    //           this.filter.offset.y = position.y;
+    //         }
+    //       }),
+    //       map((event) => {
+    //         this.moved = true;
 
-            return {
-              x: event.clientX,
-              y: event.clientY,
-            };
-          }),
-        )
-        .subscribe(
-          (position) => this.handleMouseMove(position, config),
-        );
-    }
+    //         return {
+    //           x: event.clientX,
+    //           y: event.clientY,
+    //         };
+    //       }),
+    //     )
+    //     .subscribe(
+    //       (position) => this.handleMouseMove(position, config),
+    //     );
+    // }
   }
 
   public deactivate(config: Partial<MouseTwistConfig> = {}) {

@@ -394,7 +394,7 @@ export default class ProjectsSection extends Vue {
             speed: index % 2 === 0 ? 100 : -100,
             direction: 'x'
           }">
-            <KeywordList :keywords="project.keywords" />
+            <!-- <KeywordList :keywords="project.keywords" /> -->
           </Parallax>
         </div>
       </div>

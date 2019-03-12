@@ -1,6 +1,6 @@
 import { Observable, Subject } from 'rxjs';
 import {
-  auditTime, distinctUntilChanged, map, takeWhile, finalize, tap, switchMap, startWith, takeUntil,
+  auditTime, distinctUntilChanged, map, takeUntil, tap,
 } from 'rxjs/operators';
 
 import { ElementState } from '../providers/element-state.provider';

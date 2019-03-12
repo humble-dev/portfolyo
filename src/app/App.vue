@@ -81,7 +81,7 @@ export default class App extends Vue {
 
     // Sync smoovy ticker with pixi ticker
     Ticker.override = true;
-    PIXI.ticker.shared.add((delta) => Ticker.nextTick());
+    PIXI.ticker.shared.add((delta) => Ticker.tick(delta));
 
     // Prevent from tab scrolling
     document.addEventListener('keydown', (event) => {
