@@ -96,11 +96,10 @@ export default class App extends Vue {
     );
 
     // Add main background
-    const background = new MainBackgroundContainer(this.scroller.wrapper);
-
-    // background.enableParallax(true, { speed: 3000, direction: 'y' });
-
-    this.canvasDelegator.addContainer('background', background);
+    this.canvasDelegator.addContainer(
+      'background',
+      new MainBackgroundContainer()
+    );
 
     // Add custom cursoir
     this.canvasDelegator.addContainer('foreground', new MainCursorContainer());

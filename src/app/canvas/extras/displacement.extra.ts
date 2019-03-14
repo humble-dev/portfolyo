@@ -8,13 +8,16 @@ export interface DisplacementConfig extends ContainerExtraConfig {
   scaleY: number;
   sprite: string;
   scaleDuration: number;
-  rotationDuration: number;
+  rotationSpeed: number;
+  moveSpeedX: number;
+  moveSpeedY: number;
 }
 
 export const displacementExtraName = 'displacement';
 
 export class Displacement implements ContainerExtra {
   public name = displacementExtraName;
+  private config!: Partial<DisplacementConfig>;
   private active: boolean = false;
   private sprite?: PIXI.Sprite;
   private filter?: PIXI.filters.DisplacementFilter;
@@ -40,14 +43,11 @@ export class Displacement implements ContainerExtra {
       this.killTweens();
 
       this.active = true;
+      this.config = config;
 
       if ( ! this.sprite) {
-        this.sprite = PIXI.Sprite.from(config.sprite || 'displacement.water');
+        this.sprite = PIXI.Sprite.from(config.sprite || 'displacement.clouds');
         this.sprite.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
-        this.sprite.anchor.x = 0.5;
-        this.sprite.anchor.y = 0.5;
-        this.sprite.position.x = this.target.x + this.target.width / 2;
-        this.sprite.position.y = this.target.y + this.target.height / 2;
       }
 
       if ( ! this.filter) {
@@ -75,17 +75,26 @@ export class Displacement implements ContainerExtra {
         }),
       );
 
-      // this.animations.push(
-        // anime({
-        //   targets: this.sprite,
-        //   duration: config.rotationDuration || 250000,
-        //   rotation: 360 * (Math.PI / 180),
-        //   easing: 'linear',
-        //   loop: true,
-        // }),
-      // );
-
       this.target.addChild(this.sprite);
+    }
+  }
+
+  public render(delta: number = 1) {
+    if (this.sprite) {
+      if (this.config.rotationSpeed) {
+        this.sprite.rotation += this.config.rotationSpeed * delta;
+        this.sprite.rotation %= 6.283185307179586; // = 360deg
+      }
+
+      if (this.config.moveSpeedX) {
+        this.sprite.x += this.config.moveSpeedX * delta;
+        this.sprite.x %= this.sprite.width;
+      }
+
+      if (this.config.moveSpeedY) {
+        this.sprite.y += this.config.moveSpeedY * delta;
+        this.sprite.y %= this.sprite.height;
+      }
     }
   }
 

@@ -1,7 +1,7 @@
-import { ContainerExtra, ContainerExtraConfig } from '../default.container';
 import { MotionBlurFilter } from '@pixi/filter-motion-blur';
-import anime from 'animejs';
-import { Tween, easings } from '@smoovy/core';
+import { easings, Tween } from '@smoovy/core';
+
+import { ContainerExtra, ContainerExtraConfig } from '../default.container';
 
 export interface MotionBlurConfig extends ContainerExtraConfig {}
 

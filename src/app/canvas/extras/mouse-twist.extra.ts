@@ -1,11 +1,10 @@
-import { Container } from 'pixi.js';
+import { fromEvent, Subscription } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 import { TwistFilter } from '@pixi/filter-twist';
-import { Tween, easings } from '@smoovy/core';
+import { easings, Tween } from '@smoovy/core';
 
 import { ContainerExtra, ContainerExtraConfig } from '../default.container';
-import { fromEvent, Subscription } from 'rxjs';
-import { pluck, map, first, skip, tap, startWith, filter, debounceTime } from 'rxjs/operators';
 
 export interface MouseTwistConfig extends ContainerExtraConfig {
   radius: number;
@@ -25,59 +24,59 @@ export class MouseTwist implements ContainerExtra {
   private lastTween?: Tween;
 
   public constructor(
-    protected target: Container,
+    protected target: PIXI.Container,
   ) {}
 
   public activate(config: Partial<MouseTwistConfig> = {}) {
-    // if ( ! this.enabled) {
-    //   this.enabled = true;
+    if ( ! this.enabled) {
+      this.enabled = true;
 
-    //   this.filter = new TwistFilter(
-    //     config.radius,
-    //     typeof config.angle === 'number'
-    //       ? (config.angle * Math.PI / 180)
-    //       : undefined,
-    //     config.padding,
-    //   );
+      this.filter = new TwistFilter(
+        config.radius,
+        typeof config.angle === 'number'
+          ? (config.angle * Math.PI / 180)
+          : undefined,
+        config.padding || 20,
+      );
 
-    //   this.target.filters = [
-    //     this.filter,
-    //     ...(this.target.filters || []),
-    //   ];
+      this.target.filters = [
+        this.filter,
+        ...(this.target.filters || []),
+      ];
 
-    //   fromEvent(window, 'blur')
-    //     .subscribe(() => {
-    //       if (this.lastTween) {
-    //         this.lastTween.stop();
-    //       }
+      fromEvent(window, 'blur')
+        .subscribe(() => {
+          if (this.lastTween) {
+            this.lastTween.stop();
+          }
 
-    //       this.filter.offset.x = -99999;
-    //       this.filter.offset.y = -99999;
+          this.filter.offset.x = -99999;
+          this.filter.offset.y = -99999;
 
-    //       this.moved = false;
-    //     });
+          this.moved = false;
+        });
 
-    //   this.moveSubscription = fromEvent<MouseEvent>(window, 'mousemove')
-    //     .pipe(
-    //       tap((position) => {
-    //         if ( ! this.moved) {
-    //           this.filter.offset.x = position.x;
-    //           this.filter.offset.y = position.y;
-    //         }
-    //       }),
-    //       map((event) => {
-    //         this.moved = true;
+      this.moveSubscription = fromEvent<MouseEvent>(window, 'mousemove')
+        .pipe(
+          tap((position) => {
+            if ( ! this.moved) {
+              this.filter.offset.x = position.x;
+              this.filter.offset.y = position.y;
+            }
+          }),
+          map((event) => {
+            this.moved = true;
 
-    //         return {
-    //           x: event.clientX,
-    //           y: event.clientY,
-    //         };
-    //       }),
-    //     )
-    //     .subscribe(
-    //       (position) => this.handleMouseMove(position, config),
-    //     );
-    // }
+            return {
+              x: event.clientX,
+              y: event.clientY,
+            };
+          }),
+        )
+        .subscribe(
+          (position) => this.handleMouseMove(position, config),
+        );
+    }
   }
 
   public deactivate(config: Partial<MouseTwistConfig> = {}) {
@@ -98,6 +97,7 @@ export class MouseTwist implements ContainerExtra {
         this.target.filters = this.target.filters.filter((f) => {
           return f !== this.filter;
         });
+
       }
     }
   }

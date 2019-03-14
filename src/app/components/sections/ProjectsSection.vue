@@ -10,11 +10,13 @@ import {
 } from '@/app/canvas/containers/related-text.container';
 import { DisplacementConfig } from '@/app/canvas/extras/displacement.extra';
 import { ScrollerService } from '@/app/services/scroller.service';
+import { Resolver } from '@/app/utils/promise.util';
 
 import Parallax from '../Parallax.vue';
 import Section from '../Section.vue';
 import KeywordList from './Projects/KeywordList.vue';
-import { Resolver } from '@/app/utils/promise.util';
+import { DefaultContainer } from '@/app/canvas/default.container';
+import { MouseTwist } from '@/app/canvas/extras/mouse-twist.extra';
 
 type Projects = Project[];
 interface Project {
@@ -178,6 +180,7 @@ export default class ProjectsSection extends Vue {
   public mounted() {
     const wrappers = this.$refs.projectWrapper as HTMLElement[];
 
+
     wrappers.forEach((element, index) => {
       const id = element.getAttribute('data-id');
       const project = this.projects.find((p) => p.id === id);
@@ -205,12 +208,6 @@ export default class ProjectsSection extends Vue {
             direction: 'x',
           },
         );
-
-        textContainer.enableMouseTwist(true, {
-          radius: 250,
-          padding: 500,
-          angle: 20,
-        });
 
         this.canvasDelegator.addContainer(
           'background',
@@ -300,14 +297,16 @@ export default class ProjectsSection extends Vue {
         {
           scaleX: 100,
           scaleY: 100,
+          moveSpeedX: .8,
+          moveSpeedY: .8,
           scaleDuration: enabled ? 0 : 1500,
         },
       ).then((extra) => {
         setTimeout(() => {
           if (enabled) {
             extra.scaleFilter(
-              5,
-              5,
+              15,
+              15,
               1000,
             );
           } else {
@@ -318,12 +317,6 @@ export default class ProjectsSection extends Vue {
             );
           }
         });
-      });
-
-      image.enableMouseTwist(enabled, {
-        radius: 150,
-        padding: 150,
-        angle: 30,
       });
 
       image.enableVisibility(enabled);
@@ -347,6 +340,16 @@ export default class ProjectsSection extends Vue {
           minY: 0,
           maxY: 0,
         },
+      );
+
+      text.enableDisplacement(
+        enabled,
+        {
+          scaleX: 25,
+          scaleY: 25,
+          moveSpeedX: .9,
+          moveSpeedY: .9,
+        }
       );
     }
   }
@@ -394,7 +397,7 @@ export default class ProjectsSection extends Vue {
             speed: index % 2 === 0 ? 100 : -100,
             direction: 'x'
           }">
-            <!-- <KeywordList :keywords="project.keywords" /> -->
+            <KeywordList :keywords="project.keywords" />
           </Parallax>
         </div>
       </div>
@@ -407,7 +410,14 @@ export default class ProjectsSection extends Vue {
     position: relative;
   }
 
+  .keyword-list {
+    position: absolute;
+    left: 0;
+    right: 0;
+  }
+
   .keyword-container {
+    position: relative;
     width: 100%;
 
     .gl-disabled & {

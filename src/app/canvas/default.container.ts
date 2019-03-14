@@ -2,12 +2,24 @@ import * as PIXI from 'pixi.js';
 
 import { ResourceProvider } from '../providers/resource.provider';
 import { Resolver } from '../utils/promise.util';
-import { DisplacementConfig, displacementExtraName, Displacement } from './extras/displacement.extra';
-import { VisibilityConfig, visibilityExtraName, Visibility } from './extras/visibility.extra';
-import { MouseMotionConfig, mouseMotionExtraName, MouseMotion } from './extras/mouse-motion.extra';
-import { ParallaxConfig, parallaxExtraName, Parallax } from './extras/parallax.extra';
-import { MotionBlurConfig, MotionBlur, motionBlurExtraName } from './extras/motion-blur.extra';
-import { MouseTwistConfig, mouseTwistExtraName, MouseTwist } from './extras/mouse-twist.extra';
+import {
+  Displacement, DisplacementConfig, displacementExtraName,
+} from './extras/displacement.extra';
+import {
+  MotionBlur, MotionBlurConfig, motionBlurExtraName,
+} from './extras/motion-blur.extra';
+import {
+  MouseMotion, MouseMotionConfig, mouseMotionExtraName,
+} from './extras/mouse-motion.extra';
+import {
+  MouseTwist, MouseTwistConfig, mouseTwistExtraName,
+} from './extras/mouse-twist.extra';
+import {
+  Parallax, ParallaxConfig, parallaxExtraName,
+} from './extras/parallax.extra';
+import {
+  Visibility, VisibilityConfig, visibilityExtraName,
+} from './extras/visibility.extra';
 
 export interface ContainerExtraConfig {}
 
@@ -15,6 +27,7 @@ export interface ContainerExtra {
   name: string;
   activate(config?: Partial<ContainerExtraConfig>): void;
   deactivate(config?: Partial<ContainerExtraConfig>): void;
+  render?(delta: number): void;
 }
 
 export type ContainerExtraCtor = new (
@@ -23,9 +36,12 @@ export type ContainerExtraCtor = new (
 
 export class DefaultContainer {
   protected resources = ResourceProvider.getInstance();
+  protected visibility: boolean = true;
   private readyResolver: Resolver = new Resolver();
   private extraResolvers: { [name: string]: Resolver<ContainerExtra> } = {};
-  public context!: PIXI.Container;
+  private resolvedExtras: ContainerExtra[] = [];
+  private _context!: PIXI.Container;
+  private initializedResolver = new Resolver();
   public viewportSize = { width: 0, height: 0 };
 
   public constructor(
@@ -35,8 +51,22 @@ export class DefaultContainer {
 
   }
 
+  public isInitialized() {
+    return this.initializedResolver.promise;
+  }
+
   public get initialized() {
     return !!this.context;
+  }
+
+  public set context(context: PIXI.Container) {
+    this._context = context;
+
+    this.initializedResolver.resolve();
+  }
+
+  public get context() {
+    return this._context;
   }
 
   public get index(): number {
@@ -151,7 +181,7 @@ export class DefaultContainer {
     return resolver.promise;
   }
 
-  protected enableExtras(
+  public enableExtras(
     target: PIXI.Container,
     ...ctors: ContainerExtraCtor[]
   ) {
@@ -163,10 +193,28 @@ export class DefaultContainer {
       }
 
       this.extraResolvers[extra.name].resolve(extra);
+      this.resolvedExtras.push(extra);
     });
   }
 
+  public setVisibility(visible: boolean) {
+    this.visibility = visible;
+    this.context.visible = visible;
+  }
+
+  public get visible() {
+    return this.visibility;
+  }
+
+  public render(delta: number = 1) {
+    for (let i = 0, len = this.resolvedExtras.length; i < len; i++) {
+      const extra = this.resolvedExtras[i];
+      if (typeof extra.render === 'function') {
+        extra.render(delta);
+      }
+    }
+  }
+
   public sync() {}
-  public render(delta?: number) {}
   public destroy() {}
 }

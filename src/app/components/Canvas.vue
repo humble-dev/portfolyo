@@ -14,6 +14,7 @@ import { ScrollerService } from '@/app/services/scroller.service';
 import { RelatedContainer } from '@/app/canvas/related.container';
 import { ElementState } from '@/app/providers/element-state.provider';
 import { Ticker } from '@smoovy/core';
+import { MouseTwist } from '@/app/canvas/extras/mouse-twist.extra';
 
 @Component
 export default class Canvas extends Vue implements CanvasDelegator {
@@ -122,8 +123,35 @@ export default class Canvas extends Vue implements CanvasDelegator {
         this.initContainer(container);
       }
 
-      container.render(delta);
+      const visible = this.isContainerVisible(container);
+
+      if (visible !== container.visible) {
+        container.setVisibility(visible);
+      }
+
+      if (container.visible) {
+        container.render(delta);
+      }
     }
+  }
+
+  private isContainerVisible(container: DefaultContainer) {
+     if ( ! container.syncWithScrollPosition) {
+      return true;
+    }
+
+    const absScrollX = Math.abs(this.scrollContainer.context.x);
+    const absScrollY = Math.abs(this.scrollContainer.context.y);
+    const absPosX = container.context.x - absScrollX;
+    const absPosY = container.context.y - absScrollY;
+
+    const visibleX = absPosX - this.viewport.size.width < 0 &&
+                     absPosX + container.context.width > 0;
+
+    const visibleY = absPosY - this.viewport.size.height < 0 &&
+                     absPosY + container.context.height > 0;
+
+    return visibleX && visibleY;
   }
 
   protected initContainer(container: DefaultContainer) {

@@ -1,17 +1,14 @@
 import * as PIXI from 'pixi.js';
 
-import { Parallax } from '../extras/parallax.extra';
-import { RelatedContainer } from '../related.container';
-import { Displacement } from '../extras/displacement.extra';
-import { MotionBlur } from '../extras/motion-blur.extra';
+import { DefaultContainer } from '../default.container';
 
-export class MainBackgroundContainer extends RelatedContainer {
+export class MainBackgroundContainer extends DefaultContainer {
   protected noiseFilter!: PIXI.filters.NoiseFilter;
   protected sprite!: PIXI.extras.TilingSprite;
   protected texture!: PIXI.Texture;
 
-  public get index() {
-    return 0;
+  public constructor() {
+    super(false, 0);
   }
 
   public init() {
@@ -20,8 +17,8 @@ export class MainBackgroundContainer extends RelatedContainer {
     this.texture = PIXI.Texture.from('main.background');
     this.sprite = new PIXI.extras.TilingSprite(
       this.texture,
-      this.size.width,
-      this.size.height,
+      this.viewportSize.width,
+      this.viewportSize.height,
     );
 
     // this.context.filters = [
@@ -31,10 +28,10 @@ export class MainBackgroundContainer extends RelatedContainer {
     //   ),
     // ];
 
-    this.enableExtras(
-      this.context,
-      Parallax,
-    );
+    // this.enableExtras(
+    //   this.context,
+    //   Parallax,
+    // );
 
     this.context.addChild(this.sprite);
   }
@@ -48,7 +45,7 @@ export class MainBackgroundContainer extends RelatedContainer {
   public sync() {
     super.sync();
 
-    this.sprite.width = this.size.width;
-    this.sprite.height = this.size.height;
+    this.sprite.width = this.viewportSize.width;
+    this.sprite.height = this.viewportSize.height;
   }
 }

@@ -50,8 +50,9 @@ export default class IntroSection extends Vue {
       },
     );
 
+    const moveSpeed = 1;
     const minDisplacement = 10;
-    const maxDisplacement = 80;
+    const maxDisplacement = 40;
 
     text1.enableParallax(true, { speed: -100, direction: 'x' });
     text1.enableDisplacement(
@@ -59,6 +60,8 @@ export default class IntroSection extends Vue {
       {
         scaleX: minDisplacement,
         scaleY: minDisplacement,
+        moveSpeedX: moveSpeed,
+        moveSpeedY: moveSpeed,
       },
     ).then((extra) => {
       this.scroller.scrollAnimation$.subscribe((state) => {
@@ -82,6 +85,8 @@ export default class IntroSection extends Vue {
       {
         scaleX: minDisplacement,
         scaleY: minDisplacement,
+        moveSpeedX: moveSpeed,
+        moveSpeedY: moveSpeed,
       },
     ).then((extra) => {
       this.scroller.scrollAnimation$.subscribe((state) => {
