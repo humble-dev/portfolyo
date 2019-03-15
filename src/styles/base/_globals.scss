@@ -12,8 +12,9 @@ $font-neue-plak-extended-extra-black: "Neue Plak Extended ExtraBlack";
 $font-neue-plak-extended-light: "Neue Plak Extended Light";
 $font-neue-plak-extended-regular: "Neue Plak Extended Regular";
 
-/** REM definitions */
-$rem-baseline: 18;
+/** Easing definitions */
+$ease-in-out-circ: cubic-bezier(0.785, 0.135, 0.150, 0.860);
+$ease-out-smooth: cubic-bezier(0.215, 0.610, 0.355, 1.000);
 
 /** Breakpoint definitions */
 $break-xs: 380px;

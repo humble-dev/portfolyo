@@ -136,7 +136,7 @@ export default class App extends Vue {
 <style lang="scss">
   @import "@/styles/application.scss";
 
-  html:not(.gl-disabled) {
+  html:not(.gl-disabled).loaded {
     cursor: none;
 
     * {
