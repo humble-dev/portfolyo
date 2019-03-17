@@ -111,6 +111,9 @@ export default class App extends Vue {
     this.viewport.changed(200).subscribe(() => {
       this.elementState.update();
     });
+
+    // Update scroller once
+    setTimeout(() => this.scrollerService.update(), 100);
   }
 }
 </script>
@@ -136,7 +139,7 @@ export default class App extends Vue {
 <style lang="scss">
   @import "@/styles/application.scss";
 
-  html:not(.gl-disabled).loaded {
+  html:not(.gl-disabled).hide-cursor {
     cursor: none;
 
     * {
@@ -144,8 +147,16 @@ export default class App extends Vue {
     }
   }
 
-  .gl-disabled .page-wrapper {
+  html:not(.preloader-ready) .canvas-wrapper {
+    visibility: hidden;
+  }
+
+  .page-wrapper {
     background-color: $color-beige;
+  }
+
+  .circle-wrapper {
+    cursor: pointer;
   }
 
   .page-wrapper {

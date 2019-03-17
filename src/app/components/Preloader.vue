@@ -1,49 +1,77 @@
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { map, delay, tap } from 'rxjs/operators';
+import { Component, Prop, Vue } from "vue-property-decorator";
+import { map, delay, tap, filter } from "rxjs/operators";
 
-import { ResourceProvider } from '@/app/providers/resource.provider';
-import { Tween, easings, Ticker } from '@smoovy/core';
-import { clamp } from '@/app/utils/math.util';
+import { ResourceProvider } from "@/app/providers/resource.provider";
+import { Tween, easings, Ticker } from "@smoovy/core";
+import { clamp } from "@/app/utils/math.util";
+import { CursorService } from '@/app/services/cursor.service';
+import { ViewportProvider } from '@/app/providers/viewport.provider';
+import { PreloaderService } from '@/app/services/preloader.service';
 
 const loadingLines = [
-  [ 'Hey!', 'Yo!', 'Welcome!', 'Hi!' ],
-  [ 'Whazzup!' ],
-  'Thanks for visiting',
-  [ 'Ready in a minute!', 'Random line here' ],
-  'Almost ready',
-  ['FUCK NAZIS!', 'FUCK AFD!', 'FUCK RACISM!'],
-  'Oh Yeah!!'
+  ["Hey!", "Yo!", "Welcome!", "Hi!"],
+  ["Whazzup!"],
+  "Thanks for visiting",
+  ["Ready in a minute!", "Random line here"],
+  "Almost ready",
+  ["FUCK NAZIS!", "FUCK AFD!", "FUCK RACISM!"],
+  "Oh Yeah!!"
 ];
 
 @Component<Preloader>({
   subscriptions(this) {
     return {
       loadingProgress: this.resources.progress$.pipe(
-        tap((progress) => {
+        tap(progress => {
           setTimeout(() => {
-            this.updateTotalProgresss(progress);
+            this.updateTotalProgresss(progress, progress > 0.8 ? 2000 : 4000);
           }, 100);
-        }),
-      ),
+        })
+      )
     };
-  },
+  }
 })
 export default class Preloader extends Vue {
+  private preloader = PreloaderService.getInstance();
+  private cursor = CursorService.getInstance();
+  private viewport = ViewportProvider.getInstance();
   private resources = ResourceProvider.getInstance();
   private loadingProgress: number = 0;
   private totalProgress: number = 0;
+  private clicked: boolean = false;
   private progressTween?: Tween;
   private ready: boolean = false;
   private loaded: boolean = false;
 
   public mounted() {
-    setTimeout(() => this.ready = true);
+    setTimeout(() => (this.ready = true));
+
+    this.cursor.ready.then(() => {
+      this.cursor.setPosition(
+        this.viewport.size.width / 2,
+        this.viewport.size.height / 2,
+        true,
+      );
+
+      this.cursor.hide();
+    });
+
+    this.viewport.changed(200)
+      .pipe(
+        filter(() => ! this.clicked),
+      )
+      .subscribe((size) => {
+        this.cursor.setPosition(size.width / 2, size.height / 2, false);
+      })
 
     this.resources.load();
   }
 
-  private updateTotalProgresss(progress: number) {
+  private updateTotalProgresss(
+    progress: number,
+    duration: number = 4000,
+  ) {
     if (this.progressTween) {
       this.progressTween.stop();
     }
@@ -55,204 +83,140 @@ export default class Preloader extends Vue {
       {
         value: progress
       },
-      4000,
+      duration,
       {
-        easing: easings.Linear.none,
-        update: (progress) => {
-          this.totalProgress = clamp(
-            progress.value,
-            0,
-            1
-          );
+        easing: easings.Quad.out,
+        update: progress => {
+          this.totalProgress = clamp(progress.value, 0, 1);
+          this.loaded = this.totalProgress === 1;
 
-          const loaded = this.totalProgress === 1;
-
-          setTimeout(() => {
-            this.loaded = loaded;
-
-            if (this.loaded) {
-              document.documentElement.classList.add('loaded');
-            }
-          }, loaded ? 500 : 0);
-        },
+          if (this.loaded) {
+            document.documentElement.classList.add('preloader-ready');
+          }
+        }
       }
     );
+  }
+
+  private handleCircleClick() {
+    if (this.loaded) {
+      this.clicked = true;
+
+      document.documentElement.classList.add('hide-cursor');
+
+      setTimeout(() => {
+        this.preloader.resolveLoaded();
+        document.documentElement.classList.add('preloader-loaded');
+      }, 100);
+
+      setTimeout(() => {
+        this.cursor.show();
+        this.cursor.setPosition(
+          this.viewport.size.width / 2,
+          this.viewport.size.height / 2,
+          false,
+        );
+      }, 498);
+    }
   }
 }
 </script>
 
 <template>
-  <div :class="{ loaded }" class="preloader-wrapper fx-layout fx-vertical fx-center-center">
-    <div class="half-wrapper half-wrapper-top">
-      <div class="progress-bar-wrapper">
-        <div
-          class="progress-bar"
-          :style="{ transform: `scaleX(${totalProgress})` }"
-        ></div>
-      </div>
-      <div class="text-container">
-        <span>
-          <span :style="{
-            transform: `translate3d(${-5 * totalProgress}px, 0, 0)`
-          }">YOOOOOO!</span>
-        </span>
-      </div>
-    </div>
-    <div class="half-wrapper half-wrapper-bottom">
-      <div class="progress-bar-wrapper">
-        <div
-          class="progress-bar"
-          :style="{ transform: `scaleX(${totalProgress})` }"
-        ></div>
-      </div>
-      <div class="text-container">
-        <span>
-          <span :style="{
-            transform: `translate3d(${5 * totalProgress}px, 0, 0)`
-          }">YOOOOOO!</span>
-        </span>
-      </div>
+  <div :class="{ loaded, clicked }" class="preloader-wrapper fx-layout fx-vertical fx-center-center">
+    <div class="circle-wrapper" @click="handleCircleClick">
+      <svg
+        version="1.1"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        preserveAspectRatio="xMidYMid meet"
+        viewBox="0 0 80 80"
+        width="70"
+        height="70"
+      >
+        <defs>
+          <path
+            d="M80 40C80 62.08 62.08 80 40 80C17.92 80 0 62.08 0 40C0 17.92 17.92 0 40 0C62.08 0 80 17.92 80 40Z"
+            id="j1tAiwRU5Y"
+          ></path>
+          <clipPath id="clipaRMILI0sk">
+            <use xlink:href="#j1tAiwRU5Y" opacity="1"></use>
+          </clipPath>
+        </defs>
+        <g>
+          <g>
+            <g>
+              <g clip-path="url(#clipaRMILI0sk)">
+                <use
+                  xlink:href="#j1tAiwRU5Y"
+                  opacity="1"
+                  fill-opacity="0"
+                  :stroke-dasharray="`
+                    ${ totalProgress * (2 * Math.PI * 40) },
+                    ${2 * Math.PI * 40}
+                  `"
+                  stroke="#ff0d00"
+                  stroke-width="4"
+                  stroke-opacity="1"
+                ></use>
+              </g>
+            </g>
+          </g>
+        </g>
+      </svg>
+      <div class="point"></div>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-  .preloader-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 200;
-    transition: bottom 1s;
-    overflow: hidden;
-    background-color: transparent;
+.preloader-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 200;
+  transition: bottom 1s;
+  overflow: hidden;
+  background-color: transparent;
 
-    &.loaded {
-      visibility: hidden;
-      transition: visibility 0s 1.7s;
-    }
-
-    .text-container {
-      font-family: $font-neue-plak-extended-regular;
-      user-select: none;
-      position: absolute;
-      overflow: hidden;
-      z-index: 2;
-      transition: opacity .5s;
-      text-transform: uppercase;
-      left: 0;
-      width: 100%;
-      text-align: center;
-      white-space: nowrap;
-
-      @include fluid-size(letter-spacing, 1px, 3px);
-      @include fluid-size(font-size, 30px, 70px);
-    }
-
-    .half-wrapper-top .text-container {
-      bottom: (50vh * 0.002);
-
-      > span {
-        display: block;
-        transform: translate(0px, 40%);
-      }
-
-      > span > span {
-        display: block;
-      }
-    }
-
-    .half-wrapper-bottom .text-container {
-      top: (50vh * 0.003);
-
-      > span {
-        display: block;
-        transform: translate(0px, -60%);
-      }
-
-      > span > span {
-        display: block;
-      }
-    }
-
-    .half-wrapper {
-      position: absolute;
-      background-color: $color-beige;
-      height: 50%;
-      left: 0;
-      right: 0;
-      transition: transform 1.2s .5s;
-
-      &:after {
-        content: "";
-        position: absolute;
-        background-color: $color-black;
-        left: 0;
-        right: 0;
-        z-index: 6;
-        bottom: -1px;
-        top: -1px;
-        transform: scaleY(0);
-        transition: transform 1.2s .1s $ease-in-out-circ;
-      }
-    }
-
-    &.loaded .half-wrapper {
-      transform: scaleY(0);
-    }
-
-    &.loaded .half-wrapper:after {
-      transform: scaleY(1);
-    }
-
-    .half-wrapper-bottom {
-      bottom: 0;
-      transform-origin: 50% 100%;
-
-      .progress-bar-wrapper,
-      &:after {
-        transform-origin: 50% 0;
-      }
-    }
-
-    .half-wrapper-top {
-      top: 0;
-      transform-origin: 50% 0;
-
-      .progress-bar-wrapper,
-      &:after {
-        transform-origin: 50% 100%;
-      }
-    }
-
-    &.loaded .progress-bar-wrapper {
-      height: 100%;
-    }
-
-    &.loaded .progress-bar-wrapper {
-      transform: scaleY(1) translate3d(-50%, 0, 0);
-    }
-
-    .progress-bar-wrapper {
-      overflow: hidden;
-      position: absolute;
-      transform: translate3d(-50%, 0, 0) scaleY(.002);
-      left: 50%;
-      z-index: 5;
-      width: 100vw;
-      height: 100%;
-      transition: transform 1.2s $ease-in-out-circ;
-
-      .progress-bar {
-        position: absolute;
-        left: 0;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        will-change: transform;
-        background-color: $color-red;
-      }
-    }
+  &.clicked {
+    visibility: hidden;
+    transition: visibility 0s .5s;
   }
+
+  .circle-wrapper {
+    transition: transform .5s $ease-in-out-circ;
+  }
+
+  &:not(.clicked) .circle-wrapper {
+    transform: scale(.8);
+  }
+
+  @keyframes rotate360 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  &:not(.loaded) .circle-wrapper svg {
+    animation: rotate360 3s forwards linear infinite;
+  }
+
+  .point {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: $color-red;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform .8s $ease-in-out-circ;
+  }
+
+  &.loaded .point {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
 </style>

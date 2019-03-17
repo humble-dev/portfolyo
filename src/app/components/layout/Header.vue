@@ -142,18 +142,22 @@ export default class Header extends Vue {
 <template>
   <header>
     <div class="fg-container-fluid fg-wrapper-maxed">
-      <div class="fg-row fg-between-xs">
-        <h1>DavidePerozzi</h1>
-        <div
-          class="designation-container"
-          :class="`active-${activeDesignationLine}`"
-        >
-          <div class="designation-wrapper fx-layout fx-vertical">
-            <div
-              class="designation-line"
-              v-for="(line, index) in designationLines"
-              v-bind:key="index"
-            >{{line}}</div>
+      <div class="fx-layout fx-horizontal fx-start fg-between-xs">
+        <h1>
+          <span>DavidePerozzi</span>
+        </h1>
+        <div class="designation">
+          <div
+            class="designation-container"
+            :class="`active-${activeDesignationLine}`"
+          >
+            <div class="designation-wrapper fx-layout fx-vertical">
+              <div
+                class="designation-line"
+                v-for="(line, index) in designationLines"
+                v-bind:key="index"
+              >{{line}}</div>
+            </div>
           </div>
         </div>
         <nav v-detectSize.ignoreWidth :class="{ minimized: navMinimized }">
@@ -198,18 +202,53 @@ export default class Header extends Vue {
 
   h1 {
     color: $color-black;
+    display: inline-block;
     pointer-events: all;
+    padding: 5px 0;
     font-family: $font-neue-plak-extended-light;
     text-transform: uppercase;
+    overflow: hidden;
 
     @include fluid-size(font-size, 20px, 30px);
 
     span {
-      color: $color-red;
+      display: block;
+      transform: translate3d(0, -120%, 0);
+      opacity: 0;
+      transition:
+        transform 1s $ease-out-smooth,
+        opacity .8s;
+
+      .preloader-loaded & {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
     }
   }
 
+
   $designation-height: 40px;
+
+  .designation {
+    overflow: hidden;
+
+    @include responsive-width(0, $break-md) {
+      display: none;
+    }
+
+    .designation-container {
+      transform: translate3d(0, -120%, 0);
+      opacity: 0;
+      transition:
+        transform 1s .3s $ease-out-smooth,
+        opacity .8s .3s;
+
+      .preloader-loaded & {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+  }
 
   .designation-container {
     text-transform: uppercase;
@@ -218,10 +257,6 @@ export default class Header extends Vue {
     font-family: $font-neue-haas-regular;
 
     @include fluid-size(font-size, 14px, 20px);
-
-    @include responsive-width(0, $break-md) {
-      display: none;
-    }
 
     .designation-wrapper {
       transition: transform 1.5s;
@@ -278,9 +313,24 @@ export default class Header extends Vue {
       will-change: height;
       overflow: hidden;
       backface-visibility: hidden;
-      transform: translate3d(0, 0, 0);
+      transform: translate3d(100%, 0, 0);
+      opacity: 0;
+      transition:
+        transform 1s $ease-out-smooth,
+        opacity .8s;
 
       @include fluid-size(font-size, 16px, 20px);
+
+      .preloader-loaded & {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+
+      @for $i from 1 through 6 {
+        &:nth-child(#{$i}) {
+          transition-delay: 100ms * $i;
+        }
+      }
     }
 
     .nav-link:after {

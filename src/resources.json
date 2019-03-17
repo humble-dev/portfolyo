@@ -30,6 +30,18 @@
     "extras": [ "pixi" ]
   },
   {
+    "name": "cursor.outer",
+    "type": "image",
+    "path": "/images/cursor/outer.png",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "cursor.inner",
+    "type": "image",
+    "path": "/images/cursor/inner.png",
+    "extras": [ "pixi" ]
+  },
+  {
     "name": "projects.ammolite.title",
     "type": "image",
     "path": "/images/projects/ammolite/title.jpg",

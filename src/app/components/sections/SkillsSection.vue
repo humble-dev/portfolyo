@@ -138,12 +138,12 @@ export default class SkillsSection extends Vue {
         white-space: nowrap;
         display: inline-block;
         transform: translate3d(0, 105%, 0);
-        transition: transform 1s;
+        transition: transform 1s $ease-out-smooth;
       }
 
       @for $i from 1 through 10 {
         .line-wrapper:nth-child(#{$i}) > span {
-          transition-delay: 80ms * $i;
+          transition-delay: 50ms * $i;
         }
       }
 

@@ -1,7 +1,10 @@
 <script lang="ts">
 import { Component, Vue, Inject } from 'vue-property-decorator';
 
+import { clamp } from '@/app/utils/math.util';
+import { ViewportProvider } from '@/app/providers/viewport.provider';
 import { ScrollerService } from '@/app/services/scroller.service';
+import { PreloaderService } from '@/app/services/preloader.service';
 import { CanvasDelegatorService } from '@/app/services/canvas-delegator.service';
 import {
   RelatedTextContainer,
@@ -11,7 +14,7 @@ import {
 
 import Section from '../Section.vue';
 import Parallax from '../Parallax.vue';
-import { clamp } from '@/app/utils/math.util';
+import { Tween, easings } from '@smoovy/core';
 
 @Component({
   components: {
@@ -20,6 +23,8 @@ import { clamp } from '@/app/utils/math.util';
   },
 })
 export default class IntroSection extends Vue {
+  private preloader = PreloaderService.getInstance();
+  private viewport = ViewportProvider.getInstance();
   private canvasDelegator = CanvasDelegatorService.getInstance();
   private scroller = ScrollerService.getInstance();
 
@@ -51,8 +56,8 @@ export default class IntroSection extends Vue {
     );
 
     const moveSpeed = 1;
-    const minDisplacement = 10;
-    const maxDisplacement = 40;
+    const minDisplacement = 12;
+    const maxDisplacement = 50;
 
     text1.enableParallax(true, { speed: -100, direction: 'x' });
     text1.enableDisplacement(
@@ -104,7 +109,42 @@ export default class IntroSection extends Vue {
       });
     });
 
-    this.canvasDelegator.addContainer('background', text1, text2);
+    text1.enableVisibility(false);
+    text2.enableVisibility(false);
+
+    this.preloader.loaded.then(() => {
+      setTimeout(() => {
+        const moveX1 = this.viewport.size.width * 0.15;
+        const moveX2 = this.viewport.size.width * 0.15;
+        const textX1 = text1.context.x;
+        const textX2 = text2.context.x;
+
+        text1.context.x += moveX1;
+        text2.context.x -= moveX2;
+
+        text1.enableVisibility(true, { duration: 1800 });
+
+        Tween.to({ x: 0 }, { x: moveX1 }, 3000, {
+          easing: easings.Expo.out,
+          update: (pos) => {
+            text1.context.x = textX1 + moveX1 - pos.x;
+          },
+        });
+
+        setTimeout(() => {
+          text2.enableVisibility(true, { duration: 1800 });
+
+          Tween.to({ x: 0 }, { x: moveX2 }, 3000, {
+            easing: easings.Expo.out,
+            update: (pos) => {
+              text2.context.x = textX2 - moveX2 + pos.x;
+            },
+          });
+        }, 200);
+      }, 800);
+    });
+
+    // this.canvasDelegator.addContainer('background', text1, text2);
   }
 }
 </script>
@@ -112,14 +152,25 @@ export default class IntroSection extends Vue {
 <template>
   <Section name="intro" class="intro-wrapper">
     <div class="fg-row">
-      <p class="teaser-text upper fg-col-xs-3 fg-col-lg-2 fg-col-lg-offset-1">
-        <Parallax v-bind:speed="glConfig.enabled ? -150 : -50">
-          <span>Available for AWESOME Freelance projects</span>
+      <p class="teaser-text upper fg-col-xs-18 fg-col-lg-3 fg-col-lg-offset-1">
+        <Parallax v-bind:speed="glConfig.enabled ? -100 : -50">
+          <span class="line">
+            <span>Available for</span>
+          </span>
+          <span class="line">
+            <span>AWESOME</span>
+          </span>
+          <span class="line">
+            <span>Freelance</span>
+          </span>
+          <span class="line">
+            <span>projects</span>
+          </span>
         </Parallax>
       </p>
       <div
         ref="desLine1"
-        class="desline desline-1 fg-col-xs-18 fg-col-lg-14 fg-col-lg-offset-1"
+        class="desline desline-1 fg-col-xs-18 fg-col-lg-13 fg-col-lg-offset-1"
       >
         <Parallax
           v-if="!glConfig.enabled"
@@ -148,10 +199,34 @@ export default class IntroSection extends Vue {
 </template>
 
 <style scoped lang="scss">
-
   .teaser-text {
     @include responsive-width($break-lg) {
       text-align: right;
+    }
+
+    .line {
+      display: block;
+      overflow: hidden;
+
+      @for $i from 1 through 8 {
+        &:nth-child(#{$i}) span {
+          transition-delay: 100ms * $i;
+        }
+      }
+    }
+
+    .line span {
+      display: block;
+      opacity: 0;
+      transform: translate3d(0, 100%, 0);
+      transition:
+        transform 1.5s $ease-out-smooth,
+        opacity .8s;
+
+      .preloader-loaded & {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
     }
   }
 

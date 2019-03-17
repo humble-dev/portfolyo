@@ -116,11 +116,13 @@ export class ScrollerService {
       input: {
         mouse: {},
         touch: {
-          multiplier: 2,
+          multiplier: 2.5,
         },
       },
       output: {
         default: {
+          easing: easings.Quint.out,
+          speed: 1350,
           selector: 'section,footer',
           on: {
             animation: (
@@ -151,6 +153,10 @@ export class ScrollerService {
     );
 
     this.initialized = true;
+  }
+
+  public update() {
+    this.scroller.update();
   }
 
   public get wrapper(): HTMLElement {

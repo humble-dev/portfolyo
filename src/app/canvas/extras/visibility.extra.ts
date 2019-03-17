@@ -32,7 +32,7 @@ export class Visibility implements ContainerExtra {
         targets: this.target,
         duration,
         alpha: 1,
-        easing: 'easeOutCirc',
+        easing: 'easeOutQuad',
       });
     }
   }
