@@ -3,7 +3,10 @@ import { Component, Vue } from 'vue-property-decorator';
 
 import Section from '../Section.vue';
 import { CanvasDelegatorService } from '@/app/services/canvas-delegator.service';
-import { RelatedTextContainerStretch, RelatedTextContainer } from '@/app/canvas/containers/related-text.container';
+import {
+  RelatedTextContainerStretch,
+  RelatedTextContainer,
+} from '@/app/canvas/containers/related-text.container';
 
 const randomLinks = [
   'https://fakten-gegen-rechts.de/',
@@ -41,8 +44,22 @@ export default class ContactSection extends Vue {
       { ...textConfig },
     );
 
-    contactTextContainer.enableMouseTwist(true, { radius: 150, angle: 10, padding: 500 })
-    contactTextContainer.enableParallax(true, { speed: 30, direction: 'x' });
+    contactTextContainer.enableMouseTwist(
+      true,
+      {
+        radius: 150,
+        angle: 10,
+        padding: 500,
+      },
+    );
+
+    contactTextContainer.enableParallax(
+      true,
+      {
+        speed: 30,
+        direction: 'x',
+      },
+    );
 
     this.canvasDelegator.addContainer(
       'background',
@@ -51,7 +68,9 @@ export default class ContactSection extends Vue {
   }
 
   private updateRandomLink() {
-    this.randomLink = randomLinks[Math.round(randomLinks.length * Math.random())];
+    this.randomLink = randomLinks[
+      Math.round(randomLinks.length * Math.random())
+    ];
   }
 }
 </script>

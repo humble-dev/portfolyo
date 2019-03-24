@@ -96,10 +96,10 @@ export default class App extends Vue {
     );
 
     // Add main background
-    this.canvasDelegator.addContainer(
-      'background',
-      new MainBackgroundContainer()
-    );
+    // this.canvasDelegator.addContainer(
+    //   'background',
+    //   new MainBackgroundContainer()
+    // );
 
     // Add custom cursoir
     this.canvasDelegator.addContainer('foreground', new MainCursorContainer());
@@ -130,7 +130,7 @@ export default class App extends Vue {
 
               node.removeEventListener('mouseleave', leaveListener);
             },
-            false
+            false,
           );
         }, false);
       });

@@ -136,7 +136,7 @@ export default class Canvas extends Vue implements CanvasDelegator {
   }
 
   private isContainerVisible(container: DefaultContainer) {
-     if ( ! container.syncWithScrollPosition) {
+    if ( ! container.syncWithScrollPosition) {
       return true;
     }
 

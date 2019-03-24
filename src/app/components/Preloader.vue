@@ -1,10 +1,10 @@
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { map, delay, tap, filter } from "rxjs/operators";
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { map, delay, tap, filter } from 'rxjs/operators';
 
-import { ResourceProvider } from "@/app/providers/resource.provider";
-import { Tween, easings, Ticker } from "@smoovy/core";
-import { clamp } from "@/app/utils/math.util";
+import { ResourceProvider } from '@/app/providers/resource.provider';
+import { Tween, easings, Ticker } from '@smoovy/core';
+import { clamp } from '@/app/utils/math.util';
 import { CursorService } from '@/app/services/cursor.service';
 import { ViewportProvider } from '@/app/providers/viewport.provider';
 import { PreloaderService } from '@/app/services/preloader.service';
@@ -13,16 +13,16 @@ import { PreloaderService } from '@/app/services/preloader.service';
   subscriptions(this) {
     return {
       loadingProgress: this.resources.progress$.pipe(
-        tap(progress => {
+        tap((progress) => {
           this.currentProgress = progress;
 
           setTimeout(() => {
             this.updateTotalProgresss(progress, progress > 0.8 ? 2000 : 4000);
           }, 100);
-        })
-      )
+        }),
+      ),
     };
-  }
+  },
 })
 export default class Preloader extends Vue {
   private preloader = PreloaderService.getInstance();
@@ -64,7 +64,7 @@ export default class Preloader extends Vue {
       )
       .subscribe((size) => {
         this.cursor.setPosition(size.width / 2, size.height / 2, false);
-      })
+      });
 
     this.resources.load();
   }
@@ -79,23 +79,23 @@ export default class Preloader extends Vue {
 
     this.progressTween = Tween.to(
       {
-        value: this.totalProgress
+        value: this.totalProgress,
       },
       {
-        value: progress
+        value: progress,
       },
       duration,
       {
         easing: easings.Quad.out,
-        update: progress => {
-          this.totalProgress = clamp(progress.value, 0, 1);
+        update: ({ value }) => {
+          this.totalProgress = clamp(value, 0, 1);
           this.loaded = this.totalProgress === 1;
 
           if (this.loaded) {
             document.documentElement.classList.add('preloader-ready');
           }
-        }
-      }
+        },
+      },
     );
   }
 

@@ -14,8 +14,8 @@ import { RelatedTextContainer, RelatedTextContainerStretch } from '@/app/canvas/
     Parallax,
   },
   directives: {
-    visibleTrigger
-  }
+    visibleTrigger,
+  },
 })
 export default class SkillsSection extends Vue {
   private canvasDelegator = CanvasDelegatorService.getInstance();

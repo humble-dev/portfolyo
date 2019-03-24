@@ -1,9 +1,18 @@
 <script lang="ts">
 import { Component, Watch, Vue, Inject } from 'vue-property-decorator';
 
-import { RelatedImageContainer, RelatedImageContainerStretch } from '@/app/canvas/containers/related-image.container';
-import { RelatedVideoContainer, RelatedVideoContainerStretch, RelatedVideoContainerConfig } from '@/app/canvas/containers/related-video.container';
-import { CanvasDelegatorService } from '@/app/services/canvas-delegator.service';
+import {
+  RelatedImageContainer,
+  RelatedImageContainerStretch,
+} from '@/app/canvas/containers/related-image.container';
+import {
+  RelatedVideoContainer,
+  RelatedVideoContainerStretch,
+  RelatedVideoContainerConfig,
+} from '@/app/canvas/containers/related-video.container';
+import {
+  CanvasDelegatorService,
+} from '@/app/services/canvas-delegator.service';
 import {
   RelatedTextContainer,
   RelatedTextContainerStretch,
@@ -180,7 +189,7 @@ export default class ProjectsSection extends Vue {
   private scrollerService = ScrollerService.getInstance();
   private textContainers: { [id: string]: RelatedTextContainer } = {};
   private spriteContainers: {
-    [id: string]: RelatedImageContainer | RelatedVideoContainer
+    [id: string]: RelatedImageContainer | RelatedVideoContainer,
   } = {};
 
   @Inject('glConfig')
@@ -396,7 +405,7 @@ export default class ProjectsSection extends Vue {
           scaleY: 10,
           moveSpeedX: .3,
           moveSpeedY: .3,
-        }
+        },
       );
     }
   }

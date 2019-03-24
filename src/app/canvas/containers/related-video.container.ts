@@ -121,8 +121,8 @@ export class RelatedVideoContainer extends RelatedContainer {
     super.sync();
 
     if (this.canPlay) {
-      const heightRatio = this.size.height / this.sprite.height;
-      const widthRatio = this.size.width / this.sprite.width;
+      const heightRatio = this.size.height / this.originSize.height;
+      const widthRatio = this.size.width / this.originSize.width;
       let ratio = 1;
 
       if (this.config.stretchMode) {
@@ -147,28 +147,26 @@ export class RelatedVideoContainer extends RelatedContainer {
         ratio *= this.config.scale;
       }
 
-      setTimeout(() => {
-        this.sprite.width = this.originSize.width * ratio;
-        this.sprite.height = this.originSize.height * ratio;
+      this.sprite.width = this.originSize.width * ratio;
+      this.sprite.height = this.originSize.height * ratio;
 
-        if (this.config.centerHorizontal) {
-          this.context.x -= this.sprite.width * .5 - this.size.width * .5;
-          this.sprite.x = 0;
-          this.sprite.anchor.x = 0;
-        } else {
-          this.sprite.x = 0;
-          this.sprite.anchor.x = 0;
-        }
+      if (this.config.centerHorizontal) {
+        this.context.x -= this.sprite.width * .5 - this.size.width * .5;
+        this.sprite.x = 0;
+        this.sprite.anchor.x = 0;
+      } else {
+        this.sprite.x = 0;
+        this.sprite.anchor.x = 0;
+      }
 
-        if (this.config.centerVertical) {
-          this.context.y -= this.sprite.height * .5 - this.size.height * .5;
-          this.sprite.y = 0;
-          this.sprite.anchor.y = 0;
-        } else {
-          this.sprite.y = 0;
-          this.sprite.anchor.y = 0;
-        }
-      });
+      if (this.config.centerVertical) {
+        this.context.y -= this.sprite.height * .5 - this.size.height * .5;
+        this.sprite.y = 0;
+        this.sprite.anchor.y = 0;
+      } else {
+        this.sprite.y = 0;
+        this.sprite.anchor.y = 0;
+      }
     }
   }
 }
