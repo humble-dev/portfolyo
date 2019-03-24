@@ -27,7 +27,7 @@ export default class AboutSection extends Vue {
       this.$refs.name as HTMLElement,
       'about.me',
       {
-        scale: 1.1,
+        scale: 1.15,
         stretchMode: RelatedImageContainerStretch.FIT_WIDTH,
         centerHorizontal: true,
         centerVertical: true,
@@ -39,8 +39,8 @@ export default class AboutSection extends Vue {
     this.image.enableDisplacement(
       true,
       {
-        scaleX: 50,
-        scaleY: 50,
+        scaleX: 30,
+        scaleY: 30,
       },
     ).then((extra) => this.displacement = extra);
 
@@ -56,9 +56,9 @@ export default class AboutSection extends Vue {
 
       if (this.displacement) {
         if (enabled) {
-          this.displacement.scaleFilter(0, 0, 1500);
+          setTimeout(() => this.displacement.scaleFilter(0, 0, 1500));
         } else {
-          this.displacement.scaleFilter(50, 50, 1500);
+          setTimeout(() => this.displacement.scaleFilter(50, 50, 1500));
         }
       }
     }
@@ -83,7 +83,7 @@ export default class AboutSection extends Vue {
             >Davide</Parallax>
           </span>, a creative developer based
           in Karlsruhe where I create awesome digital
-          projects together with a cool team at <a href="https://dorfjungs.com/" target="_blank">Dorfjungs.</a>
+          projects together with a cool team at <a href="https://dorfjungs.com/" target="_blank">Dorfjungs</a>
         </p>
       </div>
     </div>
@@ -104,10 +104,12 @@ export default class AboutSection extends Vue {
   html:not(.gl-disabled) & {
     display: inline-block;
     color: $color-black;
-    transition: color .8s;
+    transition: color .8s, -webkit-text-stroke-color .8s;
+    -webkit-text-stroke: 1px transparent;
 
     &.active {
-      color: $color-white;
+      color: transparent;
+      -webkit-text-stroke-color: $color-white;
     }
   }
 }

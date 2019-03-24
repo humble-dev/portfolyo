@@ -1,4 +1,4 @@
-import { Subject } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 import { Resolver } from '../utils/promise.util';
 
 interface CursorPosition {
@@ -7,10 +7,16 @@ interface CursorPosition {
   locked: boolean;
 }
 
+export enum CursorState {
+  DEFAULT = 'default',
+  SMALL = 'small',
+}
+
 export class CursorService {
   private readyResolver = new Resolver();
   private positionSubject = new Subject<CursorPosition>();
   private visiblitySubject = new Subject<boolean>();
+  private stateSubject = new BehaviorSubject<CursorState>(CursorState.DEFAULT);
   private static instance: CursorService;
 
   public static getInstance(): CursorService {
@@ -27,6 +33,14 @@ export class CursorService {
     locked: boolean = false,
   ) {
     this.positionSubject.next({ x, y, locked });
+  }
+
+  public updateState(state: CursorState) {
+    this.stateSubject.next(state);
+  }
+
+  public get state$() {
+    return this.stateSubject.asObservable();
   }
 
   public hide() {

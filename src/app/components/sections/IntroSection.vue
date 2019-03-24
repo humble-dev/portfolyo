@@ -55,9 +55,9 @@ export default class IntroSection extends Vue {
       },
     );
 
-    const moveSpeed = 1;
-    const minDisplacement = 12;
-    const maxDisplacement = 50;
+    const moveSpeed = .5;
+    const minDisplacement = 6;
+    const maxDisplacement = 20;
 
     text1.enableParallax(true, { speed: -100, direction: 'x' });
     text1.enableDisplacement(
@@ -141,10 +141,10 @@ export default class IntroSection extends Vue {
             },
           });
         }, 200);
-      }, 800);
+      }, 500);
     });
 
-    // this.canvasDelegator.addContainer('background', text1, text2);
+    this.canvasDelegator.addContainer('background', text1, text2);
   }
 }
 </script>
@@ -153,19 +153,17 @@ export default class IntroSection extends Vue {
   <Section name="intro" class="intro-wrapper">
     <div class="fg-row">
       <p class="teaser-text upper fg-col-xs-18 fg-col-lg-3 fg-col-lg-offset-1">
-        <Parallax v-bind:speed="glConfig.enabled ? -100 : -50">
-          <span class="line">
-            <span>Available for</span>
-          </span>
-          <span class="line">
-            <span>AWESOME</span>
-          </span>
-          <span class="line">
-            <span>Freelance</span>
-          </span>
-          <span class="line">
-            <span>projects</span>
-          </span>
+        <Parallax v-bind:speed="glConfig.enabled ? -100 : -50" class="line">
+          <span>Available for</span>
+        </Parallax>
+        <Parallax v-bind:speed="glConfig.enabled ? -100 : -50" class="line">
+          <span>AWESOME</span>
+        </Parallax>
+        <Parallax v-bind:speed="glConfig.enabled ? -100 : -50" class="line">
+          <span>Freelance</span>
+        </Parallax>
+        <Parallax v-bind:speed="glConfig.enabled ? -100 : -50" class="line">
+          <span>projects</span>
         </Parallax>
       </p>
       <div

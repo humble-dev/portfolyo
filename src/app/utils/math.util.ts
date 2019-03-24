@@ -26,16 +26,20 @@ export function scrollTween(
   minOffset: number = minValue,
   maxOffset: number = maxValue,
 ): number {
-  const viewportDelta = Math.max(elementPosition - viewportSize, 0);
-  const inStart = Math.max(elementPosition - viewportSize + minOffset, 0);
+  let inStart = elementPosition - viewportSize + minOffset;
   const inEnd = elementPosition + elementSize + maxOffset;
+
+  if (elementPosition + elementSize < viewportSize) {
+    inStart = 0;
+    minValue = 0;
+  }
 
   return clamp(
     mapRange(
       scrollPosition,
       inStart,
       inEnd,
-      viewportDelta === 0 ? 0 : minValue,
+      minValue,
       maxValue,
     ),
     Math.min(minValue, maxValue),

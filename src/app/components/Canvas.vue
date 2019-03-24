@@ -11,10 +11,7 @@ import { CanvasDelegator } from '@/app/interfaces/canvas-delegator.interface';
 import { DefaultContainer } from '@/app/canvas/default.container';
 import { ViewportProvider } from '@/app/providers/viewport.provider';
 import { ScrollerService } from '@/app/services/scroller.service';
-import { RelatedContainer } from '@/app/canvas/related.container';
 import { ElementState } from '@/app/providers/element-state.provider';
-import { Ticker } from '@smoovy/core';
-import { MouseTwist } from '@/app/canvas/extras/mouse-twist.extra';
 
 @Component
 export default class Canvas extends Vue implements CanvasDelegator {
@@ -51,6 +48,15 @@ export default class Canvas extends Vue implements CanvasDelegator {
       this.scroller.scrollAnimation$.subscribe((state) => {
         this.scrollContainer.context.y = -state.position.y;
         this.scrollContainer.context.x = -state.position.x;
+
+        for (let i = 0, len = this.containers.length; i < len; i++) {
+          const container = this.containers[i];
+          const visible = this.isContainerVisible(container);
+
+          if (visible !== container.isVisibile()) {
+            container.setVisibility(visible);
+          }
+        }
       });
     });
   }
@@ -123,13 +129,7 @@ export default class Canvas extends Vue implements CanvasDelegator {
         this.initContainer(container);
       }
 
-      const visible = this.isContainerVisible(container);
-
-      if (visible !== container.visible) {
-        container.setVisibility(visible);
-      }
-
-      if (container.visible) {
+      if (container.isVisibile()) {
         container.render(delta);
       }
     }
@@ -142,6 +142,7 @@ export default class Canvas extends Vue implements CanvasDelegator {
 
     const absScrollX = Math.abs(this.scrollContainer.context.x);
     const absScrollY = Math.abs(this.scrollContainer.context.y);
+
     const absPosX = container.context.x - absScrollX;
     const absPosY = container.context.y - absScrollY;
 

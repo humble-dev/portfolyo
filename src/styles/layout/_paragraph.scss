@@ -42,13 +42,41 @@ p b {
 p a,
 p .link {
   color: inherit;
+  display: inline-block;
   text-decoration: none;
   position: relative;
 
-  &:not(.no-underline):after {
+  @keyframes link-underline {
+    5% {
+      width: 100%;
+      left: 0;
+    }
+
+    50% {
+      left: 100%;
+      width: 0;
+    }
+
+    51% {
+      left: 0;
+      width: 0;
+    }
+
+    100% {
+      left: 0;
+      width: 100%;
+    }
+  }
+
+  &:hover:not(.no-underline):before {
+    animation: link-underline 2s $ease-in-out-circ infinite;
+  }
+
+  &:not(.no-underline):before {
     content: "";
     left: 0;
-    bottom: 10%;
+    bottom: 0;
+    z-index: 0;
     width: 100%;
     position: absolute;
     background-color: $color-black;

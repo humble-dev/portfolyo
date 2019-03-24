@@ -29,6 +29,7 @@ import SkillsSection from './components/sections/SkillsSection.vue';
 import ContactSection from './components/sections/ContactSection.vue';
 import AboutSection from './components/sections/AboutSection.vue';
 import ProjectsSection from './components/sections/ProjectsSection.vue';
+import { CursorService, CursorState } from '@/app/services/cursor.service';
 
 @Component({
   components: {
@@ -57,11 +58,10 @@ export default class App extends Vue {
   private elementState = ElementStateProvider.getInstance();
   private viewport = ViewportProvider.getInstance();
   private scroller = ScrollerService.getInstance();
+  private cursor = CursorService.getInstance();
 
   @Provide()
-  private glConfig = {
-    enabled: false,
-  };
+  private glConfig = { enabled: false };
 
   private isGlEnabled() {
     return ! BrowserSupport.IS_MOBILE_OR_TABLET &&
@@ -114,6 +114,27 @@ export default class App extends Vue {
 
     // Update scroller once
     setTimeout(() => this.scrollerService.update(), 100);
+
+    // Link hover controlling
+    if (typeof document !== 'undefined') {
+      document.querySelectorAll('a').forEach((node) => {
+        node.addEventListener('mouseenter', () => {
+          let leaveListener: any;
+
+          this.cursor.updateState(CursorState.SMALL);
+
+          node.addEventListener(
+            'mouseleave',
+            leaveListener = () => {
+              this.cursor.updateState(CursorState.DEFAULT);
+
+              node.removeEventListener('mouseleave', leaveListener);
+            },
+            false
+          );
+        }, false);
+      });
+    }
   }
 }
 </script>

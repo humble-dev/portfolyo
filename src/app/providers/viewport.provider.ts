@@ -18,7 +18,7 @@ export class ViewportProvider {
     window.addEventListener('resize', () => {
       this.changeSubject.next({
         width: window.innerWidth,
-        height: window.innerWidth,
+        height: window.innerHeight,
       });
     });
   }

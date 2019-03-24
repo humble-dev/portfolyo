@@ -31,7 +31,7 @@ export class RelatedImageContainer extends RelatedContainer {
 
   public constructor(
     element: HTMLElement,
-    protected imageId: string,
+    protected texture: string|PIXI.Texture,
     protected config: Partial<RelatedImageContainerConfig> = {},
   ) {
     super(element);
@@ -44,7 +44,12 @@ export class RelatedImageContainer extends RelatedContainer {
   public init() {
     super.init();
 
-    this.sprite = PIXI.Sprite.from(this.imageId);
+    if (this.texture instanceof PIXI.Texture) {
+      this.sprite = new PIXI.Sprite(this.texture);
+    } else {
+      this.sprite = PIXI.Sprite.from(this.texture);
+    }
+
     this.originSize.width = this.sprite.width;
     this.originSize.height = this.sprite.height;
 
@@ -104,21 +109,27 @@ export class RelatedImageContainer extends RelatedContainer {
       ratio *= this.config.scale;
     }
 
-    this.sprite.width = this.originSize.width * ratio;
-    this.sprite.height = this.originSize.height * ratio;
+    setTimeout(() => {
+      this.sprite.width = this.originSize.width * ratio;
+      this.sprite.height = this.originSize.height * ratio;
 
-    if (this.config.centerHorizontal) {
-      this.sprite.x = this.size.width * .5;
-      this.sprite.anchor.x = .5;
-    } else {
-      this.sprite.x = 0;
-    }
+      if (this.config.centerHorizontal) {
+        this.context.x -= this.sprite.width * .5 - this.size.width * .5;
+        this.sprite.x = 0;
+        this.sprite.anchor.x = 0;
+      } else {
+        this.sprite.x = 0;
+        this.sprite.anchor.x = 0;
+      }
 
-    if (this.config.centerVertical) {
-      this.sprite.y = this.size.height * .5;
-      this.sprite.anchor.y = .5;
-    } else {
-      this.sprite.y = 0;
-    }
+      if (this.config.centerVertical) {
+        this.context.y -= this.sprite.height * .5 - this.size.height * .5;
+        this.sprite.y = 0;
+        this.sprite.anchor.y = 0;
+      } else {
+        this.sprite.y = 0;
+        this.sprite.anchor.y = 0;
+      }
+    });
   }
 }

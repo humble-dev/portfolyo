@@ -1,7 +1,8 @@
 <script lang="ts">
-import { Component, Watch, Vue } from 'vue-property-decorator';
+import { Component, Watch, Vue, Inject } from 'vue-property-decorator';
 
 import { RelatedImageContainer, RelatedImageContainerStretch } from '@/app/canvas/containers/related-image.container';
+import { RelatedVideoContainer, RelatedVideoContainerStretch, RelatedVideoContainerConfig } from '@/app/canvas/containers/related-video.container';
 import { CanvasDelegatorService } from '@/app/services/canvas-delegator.service';
 import {
   RelatedTextContainer,
@@ -17,6 +18,7 @@ import Section from '../Section.vue';
 import KeywordList from './Projects/KeywordList.vue';
 import { DefaultContainer } from '@/app/canvas/default.container';
 import { MouseTwist } from '@/app/canvas/extras/mouse-twist.extra';
+import { RelatedContainer } from '@/app/canvas/related.container';
 
 type Projects = Project[];
 interface Project {
@@ -24,6 +26,7 @@ interface Project {
   name: string;
   url: string;
   keywords: string[];
+  video?: string;
   offset?: { [bp: string]: number };
   image?: string;
 }
@@ -34,6 +37,7 @@ const projects: Projects = [
     name: 'Mack&shy;Media',
     url: 'https://mackmedia.de/',
     image: 'projects.mackmedia.title',
+    video: '/images/projects/mackmedia/title.mp4',
     keywords: [
       'Google Closure',
       'JavaScript',
@@ -175,11 +179,15 @@ export default class ProjectsSection extends Vue {
   private canvasDelegator = CanvasDelegatorService.getInstance();
   private scrollerService = ScrollerService.getInstance();
   private textContainers: { [id: string]: RelatedTextContainer } = {};
-  private imageContainers: { [id: string]: RelatedImageContainer } = {};
+  private spriteContainers: {
+    [id: string]: RelatedImageContainer | RelatedVideoContainer
+  } = {};
+
+  @Inject('glConfig')
+  protected glConfig!: { enabled: boolean };
 
   public mounted() {
     const wrappers = this.$refs.projectWrapper as HTMLElement[];
-
 
     wrappers.forEach((element, index) => {
       const id = element.getAttribute('data-id');
@@ -215,34 +223,57 @@ export default class ProjectsSection extends Vue {
         );
       }
 
-      if (project && id && project.image && ! this.imageContainers.hasOwnProperty(id)) {
-        const imageContainer = new RelatedImageContainer(
-          element,
-          project.image,
-          {
-            scale: .7,
-            index: 5,
-            hidden: true,
-            stretchMode: RelatedImageContainerStretch.FIT_WIDTH,
-            centerHorizontal: true,
-            centerVertical: true,
-          },
-        );
+      if (project && id && ! this.spriteContainers.hasOwnProperty(id)) {
+        let spriteContainer:
+          RelatedVideoContainer |
+          RelatedImageContainer |
+          undefined;
 
-        this.imageContainers[id] = imageContainer;
+        if (project.video && this.glConfig.enabled) {
+          spriteContainer = new RelatedVideoContainer(
+            element,
+            project.video,
+            {
+              scale: .7,
+              index: 5,
+              hidden: true,
+              autoPlay: false,
+              stretchMode: RelatedVideoContainerStretch.FIT_WIDTH,
+              centerHorizontal: true,
+              centerVertical: true,
+            },
+          );
+        } else if (project.image) {
+          spriteContainer = new RelatedImageContainer(
+            element,
+            project.image,
+            {
+              scale: .7,
+              index: 5,
+              hidden: true,
+              stretchMode: RelatedImageContainerStretch.FIT_WIDTH,
+              centerHorizontal: true,
+              centerVertical: true,
+            },
+          );
+        }
 
-        imageContainer.enableParallax(
-          true,
-          {
-            speed: index % 2 === 0 ? 100 : -100,
-            direction: 'x',
-          },
-        );
+        if (spriteContainer) {
+          this.spriteContainers[id] = spriteContainer;
 
-        this.canvasDelegator.addContainer(
-          'foreground',
-          imageContainer,
-        );
+          spriteContainer.enableParallax(
+            true,
+            {
+              speed: index % 2 === 0 ? 100 : -100,
+              direction: 'x',
+            },
+          );
+
+          this.canvasDelegator.addContainer(
+            'foreground',
+            spriteContainer,
+          );
+        }
       }
     });
 
@@ -267,7 +298,7 @@ export default class ProjectsSection extends Vue {
       },
     );
 
-    headlineContainer.enableDisplacement(true, { scaleX: 5, scaleY: 5 });
+    // headlineContainer.enableDisplacement(true, { scaleX: 5, scaleY: 5 });
     headlineContainer.enableParallax(true, { speed: 300, direction: 'y' });
 
     this.canvasDelegator.addContainer(
@@ -276,8 +307,10 @@ export default class ProjectsSection extends Vue {
     );
   }
 
-  private getImageContainer(id: string): RelatedImageContainer|undefined {
-    return this.imageContainers[id];
+  private getSpriteContainer(
+    id: string,
+  ): RelatedImageContainer|RelatedVideoContainer|undefined {
+    return this.spriteContainers[id];
   }
 
   private getTextContainer(id: string): RelatedTextContainer|undefined {
@@ -288,25 +321,39 @@ export default class ProjectsSection extends Vue {
     project: Project,
     enabled: boolean = true,
   ) {
-    const image = this.getImageContainer(project.id);
+    const sprite = this.getSpriteContainer(project.id);
     const text = this.getTextContainer(project.id);
+    const videoSprite = sprite instanceof RelatedVideoContainer ? sprite : null;
 
-    if (image) {
-      image.enableDisplacement(
+    if (sprite) {
+      if (videoSprite) {
+        if (enabled) {
+          videoSprite.play();
+        } else {
+          videoSprite.pause();
+        }
+      }
+
+      sprite.enableMouseTwist(enabled, {
+        radius: 200,
+        angle: 10,
+      });
+
+      sprite.enableDisplacement(
         enabled,
         {
           scaleX: 100,
           scaleY: 100,
-          moveSpeedX: .8,
-          moveSpeedY: .8,
+          moveSpeedX: .3,
+          moveSpeedY: .3,
           scaleDuration: enabled ? 0 : 1500,
         },
       ).then((extra) => {
         setTimeout(() => {
           if (enabled) {
             extra.scaleFilter(
-              15,
-              15,
+              videoSprite ? 0 : 8,
+              videoSprite ? 0 : 8,
               1000,
             );
           } else {
@@ -319,8 +366,8 @@ export default class ProjectsSection extends Vue {
         });
       });
 
-      image.enableVisibility(enabled);
-      image.enableMouseMotion(
+      sprite.enableVisibility(enabled);
+      sprite.enableMouseMotion(
         enabled,
         {
           minX: -20,
@@ -345,10 +392,10 @@ export default class ProjectsSection extends Vue {
       text.enableDisplacement(
         enabled,
         {
-          scaleX: 25,
-          scaleY: 25,
-          moveSpeedX: .9,
-          moveSpeedY: .9,
+          scaleX: 10,
+          scaleY: 10,
+          moveSpeedX: .3,
+          moveSpeedY: .3,
         }
       );
     }

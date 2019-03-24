@@ -47,9 +47,7 @@ export class DefaultContainer {
   public constructor(
     public syncWithScrollPosition: boolean = false,
     protected zIndex: number = -1,
-  ) {
-
-  }
+  ) {}
 
   public isInitialized() {
     return this.initializedResolver.promise;
@@ -202,7 +200,7 @@ export class DefaultContainer {
     this.context.visible = visible;
   }
 
-  public get visible() {
+  public isVisibile() {
     return this.visibility;
   }
 

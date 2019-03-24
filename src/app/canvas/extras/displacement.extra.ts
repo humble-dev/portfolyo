@@ -19,6 +19,7 @@ export class Displacement implements ContainerExtra {
   public name = displacementExtraName;
   private config!: Partial<DisplacementConfig>;
   private active: boolean = false;
+  private renderable: boolean = false;
   private sprite?: PIXI.Sprite;
   private filter?: PIXI.filters.DisplacementFilter;
   private animations: anime.AnimeInstance[] = [];
@@ -43,11 +44,14 @@ export class Displacement implements ContainerExtra {
       this.killTweens();
 
       this.active = true;
+      this.renderable = true;
       this.config = config;
 
       if ( ! this.sprite) {
         this.sprite = PIXI.Sprite.from(config.sprite || 'displacement.clouds');
         this.sprite.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
+        this.sprite.cacheAsBitmap = true;
+        this.sprite.anchor.set(1, 1);
       }
 
       if ( ! this.filter) {
@@ -80,7 +84,7 @@ export class Displacement implements ContainerExtra {
   }
 
   public render(delta: number = 1) {
-    if (this.sprite) {
+    if (this.sprite && this.renderable) {
       if (this.config.rotationSpeed) {
         this.sprite.rotation += this.config.rotationSpeed * delta;
         this.sprite.rotation %= 6.283185307179586; // = 360deg
@@ -105,9 +109,7 @@ export class Displacement implements ContainerExtra {
     easing: EasingOptions = 'easeOutCubic',
   ) {
     if (this.filter) {
-      if (this.scaleAnimation) {
-        this.scaleAnimation.pause();
-      }
+      this.killTweens();
 
       this.scaleAnimation = anime({
         targets: this.filter.scale,
@@ -124,6 +126,7 @@ export class Displacement implements ContainerExtra {
       this.killTweens();
 
       this.active = false;
+
       this.animations.push(
         anime({
           targets: this.filter.scale,
@@ -131,18 +134,6 @@ export class Displacement implements ContainerExtra {
           duration: config.scaleDuration || 500,
           x: 0,
           y: 0,
-          complete: () => {
-            if (this.sprite && this.target.filters) {
-              this.target.removeChild(this.sprite);
-
-              this.target.filters = this.target.filters.filter((filter) => {
-                return filter !== this.filter;
-              });
-
-              this.sprite = undefined;
-              this.filter = undefined;
-            }
-          },
         }),
       );
     }

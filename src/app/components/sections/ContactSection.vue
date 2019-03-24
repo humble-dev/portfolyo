@@ -5,6 +5,13 @@ import Section from '../Section.vue';
 import { CanvasDelegatorService } from '@/app/services/canvas-delegator.service';
 import { RelatedTextContainerStretch, RelatedTextContainer } from '@/app/canvas/containers/related-text.container';
 
+const randomLinks = [
+  'https://fakten-gegen-rechts.de/',
+  'https://dorfjungs.com/',
+  'http://trumpdonald.org/',
+  'https://jakartarecords-label.bandcamp.com/album/durch-die-wolkendecke',
+];
+
 @Component({
   components: {
     Section,
@@ -12,10 +19,12 @@ import { RelatedTextContainerStretch, RelatedTextContainer } from '@/app/canvas/
 })
 export default class ContactSection extends Vue {
   private canvasDelegator = CanvasDelegatorService.getInstance();
+  private randomLink: string = '';
 
   public mounted() {
-    const topCoords = this.$refs.coordsTop as HTMLElement;
-    const bottomCoords = this.$refs.coordsBottom as HTMLElement;
+    this.updateRandomLink();
+
+    const backgroundText = this.$refs.backgroundText as HTMLElement;
     const textConfig = {
       fontFamily: 'Neue Plak Extended ExtraBlack',
       stretchMode: RelatedTextContainerStretch.FIT_HEIGHT,
@@ -26,26 +35,23 @@ export default class ContactSection extends Vue {
       fontSize: 200,
     };
 
-    const topCoordsContainer = new RelatedTextContainer(
-      topCoords,
-      topCoords.innerHTML,
+    const contactTextContainer = new RelatedTextContainer(
+      backgroundText,
+      backgroundText.innerHTML,
       { ...textConfig },
     );
 
-    const bottomCoordsContainer = new RelatedTextContainer(
-      bottomCoords,
-      bottomCoords.innerHTML,
-      { ...textConfig },
-    );
-
-    topCoordsContainer.enableParallax(true, { speed: 30, direction: 'x' });
-    bottomCoordsContainer.enableParallax(true, { speed: -30, direction: 'x' });
+    contactTextContainer.enableMouseTwist(true, { radius: 150, angle: 10, padding: 500 })
+    contactTextContainer.enableParallax(true, { speed: 30, direction: 'x' });
 
     this.canvasDelegator.addContainer(
       'background',
-      topCoordsContainer,
-      bottomCoordsContainer,
+      contactTextContainer,
     );
+  }
+
+  private updateRandomLink() {
+    this.randomLink = randomLinks[Math.round(randomLinks.length * Math.random())];
   }
 }
 </script>
@@ -57,26 +63,32 @@ export default class ContactSection extends Vue {
         <p class="size-xl bold">Just send me an <a href="mailto:yo@davideperozzi.de">email</a></p>
       </div>
       <div class="fg-col-xs-18 fg-col-lg-9 fg-col-lg-offset-2">
-        <div class="coordinates-warpper">
-          <span ref="coordsTop">49.00477</span>
-          <span ref="coordsBottom">8.431911°</span>
+        <div class="background-text-warpper">
+          <span ref="backgroundText">CONTACT</span>
         </div>
       </div>
     </div>
     <div class="fg-row">
       <div class="fg-col-xs-18 fg-col-lg-6 fg-col-lg-offset-10">
-        <p class="bold size-lg link-wrapper fx-layout fx-horizontal">
-          <a class="no-underline" target="_blank" rel="noopener" href="https://github.com/davideperozzi">GitHub</a>
-          <a class="no-underline" target="_blank" rel="noopener" href="https://www.linkedin.com/in/davide-perozzi-146a39172/">LinkedIn</a>
-          <a class="no-underline" target="_blank" rel="noopener" href="https://www.xing.com/profile/Davide_Perozzi">Xing</a>
-        </p>
+        <div class="fg-row">
+          <p class="fg-col-xs-9 bold size-lg link-wrapper fx-layout fx-vertical fx-start">
+            <a target="_blank" rel="noopener" href="https://github.com/davideperozzi">GitHub</a>
+            <a target="_blank" rel="noopener" href="https://www.linkedin.com/in/davide-perozzi-146a39172/">LinkedIn</a>
+            <a target="_blank" rel="noopener" href="https://www.xing.com/profile/Davide_Perozzi">Xing</a>
+          </p>
+          <p class="fg-col-xs-9 bold size-lg link-wrapper fx-layout fx-vertical fx-start">
+            <a target="_blank" rel="noopener" href="https://open.spotify.com/user/triplexp">Spotify</a>
+            <a target="_blank" rel="noopener" href="https://www.behance.net/davideperozzi">Behance</a>
+            <a target="_blank" rel="noopener" @click="updateRandomLink()" :href="randomLink">Something</a>
+          </p>
+        </div>
       </div>
     </div>
   </Section>
 </template>
 
 <style scoped lang="scss">
-  .coordinates-warpper {
+  .background-text-warpper {
     font-family: $font-neue-plak-extended-extra-black;
     visibility: hidden;
 
@@ -87,6 +99,7 @@ export default class ContactSection extends Vue {
     }
 
     span {
+      white-space: nowrap;
       display: block;
     }
 
@@ -99,7 +112,7 @@ export default class ContactSection extends Vue {
 
   .link-wrapper {
     html:not(.gl-disabled) & {
-      @include fluid-size(margin-top, -40px, -60px);
+      @include fluid-size(margin-top, -40px, -133px);
     }
 
     html.gl-disabled & {
@@ -107,7 +120,7 @@ export default class ContactSection extends Vue {
     }
 
     a {
-      display: block;
+      display: inline-block;
 
       &:not(:last-child) {
         margin-right: 20px;

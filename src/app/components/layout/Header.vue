@@ -204,7 +204,7 @@ export default class Header extends Vue {
     color: $color-black;
     display: inline-block;
     pointer-events: all;
-    padding: 5px 0;
+    padding-bottom: 5px;
     font-family: $font-neue-plak-extended-light;
     text-transform: uppercase;
     overflow: hidden;
@@ -216,16 +216,15 @@ export default class Header extends Vue {
       transform: translate3d(0, -120%, 0);
       opacity: 0;
       transition:
-        transform 1s $ease-out-smooth,
-        opacity .8s;
+        transform 1.8s .5s $ease-out-smooth,
+        opacity .5s .5s;
 
-      .preloader-loaded & {
+      .preloader-mounted & {
         opacity: 1;
         transform: translate3d(0, 0, 0);
       }
     }
   }
-
 
   $designation-height: 40px;
 
@@ -240,10 +239,10 @@ export default class Header extends Vue {
       transform: translate3d(0, -120%, 0);
       opacity: 0;
       transition:
-        transform 1s .3s $ease-out-smooth,
-        opacity .8s .3s;
+        transform 1.8s 1s $ease-out-smooth,
+        opacity .5s 1s;
 
-      .preloader-loaded & {
+      .preloader-mounted & {
         opacity: 1;
         transform: translate3d(0, 0, 0);
       }

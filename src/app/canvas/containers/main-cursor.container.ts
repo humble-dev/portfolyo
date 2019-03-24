@@ -1,6 +1,6 @@
 import { fromEvent } from 'rxjs';
 
-import { CursorService } from '@/app/services/cursor.service';
+import { CursorService, CursorState } from '@/app/services/cursor.service';
 import { clamp } from '@/app/utils/math.util';
 import { easings, Tween } from '@smoovy/core';
 
@@ -22,8 +22,13 @@ export class MainCursorContainer extends DefaultContainer {
   private velocityFrequency = 50;
   private motionBlur?: MotionBlur;
   private cursorSize = 140;
+  private innerPointSize = 16;
   private cursorScale = 0.5;
   private locked: boolean = false;
+  private stateTweenOuter?: Tween;
+  private stateTweenInner?: Tween;
+  private currentState: CursorState = CursorState.DEFAULT;
+  private stateChangeTimeout = -1;
 
   public constructor() {
     super(false, 100);
@@ -54,12 +59,123 @@ export class MainCursorContainer extends DefaultContainer {
 
     this.innerCircle = PIXI.Sprite.from('cursor.inner');
     this.innerCircle.cacheAsBitmap = true;
+    this.outerCircle.height = this.innerPointSize * this.cursorScale;
+    this.outerCircle.width = this.innerPointSize * this.cursorScale;
     this.innerCircle.anchor.x = 0.5;
     this.innerCircle.anchor.y = 0.5;
-    this.innerCircle.scale.set(this.cursorScale);
 
     this.context.addChild(this.innerCircle);
     this.context.addChild(this.outerCircle);
+
+    this.service.state$.subscribe((state) => {
+      clearTimeout(this.stateChangeTimeout);
+      this.stateChangeTimeout = setTimeout(() => {
+        switch (state) {
+          case CursorState.DEFAULT:
+            if (this.stateTweenOuter) {
+              this.stateTweenOuter.stop();
+            }
+
+            this.stateTweenOuter = Tween.to(
+              {
+                width: this.outerCircle.width,
+                height: this.outerCircle.width,
+                alpha: this.outerCircle.alpha,
+              },
+              {
+                width: this.cursorSize * this.cursorScale,
+                height: this.cursorSize * this.cursorScale,
+                alpha: 1,
+              },
+              500,
+              {
+                update: ({ width, height, alpha }) => {
+                  this.outerCircle.width = width;
+                  this.outerCircle.height = height;
+                  this.outerCircle.alpha = alpha;
+                },
+                complete: () => {
+                  this.currentState = state;
+                },
+              },
+            );
+
+            if (this.stateTweenInner) {
+              this.stateTweenInner.stop();
+            }
+
+            this.stateTweenInner = Tween.to(
+              {
+                width: this.innerCircle.width,
+                height: this.innerCircle.height,
+              },
+              {
+                width: this.innerPointSize * this.cursorScale,
+                height: this.innerPointSize * this.cursorScale,
+              },
+              500,
+              {
+                update: ({ width, height }) => {
+                  this.innerCircle.width = width;
+                  this.innerCircle.height = height;
+                },
+              },
+            );
+            break;
+
+          case CursorState.SMALL:
+            this.currentState = state;
+
+            if (this.stateTweenOuter) {
+              this.stateTweenOuter.stop();
+            }
+
+            this.stateTweenOuter = Tween.to(
+              {
+                width: this.outerCircle.width,
+                height: this.outerCircle.width,
+                alpha: this.outerCircle.alpha,
+              },
+              {
+                width: this.cursorSize * this.cursorScale * 0.8,
+                height: this.cursorSize * this.cursorScale * 0.8,
+                alpha: 0,
+              },
+              500,
+              {
+                update: ({ width, height, alpha }) => {
+                  this.outerCircle.width = width;
+                  this.outerCircle.height = height;
+                  this.outerCircle.alpha = alpha;
+                },
+              },
+            );
+
+            if (this.stateTweenInner) {
+              this.stateTweenInner.stop();
+            }
+
+            this.stateTweenInner = Tween.to(
+              {
+                width: this.innerCircle.width,
+                height: this.innerCircle.height,
+              },
+              {
+                width: this.innerPointSize * this.cursorScale * 2,
+                height: this.innerPointSize * this.cursorScale * 2,
+              },
+              500,
+              {
+                update: ({ width, height }) => {
+                  this.innerCircle.width = width;
+                  this.innerCircle.height = height;
+                },
+              },
+            );
+            break;
+        }
+      }, 100);
+    });
 
     setInterval(() => {
       if ( ! this.locked) {
@@ -127,45 +243,53 @@ export class MainCursorContainer extends DefaultContainer {
       this.outerRotationTween.stop();
     }
 
-    if (rotationDelta < 90 * Math.PI / 180) {
-      this.outerRotationTween = Tween.to(
-        {
-          rotation: this.outerCircle.rotation,
-        },
-        {
-          rotation,
-        },
-        150,
-        {
-          update: (props) => {
-            this.outerCircle.rotation = props.rotation;
+    if (this.currentState === CursorState.DEFAULT) {
+      if (rotationDelta < 90 * Math.PI / 180) {
+        this.outerRotationTween = Tween.to(
+          {
+            rotation: this.outerCircle.rotation,
           },
-        },
-      );
-    } else {
-      this.outerCircle.rotation = rotation;
+          {
+            rotation,
+          },
+          150,
+          {
+            update: (props) => {
+              if (this.currentState === CursorState.DEFAULT) {
+                this.outerCircle.rotation = props.rotation;
+              }
+            },
+          },
+        );
+      } else {
+        this.outerCircle.rotation = rotation;
+      }
     }
 
     if (this.outerVelocityTween) {
       this.outerVelocityTween.stop();
     }
 
-    this.outerVelocityTween = Tween.to(
-      {
-        width: this.outerCircle.width,
-      },
-      {
-        width: this.cursorSize * this.cursorScale * scale,
-      },
-      300,
-      {
-        update: (size) => {
-          setTimeout(() => {
-            this.outerCircle.width = size.width;
-          });
+    if (this.currentState === CursorState.DEFAULT) {
+      this.outerVelocityTween = Tween.to(
+        {
+          width: this.outerCircle.width,
         },
-      },
-    );
+        {
+          width: this.cursorSize * this.cursorScale * scale,
+        },
+        300,
+        {
+          update: (size) => {
+            setTimeout(() => {
+              if (this.currentState === CursorState.DEFAULT) {
+                this.outerCircle.width = size.width;
+              }
+            });
+          },
+        },
+      );
+    }
   }
 
   public render(delta?: number) {

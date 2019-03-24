@@ -14,7 +14,7 @@
   {
     "name": "displacement.clouds",
     "type": "image",
-    "path": "/images/displacement/clouds.jpg",
+    "path": "/images/displacement/clouds-2.jpg",
     "extras": [ "pixi" ]
   },
   {

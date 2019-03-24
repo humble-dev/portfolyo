@@ -17,6 +17,15 @@
 }
 
 @font-face {
+  font-family: "Neue Haas Unica Pro Light";
+  src:
+    url("../assets/fonts/neue-haas-unica-pro/light/NeueHaasUnicaPro-Light.woff2") format("woff2"),
+    url("../assets/fonts/neue-haas-unica-pro/light/NeueHaasUnicaPro-Light.woff") format("woff");
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
   font-family: "Neue Plak Extended Bold";
   src:
     url("../assets/fonts/neue-plak/extended-bold/Neue Plak Extended Bold.woff2") format("woff2"),
