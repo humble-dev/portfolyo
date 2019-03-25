@@ -4,16 +4,18 @@ import { Component, Vue } from 'nuxt-property-decorator';
 import { ElementState } from '~~/providers/element-state.provider';
 import { elementInViewport, elementInViewportOnce } from '~~/helpers/element-viewport.helper';
 import { CanvasDelegatorService } from '~~/services/canvas-delegator.service';
+import { Displacement } from '~~/canvas/extras/displacement.extra';
 import { RelatedImageContainer, RelatedImageContainerStretch } from '~~/canvas/containers/related-image.container';
 
 import Section from '../Section.vue';
 import Parallax from '../Parallax.vue';
-import { Displacement } from '~~/canvas/extras/displacement.extra';
+import Link from '../atoms/Link.vue';
 
 @Component({
   components: {
     Section,
     Parallax,
+    Link
   },
 })
 export default class AboutSection extends Vue {
@@ -85,7 +87,7 @@ export default class AboutSection extends Vue {
             </no-ssr>
           </span>, a creative developer based
           in Karlsruhe where I create awesome digital
-          projects together with a cool team at <a href="https://dorfjungs.com/" target="_blank">Dorfjungs</a>
+          projects together with a cool team at <Link target="_blank" to="https://dorfjungs.com/" label="Dorfjungs" />
         </p>
       </div>
     </div>

@@ -68,10 +68,6 @@ p .link {
     }
   }
 
-  &:hover:not(.no-underline):before {
-    animation: link-underline 2s $ease-in-out-circ infinite;
-  }
-
   &:not(.no-underline):before {
     content: "";
     left: 0;

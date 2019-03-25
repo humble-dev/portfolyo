@@ -24,6 +24,9 @@ export default class Canvas extends Vue implements CanvasDelegator {
   private destroy$ = this.destroySubject.asObservable();
   private scrollContainer: DefaultContainer = new DefaultContainer(false, 10);
 
+  @Prop({ default: true })
+  public enabled!: boolean;
+
   @Prop({ default: 0 })
   public index!: number;
 
@@ -39,7 +42,7 @@ export default class Canvas extends Vue implements CanvasDelegator {
 
     this.elementState = new ElementState(this.$el as HTMLElement);
 
-    if (process.browser) {
+    if (process.browser && this.enabled) {
       this.delegator.register(this);
       this.webfont.loaded.then(() => {
         this.createPixiApp();

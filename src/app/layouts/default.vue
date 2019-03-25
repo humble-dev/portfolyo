@@ -140,8 +140,18 @@ export default class App extends Vue {
     <Scrollbar></Scrollbar>
     <Header></Header>
     <no-ssr>
-      <Canvas v-show="glConfig.enabled" index="0" name="background" />
-      <Canvas v-show="glConfig.enabled" index="200" name="foreground" />
+      <Canvas
+        :enabled="glConfig.enabled"
+        :index="0"
+        v-show="glConfig.enabled"
+        name="background"
+      />
+      <Canvas
+        :enabled="glConfig.enabled"
+        v-show="glConfig.enabled"
+        :index="200"
+        name="foreground"
+      />
     </no-ssr>
     <div class="content-wrapper" ref="contentWrapper">
       <nuxt />

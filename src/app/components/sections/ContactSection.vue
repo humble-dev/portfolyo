@@ -2,6 +2,7 @@
 import { Component, Vue } from 'nuxt-property-decorator';
 
 import Section from '../Section.vue';
+import Link from '../atoms/Link.vue';
 import { CanvasDelegatorService } from '~~/services/canvas-delegator.service';
 import {
   RelatedTextContainerStretch,
@@ -18,6 +19,7 @@ const randomLinks = [
 @Component({
   components: {
     Section,
+    Link,
   },
 })
 export default class ContactSection extends Vue {
@@ -79,7 +81,9 @@ export default class ContactSection extends Vue {
   <Section name="contact" v-bind:title="`Wanna work \n with me?`" titleAlign="left" number="4">
     <div class="fg-row fx-layout fx-horoizontal fx-center-center">
       <div class="fg-col-xs-18 fg-col-lg-7 fg-col-xl-5 fg-col-xl-offset-1">
-        <p class="size-xl bold">Just send me an <a href="mailto:yo@davideperozzi.de">email</a></p>
+        <p class="size-xl bold">
+          Just send me an <Link label="email" to="mailto:yo@davideperozzi.de" />
+        </p>
       </div>
       <div class="fg-col-xs-18 fg-col-lg-9 fg-col-lg-offset-2">
         <div class="background-text-warpper">
@@ -90,15 +94,15 @@ export default class ContactSection extends Vue {
     <div class="fg-row">
       <div class="fg-col-xs-18 fg-col-lg-6 fg-col-lg-offset-10">
         <div class="fg-row">
-          <p class="fg-col-xs-9 bold size-lg link-wrapper fx-layout fx-vertical fx-start">
-            <a target="_blank" rel="noopener" href="https://github.com/davideperozzi">GitHub</a>
-            <a target="_blank" rel="noopener" href="https://www.linkedin.com/in/davide-perozzi-146a39172/">LinkedIn</a>
-            <a target="_blank" rel="noopener" href="https://www.xing.com/profile/Davide_Perozzi">Xing</a>
+          <p class="fg-col-xs-9 bold size-lg link-list-wrapper fx-layout fx-vertical fx-start">
+            <Link target="_blank" rel="noopener" to="https://github.com/davideperozzi" label="GitHub" />
+            <Link target="_blank" rel="noopener" to="https://www.linkedin.com/in/davide-perozzi-146a39172/" label="LinkedIn" />
+            <Link target="_blank" rel="noopener" to="https://www.xing.com/profile/Davide_Perozzi" label="Xing" />
           </p>
-          <p class="fg-col-xs-9 bold size-lg link-wrapper fx-layout fx-vertical fx-start">
-            <a target="_blank" rel="noopener" href="https://open.spotify.com/user/triplexp">Spotify</a>
-            <a target="_blank" rel="noopener" href="https://www.behance.net/davideperozzi">Behance</a>
-            <a target="_blank" rel="noopener" @click="updateRandomLink()" :href="randomLink">Something</a>
+          <p class="fg-col-xs-9 bold size-lg link-list-wrapper fx-layout fx-vertical fx-start">
+            <Link target="_blank" rel="noopener" to="https://open.spotify.com/user/triplexp" label="Spotify" />
+            <Link target="_blank" rel="noopener" to="https://www.behance.net/davideperozzi" label="Behance" />
+            <Link target="_blank" rel="noopener" @click="updateRandomLink()" :href="randomLink" label="Something" />
           </p>
         </div>
       </div>
@@ -129,7 +133,7 @@ export default class ContactSection extends Vue {
     }
   }
 
-  .link-wrapper {
+  .link-list-wrapper {
     html:not(.gl-disabled) & {
       @include fluid-size(margin-top, -40px, -133px);
     }
@@ -139,11 +143,7 @@ export default class ContactSection extends Vue {
     }
 
     a {
-      display: inline-block;
-
-      &:not(:last-child) {
-        margin-right: 20px;
-      }
+      white-space: nowrap;
     }
   }
 </style>
