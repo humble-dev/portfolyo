@@ -1,0 +1,62 @@
+[
+  {
+    "name": "about.me",
+    "type": "image",
+    "path": "/resources/me.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "displacement.clouds",
+    "type": "image",
+    "path": "/resources/displacement/clouds-2.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "displacement.paper",
+    "type": "image",
+    "path": "/resources/displacement/paper.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "displacement.water",
+    "type": "image",
+    "path": "/resources/displacement/water.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "cursor.outer",
+    "type": "image",
+    "path": "/resources/cursor/outer.png",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "cursor.inner",
+    "type": "image",
+    "path": "/resources/cursor/inner.png",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "projects.ammolite.title",
+    "type": "image",
+    "path": "/resources/projects/ammolite/title.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "projects.mackmedia.title",
+    "type": "image",
+    "path": "/resources/projects/mackmedia/title.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "projects.dorfjungs.title",
+    "type": "image",
+    "path": "/resources/projects/dorfjungs/title.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "projects.portfolio.title",
+    "type": "image",
+    "path": "/resources/projects/portfolio/title.jpg",
+    "extras": [ "pixi" ]
+  }
+]

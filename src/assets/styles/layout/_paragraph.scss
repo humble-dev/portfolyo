@@ -1,0 +1,92 @@
+p {
+  font-family: $font-neue-haas-regular;
+  line-height: 1.3;
+
+  @include fluid-size(font-size, 16px, 22px);
+
+  &.right {
+    text-align: right;
+  }
+
+  &.size-sm {
+    @include fluid-size(font-size, 12px, 24px);
+  }
+
+  &.size-md {
+    @include fluid-size(font-size, 16px, 30px);
+  }
+
+  &.size-lg {
+    line-height: 1.2;
+
+    @include fluid-size(font-size, 20px, 42px);
+  }
+
+  &.size-xl {
+    @include fluid-size(font-size, 30px, 80px);
+
+    line-height: 1.1;
+  }
+}
+
+p.upper,
+p .upper {
+  text-transform: uppercase;
+}
+
+p.bold,
+p b {
+  font-family: $font-neue-haas-medium;
+}
+
+p a,
+p .link {
+  color: inherit;
+  display: inline-block;
+  text-decoration: none;
+  position: relative;
+
+  @keyframes link-underline {
+    5% {
+      width: 100%;
+      left: 0;
+    }
+
+    50% {
+      left: 100%;
+      width: 0;
+    }
+
+    51% {
+      left: 0;
+      width: 0;
+    }
+
+    100% {
+      left: 0;
+      width: 100%;
+    }
+  }
+
+  &:hover:not(.no-underline):before {
+    animation: link-underline 2s $ease-in-out-circ infinite;
+  }
+
+  &:not(.no-underline):before {
+    content: "";
+    left: 0;
+    bottom: 0;
+    z-index: 0;
+    width: 100%;
+    position: absolute;
+    background-color: $color-black;
+
+    @include responsive-width(0, $break-md) {
+      height: 2px;
+    }
+
+    @include responsive-width($break-md) {
+      height: 4px;
+    }
+  }
+}
