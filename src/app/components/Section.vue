@@ -100,7 +100,13 @@ export default class Section extends Vue {
 <style scoped lang="scss">
   section {
     min-height: 100%;
+    opacity: 0;
+    transition: opacity .8s;
 
     @include fluid-size(padding-bottom, 80px, 220px);
+
+    .preloader-loaded & {
+      opacity: 1;
+    }
   }
 </style>

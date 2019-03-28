@@ -6,32 +6,49 @@ interface Position {
 }
 
 export class ElementStateProvider {
-  private static instance: ElementStateProvider;
-  private states: ElementState[] = [];
+  private static states: ElementState[] = [];
 
-   public static getInstance(): ElementStateProvider {
-    if ( ! this.instance) {
-      return this.instance = new ElementStateProvider();
-    }
-
-    return this.instance;
-  }
-
-  public add(state: ElementState) {
+  public static add(state: ElementState) {
     if ( ! this.states.includes(state)) {
       this.states.push(state);
     }
   }
 
-  public remove(state: ElementState) {
+  public static remove(state: ElementState) {
     const index = this.states.indexOf(state);
 
     if (index > -1) {
-      this.states = this.states.splice(index, 1);
+      this.states.splice(index, 1);
     }
   }
 
-  public update() {
+  public static contains(element: HTMLElement) {
+    return !!this.states.find((state) => state.element === element);
+  }
+
+  public static getByElement(element: HTMLElement) {
+    return this.states.find((state) => state.element === element);
+  }
+
+  public static pruneUpdate(parent?: HTMLElement) {
+    const states: ElementState[] = [];
+
+    if ( ! parent && typeof document !== 'undefined') {
+      parent = document.body;
+    }
+
+    this.states.forEach((state) => {
+      if (parent) {
+        if ( ! parent.contains(state.element)) {
+          states.push(state);
+        }
+      }
+    });
+
+    states.forEach((state) => this.remove(state));
+  }
+
+  public static update() {
     this.states.forEach((state) => state.update());
   }
 }
@@ -42,10 +59,15 @@ export interface ElementStateConfig {
 }
 
 export class ElementState<D extends object = any> {
-  private stateProvider = ElementStateProvider.getInstance();
   private _bounds?: { x: number, y: number, width: number, height: number };
   private _offset?: Position;
   public data: D = {} as D;
+
+  public static create<D extends object = any>(
+    element: HTMLElement
+  ): ElementState<D> {
+    return ElementStateProvider.getByElement(element) || new this(element);
+  }
 
   public constructor(
     public element: HTMLElement,
@@ -58,12 +80,12 @@ export class ElementState<D extends object = any> {
   }
 
   public attach() {
-    this.stateProvider.add(this);
-    this.update();
+    ElementStateProvider.add(this);
+    setTimeout(() => this.update());
   }
 
   public detach() {
-    this.stateProvider.remove(this);
+    ElementStateProvider.remove(this);
   }
 
   public get bounds() {
@@ -103,26 +125,23 @@ export class ElementState<D extends object = any> {
     scrollPosition: Position,
     viewportSize: { width: number, height: number },
     offset: number|Position = 0,
-    withoutBounds: boolean = false,
   ): boolean {
     offset = typeof offset === 'number' ? { x: offset, y: offset } : offset;
 
-    const elementPosition = {  ...this.offset };
-
     const belowViewport = (
-      elementPosition.y - offset.y > scrollPosition.y + viewportSize.height
+      this.offset.y - offset.y > scrollPosition.y + viewportSize.height
     );
 
     const aboveViewport = (
-      elementPosition.y + offset.y + this.bounds.height < scrollPosition.y
+      this.offset.y + offset.y + this.bounds.height < scrollPosition.y
     );
 
     const rightOfViewport = (
-      elementPosition.x - offset.x > scrollPosition.x + viewportSize.width
+      this.offset.x - offset.x > scrollPosition.x + viewportSize.width
     );
 
     const leftOfViewport = (
-      elementPosition.x + offset.x + this.bounds.width < scrollPosition.x
+      this.offset.x + offset.x + this.bounds.width < scrollPosition.x
     );
 
     return !belowViewport && !aboveViewport &&

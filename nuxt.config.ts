@@ -6,6 +6,10 @@ import favicon from './favicon.config';
 
 export default {
   mode: 'universal',
+  server: {
+    port: 3000,
+    host: '0.0.0.0'
+  },
   head: {
     title: 'Davide Perozzi | Interactive developer',
     meta: [

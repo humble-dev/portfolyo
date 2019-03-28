@@ -13,7 +13,9 @@ export class PreloaderService {
   }
 
   public resolveLoaded() {
-    this.loadedResolver.resolve();
+    if ( ! this.loadedResolver.completed) {
+      this.loadedResolver.resolve();
+    }
   }
 
   public get loaded() {

@@ -2,6 +2,7 @@
 import { Component, Vue } from 'nuxt-property-decorator';
 
 import Section from '../Section.vue';
+import PocketParagraph from '../atoms/PocketParagraph.vue';
 import Link from '../atoms/Link.vue';
 import { CanvasDelegatorService } from '~~/services/canvas-delegator.service';
 import {
@@ -19,6 +20,7 @@ const randomLinks = [
 @Component({
   components: {
     Section,
+    PocketParagraph,
     Link,
   },
 })
@@ -81,9 +83,14 @@ export default class ContactSection extends Vue {
   <Section name="contact" v-bind:title="`Wanna work \n with me?`" titleAlign="left" number="4">
     <div class="fg-row fx-layout fx-horoizontal fx-center-center">
       <div class="fg-col-xs-18 fg-col-lg-7 fg-col-xl-5 fg-col-xl-offset-1">
-        <p class="size-xl bold">
-          Just send me an <Link label="email" to="mailto:yo@davideperozzi.de" />
-        </p>
+        <PocketParagraph class="size-xl bold">
+          <span>
+            <span>Just send me</span>
+          </span>
+          <span>
+            <span>an <Link label="email" to="mailto:yo@davideperozzi.de" /></span>
+          </span>
+        </PocketParagraph>
       </div>
       <div class="fg-col-xs-18 fg-col-lg-9 fg-col-lg-offset-2">
         <div class="background-text-warpper">

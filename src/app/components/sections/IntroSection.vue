@@ -111,41 +111,43 @@ export default class IntroSection extends Vue {
     text1.enableVisibility(false);
     text2.enableVisibility(false);
 
-    this.preloader.loaded.then(() => {
-      setTimeout(() => {
-        const moveX1 = this.viewport.size.width * 0.15;
-        const moveX2 = this.viewport.size.width * 0.15;
-        const textX1 = text1.context.x;
-        const textX2 = text2.context.x;
-
-        text1.context.x += moveX1;
-        text2.context.x -= moveX2;
-
-        text1.enableVisibility(true, { duration: 1800 });
-
-        if (process.browser) {
-          smoovy.Tween.to({ x: 0 }, { x: moveX1 }, 3000, {
-            easing: smoovy.easings.Expo.out,
-            update: (pos) => {
-              text1.context.x = textX1 + moveX1 - pos.x;
-            },
-          });
-        }
-
+    if (this.glConfig.enabled) {
+      this.preloader.loaded.then(() => {
         setTimeout(() => {
-          text2.enableVisibility(true, { duration: 1800 });
+          const moveX1 = this.viewport.size.width * 0.15;
+          const moveX2 = this.viewport.size.width * 0.15;
+          const textX1 = text1.context.x;
+          const textX2 = text2.context.x;
+
+          text1.context.x += moveX1;
+          text2.context.x -= moveX2;
+
+          text1.enableVisibility(true, { duration: 1800 });
 
           if (process.browser) {
-            smoovy.Tween.to({ x: 0 }, { x: moveX2 }, 3000, {
+            smoovy.Tween.to({ x: 0 }, { x: moveX1 }, 3000, {
               easing: smoovy.easings.Expo.out,
               update: (pos) => {
-                text2.context.x = textX2 - moveX2 + pos.x;
+                text1.context.x = textX1 + moveX1 - pos.x;
               },
             });
           }
-        }, 200);
-      }, 500);
-    });
+
+          setTimeout(() => {
+            text2.enableVisibility(true, { duration: 1800 });
+
+            if (process.browser) {
+              smoovy.Tween.to({ x: 0 }, { x: moveX2 }, 3000, {
+                easing: smoovy.easings.Expo.out,
+                update: (pos) => {
+                  text2.context.x = textX2 - moveX2 + pos.x;
+                },
+              });
+            }
+          }, 200);
+        }, 500);
+      });
+    }
 
     this.canvasDelegator.addContainer('background', text1, text2);
   }
@@ -202,6 +204,23 @@ export default class IntroSection extends Vue {
 </template>
 
 <style scoped lang="scss">
+  .desline {
+    .gl-disabled & {
+      opacity: 0;
+      transition:
+        transform 1.2s .5s $ease-out-smooth,
+        opacity .8s .5s;
+    }
+
+    &-1.desline,
+    &-2.desline {
+      .gl-disabled.preloader-loaded & {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+  }
+
   .teaser-text {
     @include responsive-width($break-lg) {
       text-align: right;
@@ -267,12 +286,16 @@ export default class IntroSection extends Vue {
       }
 
       .desline-1 {
+        transform: translate3d(15vw, 0, 0);
+
         @include responsive-width($break-md) {
           @include fluid-size(margin-left, 130px, 30px);
         }
       }
 
       .desline-2 {
+        transform: translate3d(-15vw, 0, 0);
+
         @include responsive-width(0, $break-md) {
           @include fluid-size(margin-left, -200px, -100px);
         }

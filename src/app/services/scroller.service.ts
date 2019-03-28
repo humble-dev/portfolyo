@@ -113,7 +113,10 @@ export class ScrollerService {
           },
         },
         input: {
-          mouse: {},
+          mouse: {
+            multiplier: 0.5,
+            firefoxMultiplier: 20
+          },
           touch: {
             multiplier: 2.5,
           },
@@ -121,7 +124,7 @@ export class ScrollerService {
         output: {
           default: {
             easing: smoovy.easings.Quint.out,
-            speed: 1350,
+            speed: 1200,
             selector: 'section,footer',
             on: {
               animation: (

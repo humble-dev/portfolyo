@@ -3,15 +3,20 @@ import { Component, Vue, Inject } from 'nuxt-property-decorator';
 
 import Section from '../Section.vue';
 import Parallax from '../Parallax.vue';
+import PocketParagraph from '../atoms/PocketParagraph.vue';
 import visibleTrigger from '~~/directives/visible-trigger.directive';
 
 import { CanvasDelegatorService } from '~~/services/canvas-delegator.service';
-import { RelatedTextContainer, RelatedTextContainerStretch } from '~~/canvas/containers/related-text.container';
+import {
+  RelatedTextContainer,
+  RelatedTextContainerStretch
+} from '~~/canvas/containers/related-text.container';
 
 @Component({
   components: {
     Section,
     Parallax,
+    PocketParagraph,
   },
   directives: {
     visibleTrigger,
@@ -60,27 +65,24 @@ export default class SkillsSection extends Vue {
   <Section name="skills" v-bind:title="`Skillz & \n Awards!`" titleAlign="right" number="3">
     <div class="fg-row">
       <div class="fg-col-xs-18 fg-col-lg-13 fg-col-xxl-10">
-        <p
-          class="bold size-lg description-wrapper"
-          v-visibleTrigger="{ offset: -100 }"
-        >
-          <span class="line-wrapper">
+        <PocketParagraph class="bold size-lg description-wrapper">
+          <span>
             <span>I am a full stack interactive developer with knowledge</span>
           </span>
-          <span class="line-wrapper">
+          <span>
             <span>in a lot of technologies. If i don‘t know something</span>
           </span>
-          <span class="line-wrapper">
+          <span>
             <span>I am really fast in learning it.</span>
           </span>
           <br /><br />
-          <span class="line-wrapper">
+          <span>
             <span>My work got featured on several platforms</span>
           </span>
-          <span class="line-wrapper">
+          <span>
             <span>like awwwards, cssdesignawards and more.</span>
           </span>
-        </p>
+        </PocketParagraph>
       </div>
     </div>
     <div class="fg-row headline-row">
@@ -129,32 +131,6 @@ export default class SkillsSection extends Vue {
 </template>
 
 <style scoped lang="scss">
-  @include responsive-width($break-md) {
-    .description-wrapper {
-      .line-wrapper {
-        display: inline-block;
-        overflow: hidden;
-      }
-
-      .line-wrapper > span {
-        white-space: nowrap;
-        display: inline-block;
-        transform: translate3d(0, 105%, 0);
-        transition: transform 1s $ease-out-smooth;
-      }
-
-      @for $i from 1 through 10 {
-        .line-wrapper:nth-child(#{$i}) > span {
-          transition-delay: 50ms * $i;
-        }
-      }
-
-      &.visible-trigger--visible .line-wrapper > span {
-        transform: translate3d(0, 0, 0);
-      }
-    }
-  }
-
   .awards-headline {
     html:not(.gl-disabled) & {
       visibility: hidden;

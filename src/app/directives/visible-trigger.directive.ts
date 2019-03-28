@@ -1,6 +1,6 @@
 import { DirectiveOptions } from 'vue';
 
-import { elementInViewportOnce, elementInViewport } from '../helpers/element-viewport.helper';
+import { elementInViewportOnce } from '../helpers/element-viewport.helper';
 import { ElementState } from '../providers/element-state.provider';
 
 export default {
@@ -9,6 +9,7 @@ export default {
 
     (el as any).__scroll_subscription__ = elementInViewportOnce(
       elementState,
+      0,
       typeof binding.value.offset === 'number'
         ? binding.value.offset
         : 0,
@@ -16,6 +17,8 @@ export default {
         (visible) => {
           if (visible) {
             elementState.element.classList.add('visible-trigger--visible');
+          } else {
+            elementState.element.classList.remove('visible-trigger--visible');
           }
         },
       );

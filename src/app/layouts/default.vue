@@ -37,7 +37,6 @@ import Footer from '~~/components/layout/Footer.vue';
 export default class App extends Vue {
   private scrollerService = ScrollerService.getInstance();
   private canvasDelegator = CanvasDelegatorService.getInstance();
-  private elementState = ElementStateProvider.getInstance();
   private viewport = ViewportProvider.getInstance();
   private scroller = ScrollerService.getInstance();
   private cursor = CursorService.getInstance();
@@ -88,12 +87,6 @@ export default class App extends Vue {
       this.$refs.contentWrapper as HTMLElement,
     );
 
-    // Add main background
-    // this.canvasDelegator.addContainer(
-    //   'background',
-    //   new MainBackgroundContainer()
-    // );
-
     // Add custom cursoir
     this.canvasDelegator.addContainer(
       'foreground',
@@ -101,11 +94,11 @@ export default class App extends Vue {
     );
 
     // Manage element states
-    this.elementState.update();
-    setTimeout(() => this.elementState.update());
+    ElementStateProvider.update();
+    setTimeout(() => ElementStateProvider.update());
 
     this.viewport.changed(200).subscribe(() => {
-      this.elementState.update();
+      ElementStateProvider.update();
     });
 
     // Update scroller once

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator';
+import { Component, Prop, Vue, Inject } from 'nuxt-property-decorator';
 import { map, delay, tap, filter } from 'rxjs/operators';
 
 import { ResourceProvider } from '~~/providers/resource.provider';
@@ -38,24 +38,31 @@ export default class Preloader extends Vue {
   private ready: boolean = false;
   private loaded: boolean = false;
 
+  @Inject('glConfig')
+  private glConfig!: { enabled: boolean };
+
   public mounted() {
-    this.cursor.ready.then(() => {
-      setTimeout(() => this.ready = true);
+    if (this.glConfig.enabled) {
+      this.cursor.ready.then(() => {
+        setTimeout(() => this.ready = true);
 
-      // Skip preloading
-      // this.handleLoadingDone();
-      // document.documentElement.classList.add('preloader-ready');
+        // Skip preloading
+        // this.handleLoadingDone();
+        // document.documentElement.classList.add('preloader-ready');
 
-      this.cursor.setPosition(
-        this.viewport.size.width / 2,
-        this.viewport.size.height / 2,
-        true,
-      );
+        this.cursor.setPosition(
+          this.viewport.size.width / 2,
+          this.viewport.size.height / 2,
+          true,
+        );
 
-      this.cursor.hide();
+        this.cursor.hide();
 
+        document.documentElement.classList.add('preloader-mounted');
+      });
+    } else {
       document.documentElement.classList.add('preloader-mounted');
-    });
+    }
 
     this.viewport.changed(200)
       .pipe(
@@ -221,6 +228,7 @@ export default class Preloader extends Vue {
   .circle-wrapper {
     position: relative;
     z-index: 2;
+    user-select: none;
     transition: transform .5s $ease-in-out-circ;
     transform: scale(.8) translateZ(0);
 

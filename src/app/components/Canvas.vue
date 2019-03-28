@@ -89,10 +89,8 @@ export default class Canvas extends Vue implements CanvasDelegator {
   private createPixiApp() {
     this.pixiApp = new PIXI.Application({
       transparent: true,
-      forceFXAA: true,
       autoResize: true,
       resolution: window.devicePixelRatio,
-      powerPreference: 'high-performance',
       view: this.$refs.stage as HTMLCanvasElement,
       width: this.elementState.bounds.width,
       height: this.elementState.bounds.height,
