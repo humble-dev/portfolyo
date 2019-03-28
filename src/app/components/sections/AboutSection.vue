@@ -36,6 +36,10 @@ export default class AboutSection extends Vue {
       },
     );
 
+    this.image.isInitialized().then(() => {
+      this.image.context.alpha = 0.45;
+    });
+
     this.image.enableParallax(true, { speed: 25 });
     this.image.enableVisibility(false);
     this.image.enableDisplacement(
@@ -113,7 +117,7 @@ export default class AboutSection extends Vue {
 
     &.active {
       color: transparent;
-      -webkit-text-stroke-color: $color-white;
+      -webkit-text-stroke-color: $color-black;
     }
   }
 }

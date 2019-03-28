@@ -83,7 +83,6 @@ export default class Preloader extends Vue {
       this.progressTween.stop();
     }
 
-
     if (process.browser) {
       this.progressTween = smoovy.Tween.to(
         {
@@ -109,6 +108,8 @@ export default class Preloader extends Vue {
   }
 
   private handleCircleDown() {
+    clearTimeout(this.circleDownTimeout);
+
     this.circleDown = true;
     this.circleDownTimeout = setTimeout(() => {
       if (this.loaded) {

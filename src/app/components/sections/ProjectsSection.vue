@@ -296,12 +296,12 @@ export default class ProjectsSection extends Vue {
         stroke: 0x00000,
         strokeThickness: 1,
         padding: 4,
-        fontSize: 200,
+        fontSize: 210,
         rotation: -90,
         anchorX: 1,
         anchorY: -0.2,
-        // Adjust the horizontal positioning due the rotation
         sync: (text, context, viewportSize) => {
+          // Adjust the horizontal positioning due the rotation
           context.x = viewportSize.width - text.height;
         },
       },
@@ -335,17 +335,10 @@ export default class ProjectsSection extends Vue {
     const videoSprite = sprite instanceof RelatedVideoContainer ? sprite : null;
 
     if (sprite) {
-      if (videoSprite) {
-        if (enabled) {
-          videoSprite.play();
-        } else {
-          videoSprite.pause();
-        }
-      }
-
       sprite.enableMouseTwist(enabled, {
         radius: 200,
         angle: 10,
+        padding: 500,
       });
 
       sprite.enableDisplacement(
@@ -355,9 +348,17 @@ export default class ProjectsSection extends Vue {
           scaleY: 100,
           moveSpeedX: .3,
           moveSpeedY: .3,
-          scaleDuration: enabled ? 0 : 1500,
+          scaleDuration: enabled ? 100 : 1500,
         },
       ).then((extra) => {
+        if (videoSprite) {
+          if (enabled) {
+            videoSprite.play();
+          } else {
+            videoSprite.pause();
+          }
+        }
+
         setTimeout(() => {
           if (enabled) {
             extra.scaleFilter(

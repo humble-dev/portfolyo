@@ -40,6 +40,7 @@ export class DefaultContainer {
   private resolvedExtras: ContainerExtra[] = [];
   private _context!: PIXI.Container;
   private initializedResolver = new Resolver();
+  public padding = { top: 0, bottom: 0, left: 0, right: 0 };
   public viewportSize = { width: 0, height: 0 };
 
   public constructor(
@@ -142,6 +143,16 @@ export class DefaultContainer {
     config?: Partial<ParallaxConfig>,
   ) {
     const extra = await this.extra(parallaxExtraName);
+
+    if (config && config.speed) {
+      if (config.direction && config.direction === 'x') {
+        this.padding.left = config.speed;
+        this.padding.right = config.speed;
+      } else {
+        this.padding.top = config.speed;
+        this.padding.bottom = config.speed;
+      }
+    }
 
     if (enabled) {
       extra.activate(config);

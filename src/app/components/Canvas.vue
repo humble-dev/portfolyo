@@ -48,15 +48,17 @@ export default class Canvas extends Vue implements CanvasDelegator {
         this.createPixiApp();
 
         this.scroller.scrollAnimation$.subscribe((state) => {
-          this.scrollContainer.context.y = -state.position.y;
-          this.scrollContainer.context.x = -state.position.x;
+          if (this.scrollContainer.initialized) {
+            this.scrollContainer.context.y = -state.position.y;
+            this.scrollContainer.context.x = -state.position.x;
 
-          for (let i = 0, len = this.containers.length; i < len; i++) {
-            const container = this.containers[i];
-            const visible = this.isContainerVisible(container);
+            for (let i = 0, len = this.containers.length; i < len; i++) {
+              const container = this.containers[i];
+              const visible = this.isContainerVisible(container);
 
-            if (visible !== container.isVisibile()) {
-              container.setVisibility(visible);
+              if (visible !== container.isVisibile()) {
+                container.setVisibility(visible);
+              }
             }
           }
         });
@@ -144,14 +146,16 @@ export default class Canvas extends Vue implements CanvasDelegator {
     const absScrollX = Math.abs(this.scrollContainer.context.x);
     const absScrollY = Math.abs(this.scrollContainer.context.y);
 
+    const padding = container.padding;
+
     const absPosX = container.context.x - absScrollX;
     const absPosY = container.context.y - absScrollY;
 
-    const visibleX = absPosX - this.viewport.size.width < 0 &&
-                     absPosX + container.context.width > 0;
+    const visibleX = absPosX - this.viewport.size.width - padding.left < 0 &&
+                     absPosX + container.context.width + padding.top > 0;
 
-    const visibleY = absPosY - this.viewport.size.height < 0 &&
-                     absPosY + container.context.height > 0;
+    const visibleY = absPosY - this.viewport.size.height - padding.top < 0 &&
+                     absPosY + container.context.height + padding.bottom > 0;
 
     return visibleX && visibleY;
   }

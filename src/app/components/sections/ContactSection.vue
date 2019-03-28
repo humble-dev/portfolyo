@@ -101,16 +101,40 @@ export default class ContactSection extends Vue {
     <div class="fg-row">
       <div class="fg-col-xs-18 fg-col-lg-6 fg-col-lg-offset-10">
         <div class="fg-row">
-          <p class="fg-col-xs-9 bold size-lg link-list-wrapper fx-layout fx-vertical fx-start">
-            <Link target="_blank" rel="noopener" to="https://github.com/davideperozzi" label="GitHub" />
-            <Link target="_blank" rel="noopener" to="https://www.linkedin.com/in/davide-perozzi-146a39172/" label="LinkedIn" />
-            <Link target="_blank" rel="noopener" to="https://www.xing.com/profile/Davide_Perozzi" label="Xing" />
-          </p>
-          <p class="fg-col-xs-9 bold size-lg link-list-wrapper fx-layout fx-vertical fx-start">
-            <Link target="_blank" rel="noopener" to="https://open.spotify.com/user/triplexp" label="Spotify" />
-            <Link target="_blank" rel="noopener" to="https://www.behance.net/davideperozzi" label="Behance" />
-            <Link target="_blank" rel="noopener" @click="updateRandomLink()" :href="randomLink" label="Something" />
-          </p>
+          <PocketParagraph class="fg-col-xs-9 bold size-lg link-list-wrapper fx-layout fx-vertical fx-start">
+            <span>
+              <span>
+                <Link target="_blank" rel="noopener" to="https://github.com/davideperozzi" label="GitHub" />
+              </span>
+            </span>
+            <span>
+              <span>
+                <Link target="_blank" rel="noopener" to="https://www.linkedin.com/in/davide-perozzi-146a39172/" label="LinkedIn" />
+              </span>
+            </span>
+            <span>
+              <span>
+                <Link target="_blank" rel="noopener" to="https://www.xing.com/profile/Davide_Perozzi" label="Xing" />
+              </span>
+            </span>
+          </PocketParagraph>
+          <PocketParagraph class="fg-col-xs-9 bold size-lg link-list-wrapper fx-layout fx-vertical fx-start">
+            <span>
+              <span>
+                <Link target="_blank" rel="noopener" to="https://open.spotify.com/user/triplexp" label="Spotify" />
+              </span>
+            </span>
+            <span>
+              <span>
+                <Link target="_blank" rel="noopener" to="https://www.behance.net/davideperozzi" label="Behance" />
+              </span>
+            </span>
+            <span>
+              <span>
+                <Link target="_blank" rel="noopener" @click="updateRandomLink()" :href="randomLink" label="Something" />
+              </span>
+            </span>
+          </PocketParagraph>
         </div>
       </div>
     </div>

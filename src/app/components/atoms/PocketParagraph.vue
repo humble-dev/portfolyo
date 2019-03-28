@@ -32,12 +32,12 @@ export default class PocketParagraph extends Vue {
       display: inline-block;
       white-space: nowrap;
       transform: translate3d(0, 100%, 0);
-      transition: transform 1.5s cubic-bezier(.23,1,.32,1);
+      transition: transform 1.3s cubic-bezier(.23,1,.32,1);
     }
 
     @for $i from 1 through 10 {
       p > span:nth-child(#{$i}) > span {
-        transition-delay: 100ms * $i;
+        transition-delay: 80ms * $i;
       }
     }
 
