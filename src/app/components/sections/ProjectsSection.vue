@@ -21,7 +21,7 @@ import {
   RelatedTextContainerStretch,
   RelatedTextContainerConfig,
 } from '~~/canvas/containers/related-text.container';
-import { DisplacementConfig } from '~~/canvas/extras/displacement.extra';
+import { DisplacementConfig, Displacement } from '~~/canvas/extras/displacement.extra';
 import { ScrollerService } from '~~/services/scroller.service';
 import { Resolver } from '~~/utils/promise.util';
 
@@ -193,7 +193,10 @@ export default class ProjectsSection extends Vue {
   private scrollerService = ScrollerService.getInstance();
   private textContainers: { [id: string]: RelatedTextContainer } = {};
   private spriteContainers: {
-    [id: string]: RelatedImageContainer | RelatedVideoContainer,
+    [id: string]: {
+      container: RelatedImageContainer | RelatedVideoContainer,
+      displacement: Displacement
+    },
   } = {};
 
   @Inject('glConfig')
@@ -272,7 +275,10 @@ export default class ProjectsSection extends Vue {
         }
 
         if (spriteContainer) {
-          this.spriteContainers[id] = spriteContainer;
+          this.canvasDelegator.addContainer(
+            'foreground',
+            spriteContainer,
+          );
 
           spriteContainer.enableParallax(
             true,
@@ -282,10 +288,20 @@ export default class ProjectsSection extends Vue {
             },
           );
 
-          this.canvasDelegator.addContainer(
-            'foreground',
-            spriteContainer,
-          );
+          spriteContainer.enableDisplacement(
+            true,
+            {
+              scaleX: 100,
+              scaleY: 100,
+            }
+          ).then((displacement) => {
+            if (spriteContainer) {
+              this.spriteContainers[id] = {
+                container: spriteContainer,
+                displacement
+              };
+            }
+          });
         }
       }
     });
@@ -323,7 +339,11 @@ export default class ProjectsSection extends Vue {
   private getSpriteContainer(
     id: string,
   ): RelatedImageContainer|RelatedVideoContainer|undefined {
-    return this.spriteContainers[id];
+    return (this.spriteContainers[id] || {}).container;
+  }
+
+  private getSpriteDisplacement(id: string): Displacement|undefined {
+    return (this.spriteContainers[id] || {}).displacement;
   }
 
   private getTextContainer(id: string): RelatedTextContainer|undefined {
@@ -335,6 +355,7 @@ export default class ProjectsSection extends Vue {
     enabled: boolean = true,
   ) {
     const sprite = this.getSpriteContainer(project.id);
+    const spriteDisplacement = this.getSpriteDisplacement(project.id);
     const text = this.getTextContainer(project.id);
     const videoSprite = sprite instanceof RelatedVideoContainer ? sprite : null;
 
@@ -345,42 +366,21 @@ export default class ProjectsSection extends Vue {
         padding: 500,
       });
 
-      sprite.enableDisplacement(
-        enabled,
-        {
-          scaleX: 100,
-          scaleY: 100,
-          moveSpeedX: .3,
-          moveSpeedY: .3,
-          scaleDuration: enabled ? 0 : 1500,
-        },
-      ).then((extra) => {
-        if (videoSprite) {
-          if (enabled) {
-            setTimeout(() => {
+      if (spriteDisplacement) {
+        if (enabled) {
+          spriteDisplacement.scaleFilter(0, 0, 1000).then(() => {
+            if (videoSprite) {
               videoSprite.play();
-            }, 500);
-          } else {
+            }
+          })
+        } else {
+          if (videoSprite) {
             videoSprite.pause();
           }
-        }
 
-        setTimeout(() => {
-          if (enabled) {
-            extra.scaleFilter(
-              videoSprite ? 0 : 8,
-              videoSprite ? 0 : 8,
-              1000,
-            );
-          } else {
-            extra.scaleFilter(
-              100,
-              100,
-              1500,
-            );
-          }
-        });
-      });
+          spriteDisplacement.scaleFilter(100, 100, 1000);
+        }
+      }
 
       sprite.enableVisibility(enabled);
       sprite.enableMouseMotion(
@@ -483,6 +483,10 @@ export default class ProjectsSection extends Vue {
   .keyword-container {
     position: relative;
     width: 100%;
+
+    html:not(.gl-disabled) & {
+      @include fluid-size(margin-top, -2px, -7px);
+    }
 
     .gl-disabled & {
       transform: translate3d(0, 0, 0) !important;

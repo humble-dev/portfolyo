@@ -107,17 +107,20 @@ export class Displacement implements ContainerExtra {
     duration: number = 500,
     easing: EasingOptions = 'easeOutCubic',
   ) {
-    if (this.filter) {
-      this.killTweens();
+    return new Promise((resolve, reject) => {
+      if (this.filter) {
+        this.killTweens();
 
-      this.scaleAnimation = anime({
-        targets: this.filter.scale,
-        duration,
-        x: scaleX,
-        y: scaleY,
-        easing,
-      });
-    }
+        this.scaleAnimation = anime({
+          targets: this.filter.scale,
+          duration,
+          x: scaleX,
+          y: scaleY,
+          easing,
+          complete: () => resolve()
+        });
+      }
+    });
   }
 
   public deactivate(config: Partial<DisplacementConfig> = {}) {

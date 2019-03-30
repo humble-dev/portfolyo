@@ -110,4 +110,8 @@ export default class Parallax extends Vue {
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+  .parallax-wrapper {
+    will-change: transform;
+  }
+</style>

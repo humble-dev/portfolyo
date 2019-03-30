@@ -1,12 +1,17 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator';
 import { ElementState } from '~~/providers/element-state.provider';
+import { ViewportProvider } from '~~/providers/viewport.provider';
 
 @Component
 export default class Link extends Vue {
+  private viewport = ViewportProvider.getInstance();
   private lettersDefault!: ElementState;
   private lettersActive!: ElementState;
   private activeScale = 1;
+  private defaultScale = 1;
+  private defaultWidth = 0;
+  private activeWidth = 0;
 
   @Prop({ default: '' })
   private label!: string;
@@ -34,19 +39,27 @@ export default class Link extends Vue {
     );
 
     setTimeout(() => {
-      const defaultWidth = this.lettersDefault.bounds.width;
+      this.defaultWidth = this.lettersDefault.bounds.width;
+      this.activeWidth = this.lettersActive.bounds.width;
+    });
 
-      this.activeScale = this.lettersActive.bounds.width / defaultWidth;
+    this.viewport.changed(100).subscribe(() => {
+      this.defaultWidth = this.lettersDefault.bounds.width;
+      this.activeWidth = this.lettersActive.bounds.width;
     });
   }
 }
 </script>
 
 <template>
-  <span class="link-wrapper">
-    <a class="link-container" :href="to" :target="target" :style="{
-      '--active-scale': activeScale
-    }">
+  <span
+    class="link-wrapper"
+    :style="{
+      '--default-width': defaultWidth,
+      '--active-width': activeWidth
+    }"
+  >
+    <a class="link-container" :href="to" :target="target">
       <span class="letter-wrapper" ref="lettersDefault">
         <span class="letter" v-for="(letter, index) in letters" :key="index">
           <span :style="{ transitionDelay: `${20 * (letters.length - index)}ms` }">{{letter}}</span>
@@ -66,28 +79,26 @@ export default class Link extends Vue {
 <style scoped lang="scss">
 .link-wrapper {
   display: inline-block;
+  width: calc(var(--active-width) * 1px);
 }
 
 .link-container {
-  $padding-r: "(var(--active-scale) - 1) * 100%";
-
-  position: relative;
-  top: .5ch;
-  margin-top: -.5ch;
   display: inline-block;
+  position: relative;
+  width: 100%;
   white-space: nowrap;
-  padding-right: calc(#{$padding-r});
 
   &:after {
     content: "";
     display: block;
-    width: calc(100% - #{$padding-r} + 1%);
+    width: 100%;
     background-color: $color-black;
     position: absolute;
-    bottom: 0.5ch;
     left: 0;
     transform-origin: 0% 50%;
     transition: transform 1s $ease-out-smooth;
+    bottom: 5%;
+    transform: scaleX(calc(var(--default-width) / var(--active-width)));
 
     @include responsive-width(0, $break-md) {
       height: 2px;
@@ -99,14 +110,14 @@ export default class Link extends Vue {
   }
 
   &:hover:after {
-    transform: scaleX(var(--active-scale));
+    transform: scaleX(1);
     transition: transform 1s $ease-in-out-circ;
   }
 }
 
 .letter {
-  overflow: hidden;
   padding-bottom: 0.25ch;
+  overflow: hidden;
   display: inline-block;
 
   > span {
@@ -120,7 +131,11 @@ export default class Link extends Vue {
 }
 
 .link-container:not(:hover) .letter > span {
-  transition-delay: none !important;
+  transition-delay: 0s !important;
+}
+
+.letter-wrapper {
+  display: inline-flex;
 }
 
 .letter-wrapper:nth-child(2) {

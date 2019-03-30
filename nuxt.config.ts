@@ -21,6 +21,10 @@ export default {
         content: 'width=device-width, initial-scale=1'
       },
       {
+        name: 'format-detection',
+        content: 'telephone=no'
+      },
+      {
         hid: 'description',
         name: 'description',
         content: 'I\'m Davide, an interactive developer from Karlsruhe'

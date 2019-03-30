@@ -10,6 +10,16 @@ import { RelatedImageContainer, RelatedImageContainerStretch } from '~~/canvas/c
 import Section from '../Section.vue';
 import Parallax from '../Parallax.vue';
 import Link from '../atoms/Link.vue';
+import { ViewportProvider } from '~~/providers/viewport.provider';
+
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+
+  return a;
+}
 
 @Component({
   components: {
@@ -20,9 +30,30 @@ import Link from '../atoms/Link.vue';
 })
 export default class AboutSection extends Vue {
   private canvasDelegator = CanvasDelegatorService.getInstance();
+  private viewport = ViewportProvider.getInstance();
   private myselfEnabled: boolean = false;
   private displacement!: Displacement;
   private image!: RelatedImageContainer;
+  private activePersonality = 1;
+  private showDefault = false;
+  private nameSpeed = 0;
+  private lastPersonSwitch = -1;
+  private currentPersonPos = 0;
+  private personalities = [
+    'not batman',
+    'motivated',
+    'someone',
+    'never satisified',
+    'half italian',
+    'passionated',
+    'just a guy',
+    'a hip hop head',
+    'not very tall'
+  ];
+
+  public created() {
+    shuffle(this.personalities);
+  }
 
   public mounted() {
     this.image = new RelatedImageContainer(
@@ -37,7 +68,7 @@ export default class AboutSection extends Vue {
     );
 
     this.image.isInitialized().then(() => {
-      this.image.context.alpha = 0.45;
+      this.image.context.alpha = 0.8;
     });
 
     this.image.enableParallax(true, { speed: 25 });
@@ -45,10 +76,18 @@ export default class AboutSection extends Vue {
     this.image.enableDisplacement(
       true,
       {
-        scaleX: 30,
-        scaleY: 30,
+        scaleX: 50,
+        scaleY: 50,
       },
     ).then((extra) => this.displacement = extra);
+
+    setTimeout(() => {
+      this.nameSpeed = (this.$refs.text as HTMLElement).offsetTop;
+    });
+
+    this.viewport.changed(100).subscribe(() => {
+      this.nameSpeed = (this.$refs.text as HTMLElement).offsetTop;
+    });
 
     this.canvasDelegator.addContainer('background', this.image);
   }
@@ -76,6 +115,25 @@ export default class AboutSection extends Vue {
 
   private handleNameTranslation(position: { x: number, y: number }) {
     this.enableMyself(position.y >= -0.5);
+    this.showDefault = position.y >= -60;
+
+    if (this.lastPersonSwitch === -1) {
+      this.lastPersonSwitch = Math.abs(position.y);
+    }
+
+    this.currentPersonPos = Math.abs(
+      this.lastPersonSwitch - Math.abs(position.y)
+    );
+
+    if (this.currentPersonPos >= this.nameSpeed / 9) {
+      this.lastPersonSwitch = Math.abs(position.y);
+
+      const nextPerso = this.activePersonality + 1;
+
+      this.activePersonality = nextPerso < this.personalities.length
+        ? nextPerso
+        : 0;
+    }
   }
 }
 </script>
@@ -86,12 +144,22 @@ export default class AboutSection extends Vue {
       <div class="fg-col-xs-18 fg-col-md-16">
         <p class="bold size-xl" ref="text">
           Hello. I am
-          <span class="name" :class="{ active: myselfEnabled }" ref="name">
+          <span class="name" :class="[
+            { active: myselfEnabled, default: showDefault },
+            `p${activePersonality + 1}`
+          ]" ref="name">
             <no-ssr>
               <Parallax
                 @translate="handleNameTranslation"
-                v-bind="{ speed: 45, minValue: 0 }"
-              >Davide</Parallax>
+                v-bind="{ speed: nameSpeed, minValue: 0 }"
+              >
+                <span
+                  class="personality"
+                  v-for="(personality, index) in personalities"
+                  :key="index"
+                >{{personality}}</span>
+                <span class="default-text">Davide</span>
+              </Parallax>
             </no-ssr>
           </span>, a creative developer based
           in Karlsruhe where I create awesome digital
@@ -114,10 +182,31 @@ export default class AboutSection extends Vue {
   }
 
   html:not(.gl-disabled) & {
+    position: relative;
     display: inline-block;
     color: $color-black;
     transition: color .8s, -webkit-text-stroke-color .8s;
     -webkit-text-stroke: 1px transparent;
+
+    .personality {
+      display: none;
+      position: absolute;
+      left: 0;
+      top: 50%;
+      white-space: nowrap;
+      display: none;
+      transform: translate3d(0, -50%, 0);
+    }
+
+    &:not(.default) .default-text {
+      visibility: hidden;
+    }
+
+    @for $i from 1 through 10 {
+      &:not(.default).p#{$i} .personality:nth-child(#{$i}) {
+        display: block;
+      }
+    }
 
     &.active {
       color: transparent;

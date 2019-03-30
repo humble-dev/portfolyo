@@ -273,7 +273,7 @@ export default class Header extends Vue {
     }
   }
 
-  $nav-link-height: 40px;
+  $nav-link-height: 28px;
 
   nav {
     pointer-events: all;
@@ -349,7 +349,7 @@ export default class Header extends Vue {
       position: relative;
       display: inline-block;
       height: 100%;
-      padding: 5px 10px 5px 15px;
+      padding: 4px 13px 4px 15px;
       transform: translate3d(0, 0, 0);
 
       > span {
@@ -396,12 +396,12 @@ export default class Header extends Vue {
       }
 
       &-top {
-        clip: rect(0 auto 15px 0);
+        clip: rect(0 auto 10px 0);
         transform-origin: 50% 100%;
       }
 
       &-bottom {
-        clip: rect(15px auto auto 0);
+        clip: rect(10px auto auto 0);
         transform-origin: 50% 0;
       }
 

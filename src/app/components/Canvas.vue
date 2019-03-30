@@ -54,6 +54,11 @@ export default class Canvas extends Vue implements CanvasDelegator {
 
             for (let i = 0, len = this.containers.length; i < len; i++) {
               const container = this.containers[i];
+
+              if ( ! container.initialized) {
+                continue;
+              }
+
               const visible = this.isContainerVisible(container);
 
               if (visible !== container.isVisibile()) {

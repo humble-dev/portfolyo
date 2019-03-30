@@ -123,8 +123,15 @@ export default class Headline extends Vue {
     font-family: $font-neue-plak-extended-regular;
   }
 
+  .number {
+    line-height: 1.4;
+  }
+
   h2 > p {
     overflow: hidden;
+    line-height: 0.96;
+
+    @include fluid-size(font-size, 24px, 44px);
   }
 
   h2 > p > span {
