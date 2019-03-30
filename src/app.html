@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html {{ HTML_ATTRS }}>
+  <head>
+    {{ HEAD }}
+  </head>
+  <body {{ BODY_ATTRS }}>
+    {{ APP }}
+    <div id="outdated" style="display: none"> <p> <span class="def">Please update or switch your browser to continue</span> <span class="edge">Sorry, I don't support dead browsers</span> <span> <a href="http://outdatedbrowser.com">Update</a> </span> </p></div>
+    <style>html.outdated #outdated span{display:block}html.outdated #outdated span.edge{display:none}html.outdated.o-edge #outdated span.def{display:none}html.outdated.o-edge #outdated span.edge{display:block}html.outdated{overflow:hidden}html.outdated #outdated a{text-decoration:underline;margin-top:20px}html.outdated #outdated{display:block!important;position:fixed;left:0;top:0;right:0;bottom:0;z-index:9999999;background:#fdfcf9}html.outdated #outdated p{text-align:center;display:block;font-family:Arial!important;font-weight:800;font-size:24px;letter-spacing:.1em;position:absolute;top:47%;width:100%}</style>
+    <script>var uA=navigator.userAgent.toLowerCase();function s(){var e=uA.match(/version\/[\d\.]+.*safari/),t=11;uA.match(/version\/[\d\.]+.*safari/)&&(t=+e[0].match(/version\/\d{1,2}/)[0].split("/")[1]);return t<11}function i(){return uA.indexOf("msie")>-1||navigator.appVersion.indexOf("Trident/")>0}function e(){return/Edge\/\d./i.test(this.uA)}(i()||s()||e())&&(document.documentElement.className="outdated"+(e()?" o-edge":""));</script>
+  </body>
+</html>

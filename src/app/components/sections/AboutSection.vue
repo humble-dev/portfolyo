@@ -57,8 +57,12 @@ export default class AboutSection extends Vue {
     if (enabled !== this.myselfEnabled) {
       this.myselfEnabled = enabled;
 
-      this.image.enableMouseTwist(enabled, { angle: 15, radius: 130 });
       this.image.enableVisibility(enabled);
+      this.image.enableMouseTwist(enabled, {
+        angle: 15,
+        radius: 130,
+        padding: 150,
+      });
 
       if (this.displacement) {
         if (enabled) {

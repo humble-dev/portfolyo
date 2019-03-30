@@ -16,6 +16,7 @@ import Canvas from '~~/components/Canvas.vue';
 import Preloader from '~~/components/Preloader.vue';
 import Scrollbar from '~~/components/layout/Scrollbar.vue';
 import Parallax from '~~/components/Parallax.vue';
+import Imprint from '~~/components/Imprint.vue';
 
 import Header from '~~/components/layout/Header.vue';
 import Footer from '~~/components/layout/Footer.vue';
@@ -28,6 +29,7 @@ import Footer from '~~/components/layout/Footer.vue';
     Section,
     Preloader,
     Parallax,
+    Imprint,
 
     /** Layout */
     Footer,
@@ -40,6 +42,7 @@ export default class App extends Vue {
   private viewport = ViewportProvider.getInstance();
   private scroller = ScrollerService.getInstance();
   private cursor = CursorService.getInstance();
+  private imprintEnabled = false;
 
   @Provide()
   private glConfig = { enabled: false };
@@ -125,6 +128,16 @@ export default class App extends Vue {
       });
     }
   }
+
+  private enableImprint(enabled: boolean) {
+    this.imprintEnabled = enabled;
+  }
+
+  private handleImprintCloseClick(event: Event) {
+    event.preventDefault();
+
+    this.enableImprint(false);
+  }
 }
 </script>
 
@@ -148,9 +161,15 @@ export default class App extends Vue {
     </no-ssr>
     <div class="content-wrapper" ref="contentWrapper">
       <nuxt />
-      <Footer />
+      <Footer @clickImprint="enableImprint(true)" />
     </div>
     <Preloader />
+    <div class="imprint-overlay" :class="{ active: imprintEnabled }">
+      <a class="imprint-close" href="#" @click="handleImprintCloseClick">CLOSE</a>
+      <div class="imprint-overlay-content">
+        <Imprint />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -186,5 +205,70 @@ export default class App extends Vue {
     height: 100%;
     width: 100%;
     z-index: 1;
+  }
+
+  .imprint-overlay,
+  .imprint-overlay * {
+    cursor: default !important;
+  }
+
+  .imprint-overlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 199;
+    background-color: rgba($color-black, .5);
+    opacity: 0;
+    transition: opacity .8s, visibility 0s .8s;
+    visibility: hidden;
+
+    &.active {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity .5s;
+    }
+
+    .imprint-close {
+      position: absolute;
+      color: $color-red;
+      font-family: $font-neue-haas-medium;
+      text-decoration: none;
+      right: calc(15% + 15px);
+      top: calc(15vh + 15px);
+      z-index: 2;
+      transform: translate3d(0, -50px, 0);
+      opacity: 0;
+      transition: opacity .5s .2s, transform .5s .2s;
+
+      @include fluid-size(font-size, 20px, 30px);
+    }
+
+    &.active .imprint-close {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .imprint-overlay-content {
+      position: absolute;
+      height: 70vh;
+      top: 15vh;
+      overflow: auto;
+      left: 50%;
+      max-width: 70%;
+      width: 100%;
+      background-color: $color-beige;
+      opacity: 0;
+      transition: transform .5s, opacity .5s;
+      transform: translate3d(-50%, 50px, 0);
+
+      @include fluid-size(padding, 30px, 50px);
+    }
+
+    &.active .imprint-overlay-content {
+      opacity: 1;
+      transform: translate3d(-50%, 0, 0);
+    }
   }
 </style>

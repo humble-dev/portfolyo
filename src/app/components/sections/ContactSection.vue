@@ -121,7 +121,7 @@ export default class ContactSection extends Vue {
           <PocketParagraph class="fg-col-xs-9 bold size-lg link-list-wrapper fx-layout fx-vertical fx-start">
             <span>
               <span>
-                <Link target="_blank" rel="noopener" to="https://open.spotify.com/user/triplexp" label="Spotify" />
+                <Link target="_blank" rel="noopener" to="https://dribbble.com/" label="Dribbble" />
               </span>
             </span>
             <span>

@@ -35,7 +35,8 @@ p .upper {
 }
 
 p.bold,
-p b {
+p b,
+p strong {
   font-family: $font-neue-haas-medium;
 }
 

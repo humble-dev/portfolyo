@@ -11,6 +11,12 @@ export default class Footer extends Vue {
 
     this.scroller.scrollToY(0);
   }
+
+  private handleImprintClick(event: Event) {
+    event.preventDefault();
+
+    this.$emit('clickImprint');
+  }
 }
 </script>
 
@@ -21,7 +27,7 @@ export default class Footer extends Vue {
         <p class="size-md bold">Website &copy; 2019</p>
         <p class="size-sm">des. Norman Dubois, dev. Davide Perozzi</p>
         <p class="size-sm">
-          <a href="#" @click="scrollUp" class="no-underline">scroll up</a>
+          <a href="#imprint" @click="handleImprintClick" class="no-underline">imprint</a>
         </p>
       </div>
     </div>

@@ -70,6 +70,7 @@ const projects: Projects = [
     name: 'Ammolite',
     url: 'https://www.ammolite-restaurant.de/',
     image: 'projects.ammolite.title',
+    video: '/resources/projects/ammolite/title.mp4',
     keywords: [
       'Wordpress',
       'Animations',
@@ -90,6 +91,7 @@ const projects: Projects = [
     id: 'grape-garage',
     name: 'Grape Garage',
     url: 'https://grapegarage.de/',
+    image: 'projects.grape-garage.title',
     keywords: [
       'Animations',
       'JavaScript',
@@ -135,10 +137,12 @@ const projects: Projects = [
     id: 'bandevier',
     name: 'MUELLER',
     url: 'https://bandevier.de/',
+    video: '/resources/projects/mueller/title.mp4',
     keywords: [
       'Google Closure',
       'Animations',
       'Parallax',
+      'Soy',
       'JavaScript',
       'GreenSock',
       'Version 3',
@@ -348,12 +352,14 @@ export default class ProjectsSection extends Vue {
           scaleY: 100,
           moveSpeedX: .3,
           moveSpeedY: .3,
-          scaleDuration: enabled ? 100 : 1500,
+          scaleDuration: enabled ? 0 : 1500,
         },
       ).then((extra) => {
         if (videoSprite) {
           if (enabled) {
-            videoSprite.play();
+            setTimeout(() => {
+              videoSprite.play();
+            }, 500);
           } else {
             videoSprite.pause();
           }
@@ -402,10 +408,11 @@ export default class ProjectsSection extends Vue {
       text.enableDisplacement(
         enabled,
         {
-          scaleX: 10,
-          scaleY: 10,
-          moveSpeedX: .3,
-          moveSpeedY: .3,
+          scaleX: 15,
+          scaleY: 15,
+          moveSpeedX: .4,
+          moveSpeedY: .4,
+          scaleDuration: 1500,
         },
       );
     }

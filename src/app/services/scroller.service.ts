@@ -123,8 +123,8 @@ export class ScrollerService {
         },
         output: {
           default: {
-            easing: smoovy.easings.Quint.out,
-            speed: 1200,
+            easing: smoovy.easings.Expo.out,
+            speed: 1500,
             selector: 'section,footer',
             on: {
               animation: (

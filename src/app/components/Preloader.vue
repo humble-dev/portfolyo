@@ -108,14 +108,16 @@ export default class Preloader extends Vue {
   }
 
   private handleCircleDown() {
-    clearTimeout(this.circleDownTimeout);
+    if (this.loaded) {
+      clearTimeout(this.circleDownTimeout);
 
-    this.circleDown = true;
-    this.circleDownTimeout = setTimeout(() => {
-      if (this.loaded) {
-        this.handleLoadingDone();
-      }
-    }, 500);
+      this.circleDown = true;
+      this.circleDownTimeout = setTimeout(() => {
+        if (this.loaded) {
+          this.handleLoadingDone();
+        }
+      }, 500);
+    }
   }
 
   private handleLoadingDone() {

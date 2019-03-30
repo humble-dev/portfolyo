@@ -8,7 +8,7 @@
   {
     "name": "displacement.clouds",
     "type": "image",
-    "path": "/resources/displacement/clouds-2.jpg",
+    "path": "/resources/displacement/clouds.jpg",
     "extras": [ "pixi" ]
   },
   {
@@ -36,15 +36,9 @@
     "extras": [ "pixi" ]
   },
   {
-    "name": "projects.ammolite.title",
+    "name": "projects.grape-garage.title",
     "type": "image",
-    "path": "/resources/projects/ammolite/title.jpg",
-    "extras": [ "pixi" ]
-  },
-  {
-    "name": "projects.mackmedia.title",
-    "type": "image",
-    "path": "/resources/projects/mackmedia/title.jpg",
+    "path": "/resources/projects/grape-garage/title.jpg",
     "extras": [ "pixi" ]
   },
   {

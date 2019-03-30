@@ -17,6 +17,7 @@ import { ElementState } from '~~/providers/element-state.provider';
 
     return {
       borderScaleProgress: scroller.scrollAnimation$.pipe(
+        filter(() => !!this.borderTopState),
         map((state) => state.position.y),
         map((y) => {
           const viewportSize = this.viewportProvider.size;

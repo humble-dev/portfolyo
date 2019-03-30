@@ -18,7 +18,7 @@ interface NavigationLink {
 const navigationLinks: NavigationLink[] = [
   { section: 'intro', label: 'Intro' },
   { section: 'projects', label: 'Projects' },
-  { section: 'skills', label: 'Skillz' },
+  { section: 'skills', label: 'Skills' },
   { section: 'contact', label: 'Contact' },
 ];
 
