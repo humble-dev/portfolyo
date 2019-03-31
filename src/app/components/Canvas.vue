@@ -124,6 +124,7 @@ export default class Canvas extends Vue implements CanvasDelegator {
 
           this.syncContainers(true);
           setTimeout(() => this.syncContainers(true), 50);
+          setTimeout(() => this.syncContainers(true), 500);
         });
       });
   }

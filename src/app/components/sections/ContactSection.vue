@@ -52,7 +52,7 @@ export default class ContactSection extends Vue {
       true,
       {
         radius: 150,
-        angle: 10,
+        angle: 20,
         padding: 500,
       },
     );

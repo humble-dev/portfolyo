@@ -53,6 +53,15 @@ export default class SkillsSection extends Vue {
       },
     );
 
+     awardsHeadlineContainer.enableMouseTwist(
+      true,
+      {
+        radius: 150,
+        angle: 20,
+        padding: 500,
+      },
+    );
+
     this.canvasDelegator.addContainer(
       'background',
       awardsHeadlineContainer,

@@ -81,12 +81,17 @@ export default class AboutSection extends Vue {
       },
     ).then((extra) => this.displacement = extra);
 
+    const text = new ElementState(this.$refs.text as HTMLElement);
+    const section = new ElementState(
+      (this.$refs.section as Section).$el as HTMLElement
+    );
+
     setTimeout(() => {
-      this.nameSpeed = (this.$refs.text as HTMLElement).offsetTop;
+      this.nameSpeed = Math.abs(text.offset.y - section.offset.y) - 50;
     });
 
     this.viewport.changed(100).subscribe(() => {
-      this.nameSpeed = (this.$refs.text as HTMLElement).offsetTop;
+      this.nameSpeed = Math.abs(text.offset.y - section.offset.y) - 50;
     });
 
     this.canvasDelegator.addContainer('background', this.image);
@@ -139,7 +144,7 @@ export default class AboutSection extends Vue {
 </script>
 
 <template>
-  <Section name="about" v-bind:title="`Guy behind \n these pixels`" number="1" titleAlign="right">
+  <Section ref="section" name="about" v-bind:title="`Guy behind \n these pixels`" number="1" titleAlign="right">
     <div class="fg-row">
       <div class="fg-col-xs-18 fg-col-md-16">
         <p class="bold size-xl" ref="text">
@@ -174,6 +179,10 @@ export default class AboutSection extends Vue {
 .name {
   html.gl-disabled & {
     display: inline;
+
+    .personality {
+      display: none;
+    }
 
     > div {
       display: inline;

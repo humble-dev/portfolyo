@@ -37,11 +37,16 @@ export default class Preloader extends Vue {
   private progressTween?: smoovy.Tween;
   private ready: boolean = false;
   private loaded: boolean = false;
+  private touchDevice: boolean = false;
 
   @Inject('glConfig')
   private glConfig!: { enabled: boolean };
 
   public mounted() {
+    if (process.browser) {
+      this.touchDevice = smoovy.BrowserSupport.IS_TOUCH_DEVICE;
+    }
+
     if (this.glConfig.enabled) {
       this.cursor.ready.then(() => {
         setTimeout(() => this.ready = true);
@@ -61,6 +66,8 @@ export default class Preloader extends Vue {
         document.documentElement.classList.add('preloader-mounted');
       });
     } else {
+      setTimeout(() => this.ready = true);
+
       document.documentElement.classList.add('preloader-mounted');
     }
 
@@ -205,8 +212,11 @@ export default class Preloader extends Vue {
       <div class="pulse"></div>
       <div class="point" :class="{ show: totalProgress > 0.5 }"></div>
     </div>
-    <span class="teaser-label" :class="{ active: ready && currentProgress >= 1 }">
-      <span>Click & Hold</span>
+    <span
+      class="teaser-label"
+      :class="{ active: ready && currentProgress >= 1 }"
+    >
+      <span>{{touchDevice ? 'Touch' : 'Click'}} & Hold</span>
     </span>
   </div>
 </template>

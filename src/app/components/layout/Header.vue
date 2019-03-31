@@ -112,6 +112,12 @@ export default class Header extends Vue {
     return Math.floor(Math.random() * this.designationLines.length);
   }
 
+  private handleLogoClick(event: Event) {
+    event.preventDefault();
+
+    this.scroller.scrollToY(0);
+  }
+
   public mounted() {
     this.linkRefStates = (this.$refs.navLink as HTMLElement[] || []).map(
       (ref) => {
@@ -144,7 +150,9 @@ export default class Header extends Vue {
     <div class="fg-container-fluid fg-wrapper-maxed">
       <div class="fx-layout fx-horizontal fx-start fg-between-xs">
         <h1>
-          <span>DavidePerozzi</span>
+          <span>
+            <a href="#" @click="handleLogoClick">DavidePerozzi</a>
+          </span>
         </h1>
         <div class="designation">
           <div
@@ -223,6 +231,11 @@ export default class Header extends Vue {
         opacity: 1;
         transform: translate3d(0, 0, 0);
       }
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
     }
   }
 
