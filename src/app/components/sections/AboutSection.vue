@@ -40,15 +40,16 @@ export default class AboutSection extends Vue {
   private lastPersonSwitch = -1;
   private currentPersonPos = 0;
   private personalities = [
-    'not batman',
-    'motivated',
-    'someone',
-    'never satisified',
-    'half italian',
-    'passionated',
-    'just a guy',
-    'a hip hop head',
-    'not very tall'
+    ['not batman', 'font-neue-plak-extended-regular outlined'],
+    ['motivated', 'font-neue-haas-medium'],
+    ['someone', 'font-neue-plak-regular outlined'],
+    ['patient', 'font-neue-plak-extended-extra-black outlined'],
+    ['never satisified', 'font-neue-haas-medium'],
+    ['half italian', 'font-neue-plak-light outlined'],
+    ['passionate', 'font-neue-haas-regular'],
+    ['just a guy', 'font-neue-plak-extended-light outlined'],
+    ['a hip hop head', 'font-neue-haas-medium'],
+    ['not very tall', 'font-neue-plak-extended-regular outlined']
   ];
 
   public created() {
@@ -144,31 +145,121 @@ export default class AboutSection extends Vue {
 </script>
 
 <template>
-  <Section ref="section" name="about" v-bind:title="`Guy behind \n these pixels`" number="1" titleAlign="right">
+  <Section ref="section" name="about" v-bind:title="`Who's \n talking?`" number="1" titleAlign="right">
     <div class="fg-row">
-      <div class="fg-col-xs-18 fg-col-md-16">
-        <p class="bold size-xl" ref="text">
-          Hello. I am
-          <span class="name" :class="[
-            { active: myselfEnabled, default: showDefault },
-            `p${activePersonality + 1}`
-          ]" ref="name">
-            <no-ssr>
-              <Parallax
-                @translate="handleNameTranslation"
-                v-bind="{ speed: nameSpeed, minValue: 0 }"
-              >
-                <span
-                  class="personality"
-                  v-for="(personality, index) in personalities"
-                  :key="index"
-                >{{personality}}</span>
-                <span class="default-text">Davide</span>
-              </Parallax>
-            </no-ssr>
-          </span>, a creative developer based
-          in Karlsruhe where I create awesome digital
-          projects together with a cool team at <Link target="_blank" to="https://dorfjungs.com/" label="Dorfjungs" />
+      <div class="fg-col-xs-18 fg-col-xxl-14">
+        <p
+          class="bold size-xl description"
+          :class="{ 'name-active': showDefault }"
+          ref="text"
+        >
+          <span class="intro-wrapper">
+            <span>
+              <span class="visible">Hi I'm&nbsp;</span>
+              <span class="name visible" :class="[
+                { active: myselfEnabled, default: showDefault },
+                `p${activePersonality + 1}`
+              ]" ref="name">
+                <no-ssr>
+                  <Parallax
+                    @translate="handleNameTranslation"
+                    v-bind="{ speed: nameSpeed, minValue: 0 }"
+                  >
+                    <span
+                      class="personality"
+                      v-for="(personality, index) in personalities"
+                      :key="index"
+                      :class="personality[1]"
+                    >{{personality[0]}}</span>
+                    <span class="default-text">Davide</span>
+                  </Parallax>
+                </no-ssr>
+              </span>
+              <span>
+                <span>, a</span>
+              </span>
+            </span>
+            <span>
+              <span>
+                <span>creative</span>
+              </span>
+            </span>
+            <span>
+              <span>
+                <span>developer</span>
+              </span>
+            </span>
+            <span>
+              <span>
+                <span>based</span>
+              </span>
+            </span>
+            <span>
+              <span>
+                <span>in</span>
+              </span>
+            </span>
+            <span>
+              <span>
+                <span>Karlsruhe.</span>
+              </span>
+            </span>
+            <span>
+              <span>
+                <span>I</span>
+              </span>
+            </span>
+            <span>
+              <span>
+                <span>create</span>
+              </span>
+            </span>
+            <span>
+              <span>
+                <span>cool</span>
+              </span>
+            </span>
+            <span>
+              <span>
+                <span>digital</span>
+              </span>
+            </span>
+            <span>
+              <span>
+                <span>projects</span>
+              </span>
+            </span>
+            <span>
+              <span>
+                <span>with</span>
+              </span>
+            </span>
+            <span>
+              <span>
+                <span>a</span>
+              </span>
+            </span>
+            <span>
+              <span>
+                <span>like</span>
+              </span>
+            </span>
+            <span>
+              <span>
+                <span>minded</span>
+              </span>
+            </span>
+            <span>
+              <span>
+                <span>team</span>
+              </span>
+            </span>
+            <span>
+              <span>
+                <span>at <Link target="_blank" to="https://dorfjungs.com/" label="Dorfjungs" /></span>
+              </span>
+            </span>
+          </span>
         </p>
       </div>
     </div>
@@ -176,6 +267,38 @@ export default class AboutSection extends Vue {
 </template>
 
 <style scoped lang="scss">
+.description {
+  .intro-wrapper > span {
+    display: inline-flex;
+    white-space: nowrap;
+  }
+
+  @for $i from 1 through 25 {
+    &.name-active .intro-wrapper > span:nth-child(#{$i}) > span > span {
+      transition: transform 1.5s 30ms * $i cubic-bezier(.23,1,.32,1);
+    }
+  }
+
+  .intro-wrapper > span > span {
+    padding-bottom: .1ch;
+  }
+
+  .intro-wrapper > span > span:not(.visible) {
+    display: inline-block;
+    overflow: hidden;
+  }
+
+  .intro-wrapper > span > span > span {
+    display: inline-block;
+    transition: transform 1s $ease-out-smooth;
+    transform: translate3d(0, 105%, 0);
+  }
+
+  &.name-active .intro-wrapper > span > span > span {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 .name {
   html.gl-disabled & {
     display: inline;
@@ -205,6 +328,11 @@ export default class AboutSection extends Vue {
       white-space: nowrap;
       display: none;
       transform: translate3d(0, -50%, 0);
+
+      &.outlined {
+        color: transparent;
+        -webkit-text-stroke: 1px $color-black;
+      }
     }
 
     &:not(.default) .default-text {

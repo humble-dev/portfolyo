@@ -8,6 +8,7 @@ import { ScrollerService } from '~~/services/scroller.service';
 
 import detectSize from '~~/directives/detect-size.directive';
 import Parallax from '~~/components/Parallax.vue';
+import Logo from '~~/components/atoms/Logo.vue';
 import { ElementState } from '~~/providers/element-state.provider';
 
 interface NavigationLink {
@@ -27,7 +28,7 @@ const designationLines: string[] = [
   'Fuck Nazis!',
   'Wow. Such smooth. Much Parallax',
   'Displacement everywhere',
-  'Full Stack developer',
+  'Full stack developer',
   'Enjoying my portfolio?',
   'I hope your fan ain\'t getting too loud',
   'Look mum no hands!',
@@ -46,6 +47,7 @@ interface LinkRefState {
   },
   components: {
     Parallax,
+    Logo,
   },
   subscriptions(this) {
     return {
@@ -151,7 +153,9 @@ export default class Header extends Vue {
       <div class="fx-layout fx-horizontal fx-start fg-between-xs">
         <h1>
           <span>
-            <a href="#" @click="handleLogoClick">DavidePerozzi</a>
+            <a href="#" @click="handleLogoClick">
+              <Logo />
+            </a>
           </span>
         </h1>
         <div class="designation">

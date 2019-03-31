@@ -80,7 +80,7 @@ export default class ContactSection extends Vue {
 </script>
 
 <template>
-  <Section name="contact" v-bind:title="`Wanna work \n with me?`" titleAlign="left" number="4">
+  <Section name="contact" v-bind:title="`Wanna work \n together?`" titleAlign="left" number="4">
     <div class="fg-row fx-layout fx-horoizontal fx-center-center">
       <div class="fg-col-xs-18 fg-col-lg-7 fg-col-xl-5 fg-col-xl-offset-1">
         <PocketParagraph class="size-xl bold">

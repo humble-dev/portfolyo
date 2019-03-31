@@ -115,7 +115,7 @@ export class ScrollerService {
         input: {
           mouse: {
             multiplier: 0.5,
-            multiplierFirefox: 100
+            multiplierFirefox: 60
           },
           touch: {
             multiplier: 2.5,

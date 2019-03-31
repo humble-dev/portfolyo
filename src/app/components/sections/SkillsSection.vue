@@ -71,25 +71,21 @@ export default class SkillsSection extends Vue {
 </script>
 
 <template>
-  <Section name="skills" v-bind:title="`Skills & \n Awards!`" titleAlign="right" number="3">
+  <Section name="skills" v-bind:title="`Credentials`" titleAlign="right" number="3">
     <div class="fg-row">
       <div class="fg-col-xs-18 fg-col-lg-13 fg-col-xxl-10">
         <PocketParagraph class="bold size-lg description-wrapper">
           <span>
-            <span>I am a full stack interactive developer with knowledge</span>
+            <span>I'm a full stack developer with knowledge</span>
           </span>
           <span>
-            <span>in a lot of technologies. If i don‘t know something</span>
+            <span>in a lot of different technologies. If I don't</span>
           </span>
           <span>
-            <span>I am really fast in learning it.</span>
-          </span>
-          <br /><br />
-          <span>
-            <span>My work got featured on several platforms</span>
+            <span>know something I always try to wrap my</span>
           </span>
           <span>
-            <span>like awwwards, cssdesignawards and more.</span>
+            <span>head around it fast.</span>
           </span>
         </PocketParagraph>
       </div>

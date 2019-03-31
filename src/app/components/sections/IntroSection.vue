@@ -160,10 +160,10 @@ export default class IntroSection extends Vue {
       <p class="teaser-text upper fg-col-xs-18 fg-col-lg-3 fg-col-lg-offset-1">
         <no-ssr>
           <Parallax v-bind:speed="glConfig.enabled ? -100 : -50" class="line">
-            <span>Available for</span>
+            <span>Available</span>
           </Parallax>
           <Parallax v-bind:speed="glConfig.enabled ? -100 : -50" class="line">
-            <span>AWESOME</span>
+            <span>for exciting</span>
           </Parallax>
           <Parallax v-bind:speed="glConfig.enabled ? -100 : -50" class="line">
             <span>Freelance</span>
@@ -175,7 +175,7 @@ export default class IntroSection extends Vue {
       </p>
       <div
         ref="desLine1"
-        class="desline desline-1 fg-col-xs-18 fg-col-lg-13 fg-col-lg-offset-1"
+        class="desline desline-1 fg-col-xs-18 fg-col-lg-13"
       >
         <Parallax
           v-show="!glConfig.enabled"
@@ -224,6 +224,8 @@ export default class IntroSection extends Vue {
   .teaser-text {
     @include responsive-width($break-lg) {
       text-align: right;
+      display: block;
+      padding-right: 10px;
     }
 
     .line {
@@ -261,6 +263,7 @@ export default class IntroSection extends Vue {
 
       .desline-2 {
         margin-left: -50vw;
+        margin-top: -10vh;
       }
 
       .desline-1 {

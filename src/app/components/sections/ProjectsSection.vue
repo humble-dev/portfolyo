@@ -439,7 +439,7 @@ export default class ProjectsSection extends Vue {
 </script>
 
 <template>
-  <Section name="projects" v-bind:title="`Some cool \n stuff I did`" number="2">
+  <Section name="projects" v-bind:title="`Stuff \n I did`" number="2">
     <div class="project-section-wrapper">
       <h2 class="work-headline" ref="workHeadline">WORK</h2>
       <div class="project-row fg-row" v-for="(project, index) in projects" :key="project.id">
