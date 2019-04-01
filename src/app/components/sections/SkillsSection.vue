@@ -71,7 +71,7 @@ export default class SkillsSection extends Vue {
 </script>
 
 <template>
-  <Section name="skills" v-bind:title="`Credentials`" titleAlign="right" number="3">
+  <Section name="skills" v-bind:title="`Skills and \n Credentials`" titleAlign="right" number="3">
     <div class="fg-row">
       <div class="fg-col-xs-18 fg-col-lg-13 fg-col-xxl-10">
         <PocketParagraph class="bold size-lg description-wrapper">
@@ -108,28 +108,63 @@ export default class SkillsSection extends Vue {
     </div>
     <div class="fg-row awards-entry-wrapper">
       <div class="fg-col-xs-18 fg-col-lg-4 fg-col-lg-offset-2 titles">
-        <p class="bold upper size-md">AWWWARDS</p>
+        <PocketParagraph class="bold upper size-md">
+          <span>
+            <span>AWWWARDS</span>
+          </span>
+        </PocketParagraph>
       </div>
       <div class="fg-col-xs-18 fg-col-lg-11 fg-col-lg-offset-1">
-        <p class="bold size-md">Honorable Mention - MackMedia</p>
-        <p class="bold size-md">Honorable Mention - Ammolite Restaurant</p>
+        <PocketParagraph class="bold size-md">
+          <span>
+            <span>Honorable Mention - MackMedia</span>
+          </span>
+        </PocketParagraph>
+        <PocketParagraph class="bold size-md">
+          <span>
+            <span>Honorable Mention - Ammolite Restaurant</span>
+          </span>
+        </PocketParagraph>
       </div>
     </div>
     <div class="fg-row awards-entry-wrapper">
       <div class="fg-col-xs-18 fg-col-lg-4 fg-col-lg-offset-2 titles">
-        <p class="bold upper size-md">CSS Design Awards</p>
+        <PocketParagraph class="bold upper size-md">
+          <span>
+            <span>CSS Design</span>
+          </span>
+          <span>
+            <span>Awards</span>
+          </span>
+        </PocketParagraph>
       </div>
       <div class="fg-col-xs-18 fg-col-lg-11 fg-col-lg-offset-1">
-        <p class="bold size-md">Special Kudos - MackMedia</p>
-        <p class="bold size-md">Special Kudos - Ammolite Restaurant</p>
+        <PocketParagraph class="bold size-md">
+          <span>
+            <span>Special Kudos - MackMedia</span>
+          </span>
+        </PocketParagraph>
+        <PocketParagraph class="bold size-md">
+          <span>
+            <span>Special Kudos - Ammolite Restaurant</span>
+          </span>
+        </PocketParagraph>
       </div>
     </div>
     <div class="fg-row awards-entry-wrapper">
       <div class="fg-col-xs-18 fg-col-lg-4 fg-col-lg-offset-2 titles">
-        <p class="bold upper size-md">CSS AWARDS</p>
+        <PocketParagraph class="bold upper size-md">
+          <span>
+            <span>CSS AWARDS</span>
+          </span>
+        </PocketParagraph>
       </div>
       <div class="fg-col-xs-18 fg-col-lg-11 fg-col-lg-offset-1">
-        <p class="bold size-md">Site of the Day - MUELLER by Bande Vier</p>
+        <PocketParagraph class="bold size-md">
+          <span>
+            <span>Site of the Day - MUELLER by Bande Vier</span>
+          </span>
+        </PocketParagraph>
       </div>
     </div>
   </Section>

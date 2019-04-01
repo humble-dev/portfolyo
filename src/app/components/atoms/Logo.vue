@@ -39,5 +39,6 @@ svg {
   display: block;
   width: 100%;
   max-width: 250px;
+  @include fluid-size(max-width, 200px, 250px);
 }
 </style>

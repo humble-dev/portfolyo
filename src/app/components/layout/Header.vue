@@ -24,7 +24,7 @@ const navigationLinks: NavigationLink[] = [
 ];
 
 const designationLines: string[] = [
-  'Interactive developer',
+  'Creative developer',
   'Fuck Nazis!',
   'Wow. Such smooth. Much Parallax',
   'Displacement everywhere',

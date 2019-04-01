@@ -3,7 +3,7 @@ import { Component, Prop, Vue, Inject } from 'nuxt-property-decorator';
 import { map, delay, tap, filter } from 'rxjs/operators';
 
 import { ResourceProvider } from '~~/providers/resource.provider';
-import { clamp } from '~~/utils/math.util';
+import { clamp, mapRange } from '~~/utils/math.util';
 import { CursorService } from '~~/services/cursor.service';
 import { ViewportProvider } from '~~/providers/viewport.provider';
 import { PreloaderService } from '~~/services/preloader.service';
@@ -38,6 +38,9 @@ export default class Preloader extends Vue {
   private ready: boolean = false;
   private loaded: boolean = false;
   private touchDevice: boolean = false;
+  private moveProg = { x: 0, y: 0 };
+  private pointTween?: smoovy.Tween;
+  private circleTween?: smoovy.Tween;
 
   @Inject('glConfig')
   private glConfig!: { enabled: boolean };
@@ -154,11 +157,62 @@ export default class Preloader extends Vue {
       this.circleDown = false;
     }
   }
+
+  private handleMouseMove(event: MouseEvent) {
+    if ( ! this.clicked && smoovy && ! smoovy.BrowserSupport.IS_TOUCH_DEVICE) {
+      const point = this.$refs.point as HTMLElement;
+      const circle = this.$refs.circle as HTMLElement;
+
+      const x = mapRange(
+        event.clientX - this.viewport.size.width / 2,
+        -this.viewport.size.width / 2,
+        this.viewport.size.width / 2,
+        -1,
+        1
+      ) * 90;
+
+      const y = mapRange(
+        event.clientY - this.viewport.size.height / 2,
+        -this.viewport.size.height / 2,
+        this.viewport.size.height / 2,
+        -1,
+        1
+      ) * 90;
+
+      if (this.pointTween) {
+        this.pointTween.stop();
+      }
+
+      smoovy.Tween.to(
+        this.moveProg,
+        {
+          x, y
+        },
+        500,
+        {
+          easing: smoovy.easings.Back.out,
+          update: ({ x, y }) => {
+            point.style.transform = `
+              translate3d(${x}px, ${y}px, 0)
+            `;
+
+            circle.style.transform = `
+              translate3d(${x * .08}px, ${y * .08}px, 0)
+            `;
+          }
+        }
+      );
+    }
+  }
 }
 </script>
 
 <template>
-  <div :class="{ loaded, clicked }" class="preloader-wrapper fx-layout fx-vertical fx-center-center">
+  <div
+    :class="{ loaded, clicked }"
+    class="preloader-wrapper fx-layout fx-vertical fx-center-center"
+    @mousemove="handleMouseMove"
+  >
     <div
       class="circle-wrapper"
       :class="{ active: circleDown && loaded }"
@@ -168,49 +222,53 @@ export default class Preloader extends Vue {
       @touchstart="handleCircleDown"
       @touchend="handleCircleUp"
     >
-      <svg
-        version="1.1"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        preserveAspectRatio="xMidYMid meet"
-        viewBox="0 0 80 80"
-        width="70"
-        height="70"
-      >
-        <defs>
-          <path
-            d="M80 40C80 62.08 62.08 80 40 80C17.92 80 0 62.08 0 40C0 17.92 17.92 0 40 0C62.08 0 80 17.92 80 40Z"
-            id="j1tAiwRU5Y"
-          ></path>
-          <clipPath id="clipaRMILI0sk">
-            <use xlink:href="#j1tAiwRU5Y" opacity="1"></use>
-          </clipPath>
-        </defs>
-        <g>
+      <div class="circle-image-wrapper" ref="circle">
+        <svg
+          version="1.1"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          preserveAspectRatio="xMidYMid meet"
+          viewBox="0 0 80 80"
+          width="70"
+          height="70"
+        >
+          <defs>
+            <path
+              d="M80 40C80 62.08 62.08 80 40 80C17.92 80 0 62.08 0 40C0 17.92 17.92 0 40 0C62.08 0 80 17.92 80 40Z"
+              id="j1tAiwRU5Y"
+            ></path>
+            <clipPath id="clipaRMILI0sk">
+              <use xlink:href="#j1tAiwRU5Y" opacity="1"></use>
+            </clipPath>
+          </defs>
           <g>
             <g>
-              <g clip-path="url(#clipaRMILI0sk)">
-                <use
-                  xlink:href="#j1tAiwRU5Y"
-                  opacity="1"
-                  fill-opacity="0"
-                  :stroke-dasharray="`
-                    ${ totalProgress * (2 * Math.PI * 40) },
-                    ${2 * Math.PI * 40}
-                  `"
-                  stroke="#ff0d00"
-                  stroke-width="4"
-                  stroke-opacity="1"
-                ></use>
+              <g>
+                <g clip-path="url(#clipaRMILI0sk)">
+                  <use
+                    xlink:href="#j1tAiwRU5Y"
+                    opacity="1"
+                    fill-opacity="0"
+                    :stroke-dasharray="`
+                      ${ totalProgress * (2 * Math.PI * 40) },
+                      ${2 * Math.PI * 40}
+                    `"
+                    stroke="#ff0d00"
+                    stroke-width="4"
+                    stroke-opacity="1"
+                  ></use>
+                </g>
               </g>
             </g>
           </g>
-        </g>
-      </svg>
+        </svg>
+      </div>
     </div>
     <div class="circle-inner-wrapper" :class="{ active: circleDown && loaded }">
       <div class="pulse"></div>
-      <div class="point" :class="{ show: totalProgress > 0.5 }"></div>
+      <div class="point" :class="{ show: totalProgress > 0.5 }">
+        <div class="point-inner" ref="point"></div>
+      </div>
     </div>
     <span
       class="teaser-label"
@@ -248,6 +306,14 @@ export default class Preloader extends Vue {
     &.active {
       transform: scale(1) translateZ(0);
     }
+  }
+
+  .circle-wrapper:hover .circle-image-wrapper,
+  .circle-wrapper:hover + .circle-inner-wrapper .point-inner,
+  .circle-wrapper.active .circle-image-wrapper,
+  .circle-wrapper.active + .circle-inner-wrapper .point-inner {
+    transform: none !important;
+    transition: transform .3s;
   }
 
   @keyframes rotate360 {
@@ -297,11 +363,16 @@ export default class Preloader extends Vue {
     top: 50%;
     width: 100%;
     height: 100%;
-    border-radius: 50%;
-    background-color: $color-red;
     will-change: transform;
     transform: translate3d(-50%, -50%, 0) scale(0);
     transition: transform 1s $ease-in-out-circ;
+
+    .point-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background-color: $color-red;
+    }
 
     &.show {
       transform: translate3d(-50%, -50%, 0) scale(0.11);

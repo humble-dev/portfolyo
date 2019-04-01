@@ -4,6 +4,14 @@ import NuxtConfiguration from '@nuxt/config';
 
 import favicon from './favicon.config';
 
+const url = 'https://davideperozzi.com';
+const meta = {
+  title: 'Davide Perozzi | Creative developer',
+  description: 'I\'m Davide, an creative developer based in Karlsruhe.'
+    + 'I create cool digital projects with a like minded team at Dorfjungs',
+  image: url + '/resources/og-image.png'
+};
+
 export default {
   mode: 'universal',
   server: {
@@ -11,26 +19,37 @@ export default {
     host: '0.0.0.0'
   },
   head: {
-    title: 'Davide Perozzi | Interactive developer',
+    title: meta.title,
     meta: [
-      {
-        charset: 'utf-8'
-      },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1'
-      },
-      {
-        name: 'format-detection',
-        content: 'telephone=no'
-      },
-      {
-        hid: 'description',
-        name: 'description',
-        content: 'I\'m Davide, an interactive developer from Karlsruhe'
-      }
+      { charset: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { name: 'format-detection', content: 'telephone=no' },
+      { hid: 'description', name: 'description', content: meta.description },
+
+      /** Item scope defs */
+      { itemprop: 'name', content: meta.title },
+      { itemprop: 'description', content: meta.description },
+      { itemprop: 'image', content: meta.image },
+
+      /** Open Graph */
+      { property: 'og:type', content: 'website' },
+      { property: 'og:url', content: url },
+      { property: 'og:title', content: meta.title },
+      { property: 'og:description', content: meta.description },
+      { property: 'og:image', content: meta.image },
+      { property: 'og:image:width', content: '1200' },
+      { property: 'og:image:height', content: '630' },
+
+      /** Twitter */
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:site', content: '@davideperozzi1' },
+      { name: 'twitter:creator', content: '@davideperozzi1' },
+      { name: 'twitter:title', content: meta.title },
+      { name: 'twitter:description', content: meta.description },
+      { name: 'twitter:image', content: meta.image },
     ],
     link: [
+      { rel: 'canonical', href: url },
       ...favicon
     ]
   },

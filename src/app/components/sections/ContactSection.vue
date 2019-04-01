@@ -88,7 +88,7 @@ export default class ContactSection extends Vue {
             <span>Just send me</span>
           </span>
           <span>
-            <span>an <Link label="email" to="mailto:yo@davideperozzi.de" /></span>
+            <span>an <Link label="email" to="mailto:yo@davideperozzi.com" /></span>
           </span>
         </PocketParagraph>
       </div>
@@ -121,7 +121,7 @@ export default class ContactSection extends Vue {
           <PocketParagraph class="fg-col-xs-9 bold size-lg link-list-wrapper fx-layout fx-vertical fx-start">
             <span>
               <span>
-                <Link target="_blank" rel="noopener" to="https://dribbble.com/" label="Dribbble" />
+                <Link target="_blank" rel="noopener" to="https://dribbble.com/davideperozzi" label="Dribbble" />
               </span>
             </span>
             <span>

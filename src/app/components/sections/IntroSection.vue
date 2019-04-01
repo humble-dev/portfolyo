@@ -40,7 +40,7 @@ export default class IntroSection extends Vue {
 
     const text1 = new RelatedTextContainer(
       this.$refs.desLine1 as HTMLElement,
-      'INTERACTIVE',
+      'CREATIVE',
       {
         ...headlineConfig,
       },
@@ -183,7 +183,7 @@ export default class IntroSection extends Vue {
             speed: -150,
             direction: 'x'
           }"
-        >Interactive</Parallax>
+        >Creative</Parallax>
       </div>
     </div>
     <div class="fg-row">

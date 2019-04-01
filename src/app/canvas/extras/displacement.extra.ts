@@ -10,6 +10,7 @@ export interface DisplacementConfig extends ContainerExtraConfig {
   rotationSpeed: number;
   moveSpeedX: number;
   moveSpeedY: number;
+  padding: number;
 }
 
 export const displacementExtraName = 'displacement';
@@ -55,6 +56,10 @@ export class Displacement implements ContainerExtra {
 
       if ( ! this.filter) {
         this.filter = new PIXI.filters.DisplacementFilter(this.sprite, 0);
+
+        if (this.config.padding) {
+          this.filter.padding = this.config.padding;
+        }
 
         this.target.filters = [
           this.filter,

@@ -1,10 +1,10 @@
-import { fromEvent } from 'rxjs';
+import { fromEvent, merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
-
 import { CursorService, CursorState } from '~~/services/cursor.service';
 import { clamp } from '~~/utils/math.util';
 
 import { DefaultContainer } from '../default.container';
+import { Displacement } from '../extras/displacement.extra';
 import { MotionBlur } from '../extras/motion-blur.extra';
 
 export class MainCursorContainer extends DefaultContainer {
@@ -27,7 +27,12 @@ export class MainCursorContainer extends DefaultContainer {
   private stateTweenOuter?: smoovy.Tween;
   private stateTweenInner?: smoovy.Tween;
   private currentState: CursorState = CursorState.DEFAULT;
+  private currentStateSync: CursorState = CursorState.DEFAULT;
   private stateChangeTimeout: any;
+  private mouseDown = false;
+  private mouseDownInnerPrevSize = 0;
+  private pointerUpDownTween?: smoovy.Tween;
+  private innerCircleDisplacement?: Displacement;
 
   public constructor() {
     super(false, 100);
@@ -57,7 +62,6 @@ export class MainCursorContainer extends DefaultContainer {
     this.outerCircle.anchor.y = 0.5;
 
     this.innerCircle = PIXI.Sprite.from('cursor.inner');
-    this.innerCircle.cacheAsBitmap = true;
     this.outerCircle.height = this.innerPointSize * this.cursorScale;
     this.outerCircle.width = this.innerPointSize * this.cursorScale;
     this.innerCircle.anchor.x = 0.5;
@@ -66,144 +70,17 @@ export class MainCursorContainer extends DefaultContainer {
     this.context.addChild(this.innerCircle);
     this.context.addChild(this.outerCircle);
 
-    this.service.state$.subscribe((state) => {
-      clearTimeout(this.stateChangeTimeout);
-      this.stateChangeTimeout = setTimeout(() => {
-        if (smoovy) {
-          switch (state) {
-            case CursorState.DEFAULT:
-              if (this.stateTweenOuter) {
-                this.stateTweenOuter.stop();
-              }
-
-              this.stateTweenOuter = smoovy.Tween.to(
-                {
-                  width: this.outerCircle.width,
-                  height: this.outerCircle.width,
-                  alpha: this.outerCircle.alpha,
-                },
-                {
-                  width: this.cursorSize * this.cursorScale,
-                  height: this.cursorSize * this.cursorScale,
-                  alpha: 1,
-                },
-                500,
-                {
-                  update: ({ width, height, alpha }) => {
-                    this.outerCircle.width = width;
-                    this.outerCircle.height = height;
-                    this.outerCircle.alpha = alpha;
-                  },
-                  complete: () => {
-                    this.currentState = state;
-                  },
-                },
-              );
-
-              if (this.stateTweenInner) {
-                this.stateTweenInner.stop();
-              }
-
-              this.stateTweenInner = smoovy.Tween.to(
-                {
-                  width: this.innerCircle.width,
-                  height: this.innerCircle.height,
-                },
-                {
-                  width: this.innerPointSize * this.cursorScale,
-                  height: this.innerPointSize * this.cursorScale,
-                },
-                500,
-                {
-                  update: ({ width, height }) => {
-                    this.innerCircle.width = width;
-                    this.innerCircle.height = height;
-                  },
-                },
-              );
-              break;
-
-            case CursorState.SMALL:
-              this.currentState = state;
-
-              if (this.stateTweenOuter) {
-                this.stateTweenOuter.stop();
-              }
-
-              this.stateTweenOuter = smoovy.Tween.to(
-                {
-                  width: this.outerCircle.width,
-                  height: this.outerCircle.width,
-                  alpha: this.outerCircle.alpha,
-                },
-                {
-                  width: this.cursorSize * this.cursorScale * 0.8,
-                  height: this.cursorSize * this.cursorScale * 0.8,
-                  alpha: 0,
-                },
-                500,
-                {
-                  update: ({ width, height, alpha }) => {
-                    this.outerCircle.width = width;
-                    this.outerCircle.height = height;
-                    this.outerCircle.alpha = alpha;
-                  },
-                },
-              );
-
-              if (this.stateTweenInner) {
-                this.stateTweenInner.stop();
-              }
-
-              this.stateTweenInner = smoovy.Tween.to(
-                {
-                  width: this.innerCircle.width,
-                  height: this.innerCircle.height,
-                },
-                {
-                  width: this.innerPointSize * this.cursorScale * 2,
-                  height: this.innerPointSize * this.cursorScale * 2,
-                },
-                500,
-                {
-                  update: ({ width, height }) => {
-                    this.innerCircle.width = width;
-                    this.innerCircle.height = height;
-                  },
-                },
-              );
-              break;
-          }
-        }
-      }, 100);
-    });
+    this.service.state$.subscribe((state) => this.handleStateChange(state));
 
     setInterval(() => {
       if ( ! this.locked) {
         this.trackedMousePosition.x = this.mousePosition.x;
         this.trackedMousePosition.y = this.mousePosition.y;
       }
-
     }, this.velocityFrequency);
 
     if (process.browser) {
-      fromEvent<MouseEvent>(window, 'mousemove')
-        .pipe(
-          filter(() => !this.locked),
-        )
-        .subscribe((event) => {
-          this.mousePosition.x = event.clientX;
-          this.mousePosition.y = event.clientY;
-
-          this.updateVelocityScale();
-
-          clearTimeout(this.mouseMoveResetTimer);
-
-          this.mouseMoveResetTimer = setTimeout(
-            () => this.updateVelocityScale(),
-            this.velocityFrequency,
-          );
-        });
+      this.attachMouseEvents();
     }
 
     this.enableExtras(
@@ -211,11 +88,42 @@ export class MainCursorContainer extends DefaultContainer {
       MotionBlur,
     );
 
+    this.enableExtras(
+      this.innerCircle,
+      Displacement
+    );
+
+    this.enableDisplacement(true, {
+      scaleX: 0,
+      scaleY: 0,
+      moveSpeedX: .15,
+      moveSpeedY: .15,
+      padding: 30,
+    }).then(displacement => {
+      this.innerCircleDisplacement = displacement;
+    });
+
     this.enableMotionBlur(true).then((extra) => {
       this.motionBlur = extra;
     });
 
     this.service.resolveReady();
+  }
+
+  private getStateInnerSize(state?: CursorState) {
+    let size = 0;
+
+    switch (state || this.currentStateSync) {
+      case CursorState.DEFAULT:
+        size = this.innerPointSize * this.cursorScale;
+        break;
+
+      case CursorState.SMALL:
+        size = this.innerPointSize * this.cursorScale * 2;
+        break;
+    }
+
+    return size;
   }
 
   private updateVelocityScale() {
@@ -235,9 +143,9 @@ export class MainCursorContainer extends DefaultContainer {
       );
     }
 
-    const rotation = Math.atan2(dY, dX);
+    const newRotation = Math.atan2(dY, dX);
     const lastRotation = this.outerCircle.rotation;
-    const rotationDiff = Math.abs(rotation - lastRotation);
+    const rotationDiff = Math.abs(newRotation - lastRotation);
     const rotationDelta = Math.abs(rotationDiff - this.lastRotationDiff);
 
     this.lastRotationDiff = rotationDiff;
@@ -246,56 +154,48 @@ export class MainCursorContainer extends DefaultContainer {
       this.outerRotationTween.stop();
     }
 
-    if (this.currentState === CursorState.DEFAULT) {
-      if (rotationDelta < 90 * Math.PI / 180) {
-        if (smoovy) {
-          this.outerRotationTween = smoovy.Tween.to(
-            {
-              rotation: this.outerCircle.rotation,
+    if (rotationDelta < 90 * Math.PI / 180) {
+      if (smoovy) {
+        this.outerRotationTween = smoovy.Tween.to(
+          {
+            rotation: this.outerCircle.rotation,
+          },
+          {
+            rotation: newRotation,
+          },
+          150,
+          {
+            update: ({ rotation }) => {
+              this.outerCircle.rotation = rotation;
             },
-            {
-              rotation,
-            },
-            150,
-            {
-              update: (props) => {
-                if (this.currentState === CursorState.DEFAULT) {
-                  this.outerCircle.rotation = props.rotation;
-                }
-              },
-            },
-          );
-        }
-      } else {
-        this.outerCircle.rotation = rotation;
+          },
+        );
       }
+    } else {
+      this.outerCircle.rotation = newRotation;
     }
 
     if (this.outerVelocityTween) {
       this.outerVelocityTween.stop();
     }
 
-    if (this.currentState === CursorState.DEFAULT) {
-      if (smoovy) {
-        this.outerVelocityTween = smoovy.Tween.to(
-          {
-            width: this.outerCircle.width,
+    if (smoovy) {
+      this.outerVelocityTween = smoovy.Tween.to(
+        {
+          width: this.outerCircle.width,
+        },
+        {
+          width: this.cursorSize * this.cursorScale * scale,
+        },
+        300,
+        {
+          update: (size) => {
+            if (this.currentState === CursorState.DEFAULT) {
+              this.outerCircle.width = size.width;
+            }
           },
-          {
-            width: this.cursorSize * this.cursorScale * scale,
-          },
-          300,
-          {
-            update: (size) => {
-              setTimeout(() => {
-                if (this.currentState === CursorState.DEFAULT) {
-                  this.outerCircle.width = size.width;
-                }
-              });
-            },
-          },
-        );
-      }
+        },
+      );
     }
   }
 
@@ -329,5 +229,236 @@ export class MainCursorContainer extends DefaultContainer {
         },
       );
     }
+  }
+
+  private attachMouseEvents() {
+    fromEvent<MouseEvent>(window, 'mousemove')
+      .pipe(
+        filter(() => !this.locked),
+      )
+      .subscribe((event) => {
+        this.mousePosition.x = event.clientX;
+        this.mousePosition.y = event.clientY;
+
+        this.updateVelocityScale();
+
+        clearTimeout(this.mouseMoveResetTimer);
+
+        this.mouseMoveResetTimer = setTimeout(
+          () => this.updateVelocityScale(),
+          this.velocityFrequency,
+        );
+      });
+
+    fromEvent<MouseEvent>(window, 'mousedown')
+      .pipe(filter(() => this.innerCircle.visible))
+      .subscribe(() => {
+        this.mouseDown = true;
+        this.mouseDownInnerPrevSize = this.getStateInnerSize();
+
+        if (smoovy) {
+          if (this.pointerUpDownTween) {
+            this.pointerUpDownTween.stop();
+          }
+
+          if (this.innerCircleDisplacement) {
+            this.innerCircleDisplacement.scaleFilter(20, 20, 150);
+          }
+
+          this.pointerUpDownTween = smoovy.Tween.to(
+            {
+              width: this.innerCircle.width,
+              height: this.innerCircle.height
+            },
+            {
+              width: this.innerPointSize * this.cursorScale * 2.4,
+              height: this.innerPointSize * this.cursorScale * 2.4
+            },
+            300,
+            {
+              update: ({ width, height }) => {
+                this.innerCircle.width = width;
+                this.innerCircle.height = height;
+              }
+            }
+          );
+        }
+      });
+
+    merge(
+      fromEvent<MouseEvent>(window, 'mouseup'),
+      fromEvent<MouseEvent>(window, 'mousecancel'),
+    )
+    .pipe(filter(() => this.innerCircle.visible))
+    .subscribe(() => {
+        this.mouseDown = false;
+
+        if (smoovy) {
+          this.mouseDownInnerPrevSize = this.getStateInnerSize();
+
+          if (this.pointerUpDownTween) {
+            this.pointerUpDownTween.stop();
+          }
+
+          if (this.innerCircleDisplacement &&
+              this.currentStateSync === CursorState.DEFAULT) {
+            this.innerCircleDisplacement.scaleFilter(0, 0, 200);
+          }
+
+          this.pointerUpDownTween = smoovy.Tween.to(
+            {
+              width: this.innerCircle.width,
+              height: this.innerCircle.height
+            },
+            {
+              width: this.mouseDownInnerPrevSize,
+              height: this.mouseDownInnerPrevSize
+            },
+            300,
+            {
+              update: ({ width, height }) => {
+                this.innerCircle.width = width;
+                this.innerCircle.height = height;
+              },
+            }
+          );
+        }
+      });
+  }
+
+  private handleStateChange(state: CursorState) {
+    this.currentStateSync = state;
+
+    clearTimeout(this.stateChangeTimeout);
+    this.stateChangeTimeout = setTimeout(() => {
+      if (smoovy) {
+        switch (state) {
+          case CursorState.DEFAULT:
+            if (this.stateTweenOuter) {
+              this.stateTweenOuter.stop();
+            }
+
+            if (this.innerCircleDisplacement) {
+              this.innerCircleDisplacement.scaleFilter(0, 0, 200);
+            }
+
+            this.stateTweenOuter = smoovy.Tween.to(
+              {
+                width: this.outerCircle.width,
+                height: this.outerCircle.width,
+                alpha: this.outerCircle.alpha,
+              },
+              {
+                width: this.cursorSize * this.cursorScale,
+                height: this.cursorSize * this.cursorScale,
+                alpha: 1,
+              },
+              500,
+              {
+                update: ({ width, height, alpha }) => {
+                  this.outerCircle.width = width;
+                  this.outerCircle.height = height;
+                  this.outerCircle.alpha = alpha;
+                },
+                complete: () => {
+                  this.currentState = state;
+                },
+              },
+            );
+
+            if (this.stateTweenInner) {
+              this.stateTweenInner.stop();
+            }
+
+            if (this.pointerUpDownTween) {
+              this.pointerUpDownTween.stop();
+            }
+
+            const innerSize = this.getStateInnerSize(state);
+
+            if ( ! this.mouseDown) {
+              this.stateTweenInner = smoovy.Tween.to(
+                {
+                  width: this.innerCircle.width,
+                  height: this.innerCircle.height,
+                },
+                {
+                  width: innerSize,
+                  height: innerSize,
+                },
+                500,
+                {
+                  update: ({ width, height }) => {
+                    this.innerCircle.width = width;
+                    this.innerCircle.height = height;
+                  },
+                },
+              );
+            } else {
+              this.mouseDownInnerPrevSize = innerSize;
+            }
+            break;
+
+          case CursorState.SMALL:
+            this.currentState = state;
+
+            if (this.innerCircleDisplacement) {
+              this.innerCircleDisplacement.scaleFilter(40, 40, 200);
+            }
+
+            if (this.stateTweenOuter) {
+              this.stateTweenOuter.stop();
+            }
+
+            if (this.pointerUpDownTween) {
+              this.pointerUpDownTween.stop();
+            }
+
+            this.stateTweenOuter = smoovy.Tween.to(
+              {
+                alpha: this.outerCircle.alpha,
+              },
+              {
+                alpha: 0,
+              },
+              500,
+              {
+                update: ({ alpha }) => {
+                  this.outerCircle.alpha = alpha;
+                },
+              },
+            );
+
+            if (this.stateTweenInner) {
+              this.stateTweenInner.stop();
+            }
+
+            const innerSizeSmall = this.getStateInnerSize(state);
+
+            if ( ! this.mouseDown) {
+              this.stateTweenInner = smoovy.Tween.to(
+                {
+                  width: this.innerCircle.width,
+                  height: this.innerCircle.height,
+                },
+                {
+                  width: innerSizeSmall,
+                  height: innerSizeSmall,
+                },
+                500,
+                {
+                  update: ({ width, height }) => {
+                    this.innerCircle.width = width;
+                    this.innerCircle.height = height;
+                  },
+                },
+              );
+            } else {
+              this.mouseDownInnerPrevSize = innerSizeSmall;
+            }
+            break;
+        }
+      }
+    }, 100);
   }
 }

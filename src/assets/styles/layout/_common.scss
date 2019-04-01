@@ -22,6 +22,11 @@ body {
   }
 }
 
+img, a {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
 .font-neue-haas-medium {
   font-family: $font-neue-haas-medium;
 }
