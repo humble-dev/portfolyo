@@ -25,6 +25,7 @@ export default {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { name: 'format-detection', content: 'telephone=no' },
       { hid: 'description', name: 'description', content: meta.description },
+      { name: 'apple-mobile-web-app-title', content: meta.title },
 
       /** Item scope defs */
       { itemprop: 'name', content: meta.title },
@@ -34,6 +35,7 @@ export default {
       /** Open Graph */
       { property: 'og:type', content: 'website' },
       { property: 'og:url', content: url },
+      { property: 'og:site_name', content: meta.title },
       { property: 'og:title', content: meta.title },
       { property: 'og:description', content: meta.description },
       { property: 'og:image', content: meta.image },
