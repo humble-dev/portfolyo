@@ -115,7 +115,7 @@ export class ScrollerService {
         input: {
           mouse: {
             multiplier: 0.5,
-            multiplierFirefox: 60
+            multiplierFirefox: 50
           },
           touch: {
             multiplier: 2.5,
@@ -173,15 +173,21 @@ export class ScrollerService {
   }
 
   public get wrapperHeight(): number {
-    return this.wrapperState.bounds.height;
+    return this.wrapperState
+      ? this.wrapperState.bounds.height
+      : 0;
   }
 
   public get wrapperWidth(): number {
-    return this.wrapperState.bounds.width;
+    return this.wrapperState
+      ? this.wrapperState.bounds.width
+      : 0;
   }
 
   public get containerHeight(): number {
-    return this.containerState.bounds.height;
+    return this.containerState
+      ? this.containerState.bounds.height
+      : 0;
   }
 
   public scrollToY(

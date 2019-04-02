@@ -194,7 +194,7 @@ export default class IntroSection extends Vue {
         <Parallax
           v-show="!glConfig.enabled"
           v-bind="{
-            speed: 100,
+            speed: 150,
             direction: 'x'
           }"
         >Developer</Parallax>
@@ -284,28 +284,18 @@ export default class IntroSection extends Vue {
         text-transform: uppercase;
         font-family: $font-neue-plak-extended-extra-black;
 
-        @include fluid-size(font-size, 80px, 200px);
-        @include fluid-size(margin, 20px, 30px);
+        @include fluid-size(font-size, 80px, 400px);
       }
 
       .desline-1 {
         transform: translate3d(15vw, 0, 0);
-
-        @include responsive-width($break-md) {
-          @include fluid-size(margin-left, 130px, 30px);
-        }
       }
 
       .desline-2 {
+        margin-left: -50vw;
         transform: translate3d(-15vw, 0, 0);
 
-        @include responsive-width(0, $break-md) {
-          @include fluid-size(margin-left, -200px, -100px);
-        }
-
-        @include responsive-width($break-md) {
-          @include fluid-size(margin-left, -100px, -30px);
-        }
+        @include fluid-size(margin-top, -10px, -60px);
       }
     }
   }

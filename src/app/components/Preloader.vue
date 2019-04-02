@@ -7,6 +7,7 @@ import { clamp, mapRange } from '~~/utils/math.util';
 import { CursorService } from '~~/services/cursor.service';
 import { ViewportProvider } from '~~/providers/viewport.provider';
 import { PreloaderService } from '~~/services/preloader.service';
+import { Browser } from '~~/utils/browser.util';
 
 @Component<Preloader>({
   subscriptions(this) {
@@ -41,6 +42,7 @@ export default class Preloader extends Vue {
   private moveProg = { x: 0, y: 0 };
   private pointTween?: smoovy.Tween;
   private circleTween?: smoovy.Tween;
+  private chromeNotice: boolean = false;
 
   @Inject('glConfig')
   private glConfig!: { enabled: boolean };
@@ -48,6 +50,7 @@ export default class Preloader extends Vue {
   public mounted() {
     if (process.browser) {
       this.touchDevice = smoovy.BrowserSupport.IS_TOUCH_DEVICE;
+      this.chromeNotice = smoovy.BrowserSupport.IS_FIREFOX || Browser.IS_EDGE;
     }
 
     if (this.glConfig.enabled) {
@@ -110,6 +113,10 @@ export default class Preloader extends Vue {
 
             if (this.loaded) {
               document.documentElement.classList.add('preloader-ready');
+
+              if (smoovy.BrowserSupport.IS_MOBILE_OR_TABLET) {
+                setTimeout(() => this.handleCircleDown());
+              }
             }
           },
         },
@@ -213,6 +220,9 @@ export default class Preloader extends Vue {
     class="preloader-wrapper fx-layout fx-vertical fx-center-center"
     @mousemove="handleMouseMove"
   >
+    <div class="chrome-notice" v-if="chromeNotice">
+      <span>Use Google Chrome or Safari for the best experience</span>
+    </div>
     <div
       class="circle-wrapper"
       :class="{ active: circleDown && loaded }"
@@ -280,6 +290,16 @@ export default class Preloader extends Vue {
 </template>
 
 <style scoped lang="scss">
+.chrome-notice {
+  position: absolute;
+  left: 50%;
+  bottom: 5%;
+  transform: translate3d(-50%, 0, 0);
+  text-align: center;
+
+  @include fluid-size(font-size, 14px, 20px);
+}
+
 .preloader-wrapper {
   position: fixed;
   top: 0;
@@ -294,12 +314,18 @@ export default class Preloader extends Vue {
   &.clicked {
     visibility: hidden;
     transition: visibility 0s .5s;
+
+    .is-mobile & {
+      opacity: 0;
+      transition: visibility 0s .5s, opacity .5s;
+    }
   }
 
   .circle-wrapper {
     position: relative;
     z-index: 2;
     user-select: none;
+    opacity: 1;
     transition: transform .5s $ease-in-out-circ;
     transform: scale(.8) translateZ(0);
 
@@ -337,6 +363,10 @@ export default class Preloader extends Vue {
     overflow: hidden;
     font-family: $font-neue-haas-light;
 
+    html.is-mobile & {
+      display: none;
+    }
+
     @include fluid-size(font-size, 12px, 14px);
 
     span {
@@ -372,6 +402,10 @@ export default class Preloader extends Vue {
       height: 100%;
       border-radius: 50%;
       background-color: $color-red;
+
+      html.is-mobile & {
+        display: none;
+      }
     }
 
     &.show {

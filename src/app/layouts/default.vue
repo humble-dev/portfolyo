@@ -11,6 +11,8 @@ import { MainCursorContainer } from '~~/canvas/containers/main-cursor.container'
 import { ElementStateProvider } from '~~/providers/element-state.provider';
 import { ViewportProvider } from '~~/providers/viewport.provider';
 
+import { Browser } from '~~/utils/browser.util';
+
 import Section from '~~/components/Section.vue';
 import Canvas from '~~/components/Canvas.vue';
 import Preloader from '~~/components/Preloader.vue';
@@ -45,11 +47,13 @@ export default class App extends Vue {
   private imprintEnabled = false;
 
   @Provide()
-  private glConfig = { enabled: false };
+  private glConfig = { enabled: false, partially: false };
 
   private isGlEnabled() {
     if (process.browser) {
       return ! smoovy.BrowserSupport.IS_MOBILE_OR_TABLET &&
+        ! smoovy.BrowserSupport.IS_FIREFOX &&
+        ! Browser.IS_EDGE &&
         this.viewport.size.width > 768;
     } else {
       return false;
@@ -57,11 +61,25 @@ export default class App extends Vue {
   }
 
   public created() {
-    this.glConfig.enabled = this.isGlEnabled();
+    if (process.browser) {
+      this.glConfig.enabled = this.isGlEnabled();
+      this.glConfig.partially = smoovy.BrowserSupport.IS_FIREFOX ||
+        Browser.IS_EDGE;
 
-    if ( ! this.glConfig.enabled) {
-      if (process.browser) {
+      if ( ! this.glConfig.enabled) {
         document.documentElement.classList.add('gl-disabled');
+      }
+
+      if (this.glConfig.partially) {
+        document.documentElement.classList.add('gl-disabled-partially');
+      }
+
+      if (smoovy.BrowserSupport.IS_MOBILE_OR_TABLET) {
+        document.documentElement.classList.add('is-mobile');
+      }
+
+      if (smoovy.BrowserSupport.IS_TOUCH_DEVICE) {
+        document.documentElement.classList.add('is-touch');
       }
     }
   }

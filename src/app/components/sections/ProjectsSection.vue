@@ -200,7 +200,7 @@ export default class ProjectsSection extends Vue {
   } = {};
 
   @Inject('glConfig')
-  protected glConfig!: { enabled: boolean };
+  protected glConfig!: { enabled: boolean, partially: boolean };
 
   public mounted() {
     const wrappers = this.$refs.projectWrapper as HTMLElement[];
@@ -443,8 +443,11 @@ export default class ProjectsSection extends Vue {
     <div class="project-section-wrapper">
       <h2 class="work-headline" ref="workHeadline">WORK</h2>
       <div class="project-row fg-row" v-for="(project, index) in projects" :key="project.id">
-        <div
+        <component
+          :is="glConfig.partially ? 'Parallax' : 'div'"
           class="project-wrapper"
+          :speed="index % 2 === 0 ? 100 : -100"
+          :direction="'x'"
           @mouseenter="enableDisplacement(project, true)"
           @mouseleave="enableDisplacement(project, false)"
           :class="offsetClasslist(project)"
@@ -463,7 +466,7 @@ export default class ProjectsSection extends Vue {
           }">
             <KeywordList :keywords="project.keywords" />
           </Parallax>
-        </div>
+        </component>
       </div>
     </div>
   </Section>
@@ -491,7 +494,7 @@ export default class ProjectsSection extends Vue {
     .gl-disabled & {
       transform: translate3d(0, 0, 0) !important;
 
-      @include fluid-size(margin-top, 10px, 20px);
+      @include fluid-size(margin-top, 8px, 5px);
     }
   }
 
@@ -503,6 +506,10 @@ export default class ProjectsSection extends Vue {
 
     @include fluid-size(padding-top padding-bottom, 20px, 40px);
 
+    @include responsive-width(0, $break-lg) {
+      transform: none !important;
+    }
+
     .gl-disabled & {
       @include responsive-width(0, $break-md) {
         width: 100%;
@@ -510,10 +517,15 @@ export default class ProjectsSection extends Vue {
     }
 
     .project-label {
-      font-family: $font-neue-plak-extended-extra-black;
+      font-family: $font-neue-plak-extended-bold;
       color: $color-black;
 
       @include fluid-size(font-size, 40px, 130px);
+
+      html.gl-disabled.gl-disabled-partially & {
+        transition: color .8s, -webkit-text-stroke-color .8s;
+        -webkit-text-stroke: 1px $color-black;
+      }
 
       html:not(.gl-disabled) & {
         white-space: nowrap;
@@ -527,6 +539,11 @@ export default class ProjectsSection extends Vue {
       bottom: 0;
       left: -100px;
       right: -100px;
+    }
+
+    > a:hover + .project-label {
+      color: transparent;
+      -webkit-text-stroke-color: $color-black;
     }
   }
 

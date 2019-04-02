@@ -79,7 +79,10 @@ export default class Link extends Vue {
 <style scoped lang="scss">
 .link-wrapper {
   display: inline-block;
-  width: calc(var(--active-width) * 1px);
+
+  html:not(.is-mobile) & {
+    width: calc(var(--active-width) * 1px);
+  }
 }
 
 .link-container {
@@ -98,7 +101,10 @@ export default class Link extends Vue {
     transform-origin: 0% 50%;
     transition: transform 1s $ease-out-smooth;
     bottom: 5%;
-    transform: scaleX(calc(var(--default-width) / var(--active-width)));
+
+    html:not(.is-mobile) & {
+      transform: scaleX(calc(var(--default-width) / var(--active-width)));
+    }
 
     @include responsive-width(0, $break-md) {
       height: 2px;
@@ -110,8 +116,10 @@ export default class Link extends Vue {
   }
 
   &:hover:after {
-    transform: scaleX(1);
-    transition: transform 1s $ease-in-out-circ;
+    html:not(.is-mobile) & {
+      transform: scaleX(1);
+      transition: transform 1s $ease-in-out-circ;
+    }
   }
 }
 
@@ -127,11 +135,15 @@ export default class Link extends Vue {
 }
 
 .link-container:hover .letter > span {
-  transition: transform 1s $ease-in-out-circ, color .5s;
+  html:not(.is-mobile) & {
+    transition: transform 1s $ease-in-out-circ, color .5s;
+  }
 }
 
 .link-container:not(:hover) .letter > span {
-  transition-delay: 0s !important;
+  html:not(.is-mobile) & {
+    transition-delay: 0s !important;
+  }
 }
 
 .letter-wrapper {
@@ -149,11 +161,15 @@ export default class Link extends Vue {
 }
 
 .link-container:hover .letter-wrapper:nth-child(1) .letter > span {
-  color: $color-red;
-  transform: translate3d(120%, 0, 0);
+  html:not(.is-mobile) & {
+    color: $color-red;
+    transform: translate3d(120%, 0, 0);
+  }
 }
 
 .link-container:hover .letter-wrapper:nth-child(2) .letter > span {
-  transform: translate3d(0, 0, 0);
+  html:not(.is-mobile) & {
+    transform: translate3d(0, 0, 0);
+  }
 }
 </style>

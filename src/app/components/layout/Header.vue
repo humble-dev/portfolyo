@@ -100,12 +100,15 @@ export default class Header extends Vue {
   private activeSection: string = '';
   private linkRefStates: LinkRefState[] = [];
   private activeDesignationLine: number = 0;
+  private navTouched: boolean = false;
 
   private handleLinkClick(
     link: NavigationLink,
     event: MouseEvent,
   ) {
     event.preventDefault();
+
+    this.navTouched = false;
 
     this.navigation.requestSectionScroll(link.section);
   }
@@ -172,8 +175,15 @@ export default class Header extends Vue {
             </div>
           </div>
         </div>
-        <nav v-detectSize.ignoreWidth :class="{ minimized: navMinimized }">
+        <nav
+          v-detectSize.ignoreWidth
+          :class="{
+            minimized: navMinimized,
+            touched: navTouched
+          }"
+        >
           <div class="nav-links-wrapper fx-layout fx-vertical fx-self-end" ref="navLinksWrapper">
+            <div class="touch-trigger" @click="navTouched = true"></div>
             <a
               v-for="link in navigationLinks"
               ref="navLink"
@@ -300,20 +310,43 @@ export default class Header extends Vue {
     transform: translate3d(0, 0, 0);
     transition: height .5s;
 
-    &.minimized:not(:hover) {
+    html:not(.is-touch) &.minimized:not(:hover),
+    html.is-touch &:not(.touched).minimized {
       height: $nav-link-height !important;
+    }
+
+    .nav-links-wrapper {
+      position: relative;
+    }
+
+    .is-touch & .touch-trigger {
+      display: block;
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 2;
+      background-color: transparent;
+    }
+
+    &.touched .touch-trigger,
+    &:not(.minimized) .touch-trigger {
+      display: none;
     }
 
     .nav-links-wrapper {
       transition: transform .5s;
     }
 
-    &:hover .nav-links-wrapper {
+    html:not(.is-touch) &:hover .nav-links-wrapper,
+    &.touched .nav-links-wrapper {
       transform: translate3d(0, 0, 0) !important;
     }
 
     /** Nav link */
     .nav-link {
+      position: relative;
       counter-increment: navigation;
       text-transform: uppercase;
       font-family: $font-neue-haas-regular;
@@ -427,14 +460,17 @@ export default class Header extends Vue {
       }
     }
 
-    .nav-link:hover > span > span:after,
-    &.minimized:not(:hover) .nav-link.active > span > span:after {
+    html:not(.is-touch) & .nav-link:hover > span > span:after,
+    &.minimized:not(:hover) .nav-link.active > span > span:after,
+    html.is-touch &.minimized .nav-link.active > span > span:after,
+    html.is-touch &:not(.touched).minimized .nav-link.active > span > span:after {
       left: -15px;
       opacity: 1;
     }
 
     &:not(.minimized) .nav-link.active > span > span,
-    &:hover .nav-link.active > span > span {
+    html.is-touch &.touched .nav-link.active > span > span,
+    html:not(.is-touch) &:hover .nav-link.active > span > span {
       &:after {
         opacity: 1;
         width: calc(100% + 10px);

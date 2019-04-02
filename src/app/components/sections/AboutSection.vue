@@ -273,34 +273,37 @@ export default class AboutSection extends Vue {
     white-space: nowrap;
   }
 
-  @for $i from 1 through 25 {
-    &.name-active .intro-wrapper > span:nth-child(#{$i}) > span > span {
-      transition: transform 1.5s 30ms * $i cubic-bezier(.23,1,.32,1);
+  html:not(.gl-disabled) &,
+  html.gl-disabled.gl-disabled-partially & {
+    @for $i from 1 through 25 {
+      &.name-active .intro-wrapper > span:nth-child(#{$i}) > span > span {
+        transition: transform 1.5s 30ms * $i cubic-bezier(.23,1,.32,1);
+      }
     }
-  }
 
-  .intro-wrapper > span > span {
-    padding-bottom: .1ch;
-  }
+    .intro-wrapper > span > span {
+      padding-bottom: .1ch;
+    }
 
-  .intro-wrapper > span > span:not(.visible) {
-    display: inline-block;
-    overflow: hidden;
-  }
+    .intro-wrapper > span > span:not(.visible) {
+      display: inline-block;
+      overflow: hidden;
+    }
 
-  .intro-wrapper > span > span > span {
-    display: inline-block;
-    transition: transform 1s $ease-out-smooth;
-    transform: translate3d(0, 105%, 0);
-  }
+    .intro-wrapper > span > span > span {
+      display: inline-block;
+      transition: transform 1s $ease-out-smooth;
+      transform: translate3d(0, 105%, 0);
+    }
 
-  &.name-active .intro-wrapper > span > span > span {
-    transform: translate3d(0, 0, 0);
+    &.name-active .intro-wrapper > span > span > span {
+      transform: translate3d(0, 0, 0);
+    }
   }
 }
 
 .name {
-  html.gl-disabled & {
+  html.gl-disabled:not(.gl-disabled-partially) & {
     display: inline;
 
     .personality {
@@ -313,7 +316,8 @@ export default class AboutSection extends Vue {
     }
   }
 
-  html:not(.gl-disabled) & {
+  html:not(.gl-disabled) &,
+  html.gl-disabled.gl-disabled-partially & {
     position: relative;
     display: inline-block;
     color: $color-black;

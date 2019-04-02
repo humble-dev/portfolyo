@@ -98,7 +98,6 @@ export default class Parallax extends Vue {
       0
     )`;
 
-
     (this.$el as HTMLElement).style.transform = translate3d;
   }
 }
