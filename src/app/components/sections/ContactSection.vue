@@ -11,10 +11,14 @@ import {
 } from '~~/canvas/containers/related-text.container';
 
 const randomLinks = [
-  'https://fakten-gegen-rechts.de/',
   'https://dorfjungs.com/',
-  'http://trumpdonald.org/',
-  'https://jakartarecords-label.bandcamp.com/album/durch-die-wolkendecke',
+  'https://www.youtube.com/watch?v=1MGVSupOBVg',
+  'https://open.spotify.com/user/triplexp/playlist/4u8l42osTQIKzpmZLQQyr5?si=uu9rtHmvRya7-Zoq-vuU_g',
+  'https://www.youtube.com/watch?v=XYL1aSW2nuk',
+  'https://www.youtube.com/watch?v=q4rL_Lnt6kA',
+  'https://www.instagram.com/miauandbork/',
+  'https://www.youtube.com/watch?v=O-G__ou3AaY',
+
 ];
 
 @Component({
@@ -130,8 +134,8 @@ export default class ContactSection extends Vue {
               </span>
             </span>
             <span>
-              <span>
-                <Link target="_blank" rel="noopener" @click="updateRandomLink()" :href="randomLink" label="Something" />
+              <span @click="updateRandomLink()">
+                <Link target="_blank" rel="noopener" :to="randomLink" label="Something" />
               </span>
             </span>
           </PocketParagraph>
