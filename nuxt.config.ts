@@ -7,7 +7,7 @@ import favicon from './favicon.config';
 const url = 'https://davideperozzi.com';
 const meta = {
   title: 'Davide Perozzi | Creative developer',
-  description: 'I\'m Davide, an creative developer based in Karlsruhe.'
+  description: 'I\'m Davide, an creative developer based in Karlsruhe. '
     + 'I create cool digital projects with a like minded team at Dorfjungs',
   image: url + '/resources/og-image.png'
 };

@@ -2,6 +2,13 @@
 <html {{ HTML_ATTRS }} itemscope itemtype="http://schema.org/Article">
   <head>
     {{ HEAD }}
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-137490660-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-137490660-1', { 'anonymize_ip': true });
+    </script>
   </head>
   <body {{ BODY_ATTRS }}>
     {{ APP }}
