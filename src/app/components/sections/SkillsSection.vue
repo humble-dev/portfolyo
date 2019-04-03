@@ -85,7 +85,7 @@ export default class SkillsSection extends Vue {
             <span>know something I always try to wrap my</span>
           </span>
           <span>
-            <span>head around it fast.</span>
+            <span>head around it quickly.</span>
           </span>
         </PocketParagraph>
       </div>
