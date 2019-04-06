@@ -24,7 +24,7 @@ export default class Footer extends Vue {
   <footer>
     <div class="footer-container fg-container-fluid fg-wrapper-maxed">
       <div class="footer-wrapper fg-row fg-between-lg fg-middle-lg">
-        <p class="size-md bold">Website &copy; 2019</p>
+        <p class="size-md bold">Website &copy;2019</p>
         <p class="size-sm">
           <a href="//norman-dubois.de/" target="_blank" rel="noopener">des. Norman Dubois</a>, dev. Davide Perozzi
         </p>

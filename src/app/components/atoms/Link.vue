@@ -43,6 +43,16 @@ export default class Link extends Vue {
       this.activeWidth = this.lettersActive.bounds.width;
     });
 
+    setTimeout(() => {
+      this.defaultWidth = this.lettersDefault.bounds.width;
+      this.activeWidth = this.lettersActive.bounds.width;
+    }, 200);
+
+    setTimeout(() => {
+      this.defaultWidth = this.lettersDefault.bounds.width;
+      this.activeWidth = this.lettersActive.bounds.width;
+    }, 500);
+
     this.viewport.changed(100).subscribe(() => {
       this.defaultWidth = this.lettersDefault.bounds.width;
       this.activeWidth = this.lettersActive.bounds.width;

@@ -63,8 +63,8 @@ export default class App extends Vue {
   public created() {
     if (process.browser) {
       this.glConfig.enabled = this.isGlEnabled();
-      this.glConfig.partially = smoovy.BrowserSupport.IS_FIREFOX ||
-        Browser.IS_EDGE;
+      this.glConfig.partially = (smoovy.BrowserSupport.IS_FIREFOX ||
+        Browser.IS_EDGE) && !smoovy.BrowserSupport.IS_MOBILE_OR_TABLET;
 
       if ( ! this.glConfig.enabled) {
         document.documentElement.classList.add('gl-disabled');
@@ -124,6 +124,9 @@ export default class App extends Vue {
 
     // Update scroller once
     setTimeout(() => this.scrollerService.update(), 100);
+    setTimeout(() => this.scrollerService.update(), 200);
+    setTimeout(() => this.scrollerService.update(), 300);
+    setTimeout(() => this.scrollerService.update(), 500);
 
     // Link hover controlling
     if (process.browser) {
