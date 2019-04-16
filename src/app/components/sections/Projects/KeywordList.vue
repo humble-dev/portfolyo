@@ -63,6 +63,10 @@ export default class KeywordList extends Vue {
     margin: 0 10px;
     white-space: nowrap;
 
+    @include responsive-width(0, $break-lg) {
+      color: #E00000;
+    }
+
     @include fluid-size(
       font-size,
       14px,

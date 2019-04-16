@@ -10,6 +10,7 @@ import { DefaultContainer } from '~~/canvas/default.container';
 import { ViewportProvider } from '~~/providers/viewport.provider';
 import { ScrollerService } from '~~/services/scroller.service';
 import { ElementState } from '~~/providers/element-state.provider';
+import { PreloaderService } from '../services/preloader.service';
 
 @Component
 export default class Canvas extends Vue implements CanvasDelegator {
@@ -67,6 +68,12 @@ export default class Canvas extends Vue implements CanvasDelegator {
             }
           }
         });
+
+        setTimeout(() => {
+          PreloaderService.getInstance().loaded.then(() => {
+            this.updateDimensions();
+          });
+        }, 100);
       });
     }
   }
@@ -114,19 +121,21 @@ export default class Canvas extends Vue implements CanvasDelegator {
     this.viewport.changed(300)
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        setTimeout(() => {
-          this.elementState.update();
-
-          this.pixiApp.renderer.resize(
-            this.elementState.bounds.width,
-            this.elementState.bounds.height,
-          );
-
-          this.syncContainers(true);
-          setTimeout(() => this.syncContainers(true), 50);
-          setTimeout(() => this.syncContainers(true), 500);
-        });
+        setTimeout(() => this.updateDimensions());
       });
+  }
+
+  private updateDimensions() {
+    this.elementState.update();
+
+    this.pixiApp.renderer.resize(
+      this.elementState.bounds.width,
+      this.elementState.bounds.height,
+    );
+
+    this.syncContainers(true);
+    setTimeout(() => this.syncContainers(true), 50);
+    setTimeout(() => this.syncContainers(true), 500)
   }
 
   public renderContainers(delta?: number) {

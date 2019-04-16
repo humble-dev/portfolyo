@@ -184,13 +184,14 @@ export default class Header extends Vue {
         >
           <div class="nav-links-wrapper fx-layout fx-vertical fx-self-end" ref="navLinksWrapper">
             <div class="touch-trigger" @click="navTouched = true"></div>
+            <div ref="navLink" class="nav-link-wrapper" v-for="link in navigationLinks"
+              :key="link.section" v-bind:data-section="link.section">
             <a
-              v-for="link in navigationLinks"
-              ref="navLink"
+
+
               class="nav-link"
-              v-bind:data-section="link.section"
+
               :href="'#' + link.section"
-              :key="link.section"
               :class="{ active: activeSection === link.section }"
               @click="handleLinkClick(link, $event)"
             >
@@ -202,6 +203,7 @@ export default class Header extends Vue {
                 </span>
               </span>
             </a>
+            </div>
           </div>
         </nav>
       </div>
@@ -315,6 +317,7 @@ export default class Header extends Vue {
       height: $nav-link-height !important;
     }
 
+
     .nav-links-wrapper {
       position: relative;
     }
@@ -364,11 +367,16 @@ export default class Header extends Vue {
       backface-visibility: hidden;
       transform: translate3d(100%, 0, 0);
       opacity: 0;
+      box-sizing: content-box;
       transition:
         transform 1s $ease-out-smooth,
         opacity .8s;
 
       @include fluid-size(font-size, 16px, 20px);
+
+      @include responsive-width(0, $break-lg) {
+        padding: 5px 0;
+      }
 
       .preloader-loaded & {
         opacity: 1;

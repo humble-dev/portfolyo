@@ -2,10 +2,14 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator';
 import { ElementState } from '~~/providers/element-state.provider';
 import { ViewportProvider } from '~~/providers/viewport.provider';
+import { WebfontService } from '../../services/webfont.service';
+import { PreloaderService } from '../../services/preloader.service';
 
 @Component
 export default class Link extends Vue {
   private viewport = ViewportProvider.getInstance();
+  private webfont = WebfontService.getInstance();
+  private preloader = PreloaderService.getInstance();
   private lettersDefault!: ElementState;
   private lettersActive!: ElementState;
   private activeScale = 1;
@@ -39,23 +43,41 @@ export default class Link extends Vue {
     );
 
     setTimeout(() => {
+      this.lettersDefault.update();
+      this.lettersActive.update();
+
       this.defaultWidth = this.lettersDefault.bounds.width;
       this.activeWidth = this.lettersActive.bounds.width;
     });
 
-    setTimeout(() => {
-      this.defaultWidth = this.lettersDefault.bounds.width;
-      this.activeWidth = this.lettersActive.bounds.width;
-    }, 200);
+    this.webfont.loaded.then(() => {
+      setTimeout(() => {
+        this.lettersDefault.update();
+        this.lettersActive.update();
 
-    setTimeout(() => {
-      this.defaultWidth = this.lettersDefault.bounds.width;
-      this.activeWidth = this.lettersActive.bounds.width;
-    }, 500);
+        this.defaultWidth = this.lettersDefault.bounds.width;
+        this.activeWidth = this.lettersActive.bounds.width;
+      });
+    });
+
+    this.preloader.loaded.then(() => {
+      setTimeout(() => {
+        this.lettersDefault.update();
+        this.lettersActive.update();
+
+        this.defaultWidth = this.lettersDefault.bounds.width;
+        this.activeWidth = this.lettersActive.bounds.width;
+      });
+    });
 
     this.viewport.changed(100).subscribe(() => {
-      this.defaultWidth = this.lettersDefault.bounds.width;
-      this.activeWidth = this.lettersActive.bounds.width;
+      setTimeout(() => {
+        this.lettersDefault.update();
+        this.lettersActive.update();
+
+        this.defaultWidth = this.lettersDefault.bounds.width;
+        this.activeWidth = this.lettersActive.bounds.width;
+      });
     });
   }
 }
