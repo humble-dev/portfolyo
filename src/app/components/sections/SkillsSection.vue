@@ -195,7 +195,7 @@ export default class SkillsSection extends Vue {
       <div class="fg-col-xs-18 fg-col-lg-4 fg-col-lg-offset-2 titles">
         <PocketParagraph class="bold upper size-md">
           <span>
-            <span>Mindsparkle</span>
+            <span>Mindsparkle Mag</span>
           </span>
         </PocketParagraph>
       </div>
