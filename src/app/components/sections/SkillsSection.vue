@@ -117,6 +117,36 @@ export default class SkillsSection extends Vue {
       <div class="fg-col-xs-18 fg-col-lg-11 fg-col-lg-offset-1">
         <PocketParagraph class="bold size-md">
           <span>
+            <span>Site Of The Day - This Portfolio</span>
+          </span>
+        </PocketParagraph>
+        <PocketParagraph class="bold size-md">
+          <span>
+            <span>Developer Site - This Portfolio</span>
+          </span>
+        </PocketParagraph>
+        <PocketParagraph class="bold size-md">
+          <span>
+            <span>Mobile Of The Week - This Portfolio</span>
+          </span>
+        </PocketParagraph>
+        <PocketParagraph class="bold size-md">
+          <span>
+            <span>Mobile Excellence - This Portfolio</span>
+          </span>
+        </PocketParagraph>
+        <PocketParagraph class="bold size-md">
+          <span>
+            <span>Honorable Mention - This Portfolio</span>
+          </span>
+        </PocketParagraph>
+        <PocketParagraph class="bold size-md">
+          <span>
+            <span>Honorable Mention - Dorfjungs Jobs Microsite</span>
+          </span>
+        </PocketParagraph>
+        <PocketParagraph class="bold size-md">
+          <span>
             <span>Honorable Mention - MackMedia</span>
           </span>
         </PocketParagraph>
@@ -141,12 +171,38 @@ export default class SkillsSection extends Vue {
       <div class="fg-col-xs-18 fg-col-lg-11 fg-col-lg-offset-1">
         <PocketParagraph class="bold size-md">
           <span>
+            <span>Site Of The Day - This Portfolio</span>
+          </span>
+        </PocketParagraph>
+        <PocketParagraph class="bold size-md">
+          <span>
+            <span>Best UI, UX & Innovation - This Portfolio</span>
+          </span>
+        </PocketParagraph>
+        <PocketParagraph class="bold size-md">
+          <span>
             <span>Special Kudos - MackMedia</span>
           </span>
         </PocketParagraph>
         <PocketParagraph class="bold size-md">
           <span>
             <span>Special Kudos - Ammolite Restaurant</span>
+          </span>
+        </PocketParagraph>
+      </div>
+    </div>
+    <div class="fg-row awards-entry-wrapper">
+      <div class="fg-col-xs-18 fg-col-lg-4 fg-col-lg-offset-2 titles">
+        <PocketParagraph class="bold upper size-md">
+          <span>
+            <span>Mindsparkle</span>
+          </span>
+        </PocketParagraph>
+      </div>
+      <div class="fg-col-xs-18 fg-col-lg-11 fg-col-lg-offset-1">
+        <PocketParagraph class="bold size-md">
+          <span>
+            <span>Site Of The Day - This Portfolio</span>
           </span>
         </PocketParagraph>
       </div>
@@ -162,7 +218,7 @@ export default class SkillsSection extends Vue {
       <div class="fg-col-xs-18 fg-col-lg-11 fg-col-lg-offset-1">
         <PocketParagraph class="bold size-md">
           <span>
-            <span>Site of the Day - MUELLER by Bande Vier</span>
+            <span>Site Of The Day - MUELLER by Bande Vier</span>
           </span>
         </PocketParagraph>
       </div>

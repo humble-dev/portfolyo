@@ -118,7 +118,7 @@ export default class ContactSection extends Vue {
             </span>
             <span>
               <span>
-                <Link target="_blank" rel="noopener" to="https://www.xing.com/profile/Davide_Perozzi" label="Xing" />
+                <Link target="_blank" rel="noopener" to="https://twitter.com/davideperozzi1" label="Twitter" />
               </span>
             </span>
           </PocketParagraph>
