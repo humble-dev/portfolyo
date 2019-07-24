@@ -69,11 +69,9 @@ export default class Canvas extends Vue implements CanvasDelegator {
           }
         });
 
-        setTimeout(() => {
-          PreloaderService.getInstance().loaded.then(() => {
-            this.updateDimensions();
-          });
-        }, 100);
+        PreloaderService.getInstance().loaded.then(() => {
+          setTimeout(() => this.updateDimensions());
+        });
       });
     }
   }

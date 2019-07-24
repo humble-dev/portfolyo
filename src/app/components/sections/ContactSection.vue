@@ -18,7 +18,6 @@ const randomLinks = [
   'https://www.youtube.com/watch?v=q4rL_Lnt6kA',
   'https://www.instagram.com/miauandbork/',
   'https://www.youtube.com/watch?v=O-G__ou3AaY',
-
 ];
 
 @Component({
@@ -134,8 +133,8 @@ export default class ContactSection extends Vue {
               </span>
             </span>
             <span>
-              <span @click="updateRandomLink()">
-                <Link target="_blank" rel="noopener" :to="randomLink" label="Something" />
+              <span>
+                <Link target="_blank" rel="noopener" to="https://open.spotify.com/user/triplexp/playlist/4u8l42osTQIKzpmZLQQyr5?si=uu9rtHmvRya7-Zoq-vuU_g" label="Hip Hop" />
               </span>
             </span>
           </PocketParagraph>

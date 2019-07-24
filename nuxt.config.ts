@@ -62,6 +62,10 @@ export default {
   styleResources: {
     scss: ['~/assets/styles/_base.scss']
   },
+  workbox: {
+    cacheAssets: false,
+    offline: false
+  },
   dir: {
     layouts: 'app/layouts',
     store: 'app/store',

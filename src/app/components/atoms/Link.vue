@@ -94,14 +94,17 @@ export default class Link extends Vue {
     <a class="link-container" :href="to" :target="target">
       <span class="letter-wrapper" ref="lettersDefault">
         <span class="letter" v-for="(letter, index) in letters" :key="index">
-          <span :style="{ transitionDelay: `${20 * (letters.length - index)}ms` }">{{letter}}</span>
+          <span :style="{ transitionDelay: `${20 * (letters.length - index)}ms` }" v-html="letter === ' ' ? '&nbsp;' : letter"></span>
         </span>
       </span>
       <span class="letter-wrapper" ref="lettersActive">
         <span class="letter" v-for="(letter, index) in letters" :key="index">
-          <span :style="{ transitionDelay: `${20 * (letters.length - index)}ms` }">
-            {{uppsercase ? letter.toUpperCase() : letter}}
-          </span>
+          <span
+            :style="{ transitionDelay: `${20 * (letters.length - index)}ms` }"
+            v-html="letter === ' ' ? '&nbsp;' : (
+              uppsercase ? letter.toUpperCase() : letter
+            )"
+          ></span>
         </span>
       </span>
     </a>
