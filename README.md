@@ -5,7 +5,7 @@
 Yeah.. I've changed so much stuff during the development, so I'm not very proud of the code quality anymore. Maybe it'll help someone out there!
 
 ## Smooth scrolling
-My portfolio uses a early version oft this: [@smoovy/scroller](https://github.com/davideperozzi/smoovy/tree/master/packages/scroller).
+My portfolio uses an early version oft this: [@smoovy/scroller](https://github.com/davideperozzi/smoovy/tree/master/packages/scroller).
 
 ## License
 I don't care - Do whatever you want. ¯\\\_(ツ)\_/¯
