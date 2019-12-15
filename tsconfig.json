@@ -35,8 +35,7 @@
     "sourceMap": true,
     "noEmit": true,
     "types": [
-      "@types/node",
-      "@nuxt/vue-app"
+      "@nuxt/types"
     ]
   },
   "include": [

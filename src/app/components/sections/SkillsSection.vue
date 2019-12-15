@@ -29,43 +29,45 @@ export default class SkillsSection extends Vue {
   private glConfig!: { enabled: boolean };
 
   public mounted() {
-    const awardsHeadline = this.$refs.awardsHeadline as HTMLElement;
-    const awardsHeadlineContainer = new RelatedTextContainer(
-      awardsHeadline,
-      'AWARDS',
-      {
-        fontFamily: 'Neue Plak Extended ExtraBlack',
-        stretchMode: RelatedTextContainerStretch.FIT_HEIGHT,
-        fill: 'transparent',
-        padding: 4,
-        stroke: 0x00000,
-        strokeThickness: 1,
-        fontSize: 200,
-      },
-    );
+    setTimeout(() => {
+      const awardsHeadline = this.$refs.awardsHeadline as HTMLElement;
+      const awardsHeadlineContainer = new RelatedTextContainer(
+        awardsHeadline,
+        'AWARDS',
+        {
+          fontFamily: 'Neue Plak Extended ExtraBlack',
+          stretchMode: RelatedTextContainerStretch.FIT_HEIGHT,
+          fill: 'transparent',
+          padding: 4,
+          stroke: 0x00000,
+          strokeThickness: 1,
+          fontSize: 200,
+        },
+      );
 
-    awardsHeadlineContainer.enableParallax(true, { speed: 50, direction: 'x' });
-    awardsHeadlineContainer.enableDisplacement(
-      true,
-      {
-        scaleX: 5,
-        scaleY: 0,
-      },
-    );
+      awardsHeadlineContainer.enableParallax(true, { speed: 50, direction: 'x' });
+      awardsHeadlineContainer.enableDisplacement(
+        true,
+        {
+          scaleX: 5,
+          scaleY: 0,
+        },
+      );
 
-     awardsHeadlineContainer.enableMouseTwist(
-      true,
-      {
-        radius: 150,
-        angle: 20,
-        padding: 500,
-      },
-    );
+      awardsHeadlineContainer.enableMouseTwist(
+        true,
+        {
+          radius: 150,
+          angle: 20,
+          padding: 500,
+        },
+      );
 
-    this.canvasDelegator.addContainer(
-      'background',
-      awardsHeadlineContainer,
-    );
+      this.canvasDelegator.addContainer(
+        'background',
+        awardsHeadlineContainer,
+      );
+    }, 200);
   }
 }
 </script>
@@ -97,12 +99,12 @@ export default class SkillsSection extends Vue {
           ref="awardsHeadline"
         >
           <span v-show="glConfig.enabled">AWARDS</span>
-          <no-ssr>
+          <client-only>
             <Parallax
               v-bind="{ speed: 30, direction: 'x' }"
               v-show="!glConfig.enabled"
             >AWARDS</Parallax>
-          </no-ssr>
+          </client-only>
         </h2>
       </div>
     </div>

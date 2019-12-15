@@ -9,11 +9,6 @@ import {
   RelatedImageContainerStretch,
 } from '~~/canvas/containers/related-image.container';
 import {
-  RelatedVideoContainer,
-  RelatedVideoContainerStretch,
-  RelatedVideoContainerConfig,
-} from '~~/canvas/containers/related-video.container';
-import {
   CanvasDelegatorService,
 } from '~~/services/canvas-delegator.service';
 import {
@@ -35,18 +30,39 @@ interface Project {
   name: string;
   url: string;
   keywords: string[];
-  video?: string;
   offset?: { [bp: string]: number };
   image?: string;
 }
 
 const projects: Projects = [
   {
+    id: 'roots',
+    name: 'roots',
+    url: 'https://rootsandfriends.com/',
+    image: 'projects.roots.title',
+    keywords: [
+      'Docker',
+      'Swarm',
+      'Headless',
+      'Scrolling',
+      'Parallax',
+      'Restaurant',
+      'React',
+      'Nextjs',
+      'smoovy',
+      'Directus'
+    ],
+    offset: {
+      xs: 0,
+      lg: 0,
+      xxl: 2,
+    },
+  },
+  {
     id: 'mackmedia',
     name: 'Mack&shy;Media',
     url: 'https://mackmedia.de/',
     image: 'projects.mackmedia.title',
-    video: '/resources/projects/mackmedia/title.mp4',
     keywords: [
       'Google Closure',
       'JavaScript',
@@ -70,7 +86,6 @@ const projects: Projects = [
     name: 'Ammolite',
     url: 'https://www.ammolite-restaurant.de/',
     image: 'projects.ammolite.title',
-    video: '/resources/projects/ammolite/title.mp4',
     keywords: [
       'Wordpress',
       'Animations',
@@ -137,7 +152,7 @@ const projects: Projects = [
     id: 'bandevier',
     name: 'MUELLER',
     url: 'https://bandevier.de/',
-    video: '/resources/projects/mueller/title.mp4',
+    image: 'projects.bandevier.title',
     keywords: [
       'Google Closure',
       'Animations',
@@ -194,7 +209,7 @@ export default class ProjectsSection extends Vue {
   private textContainers: { [id: string]: RelatedTextContainer } = {};
   private spriteContainers: {
     [id: string]: {
-      container: RelatedImageContainer | RelatedVideoContainer,
+      container: RelatedImageContainer,
       displacement: Displacement
     },
   } = {};
@@ -240,26 +255,9 @@ export default class ProjectsSection extends Vue {
       }
 
       if (project && id && ! this.spriteContainers.hasOwnProperty(id)) {
-        let spriteContainer:
-          RelatedVideoContainer |
-          RelatedImageContainer |
-          undefined;
+        let spriteContainer: RelatedImageContainer | undefined;
 
-        if (project.video && this.glConfig.enabled) {
-          spriteContainer = new RelatedVideoContainer(
-            element,
-            project.video,
-            {
-              scale: .7,
-              index: 5,
-              hidden: true,
-              autoPlay: false,
-              stretchMode: RelatedVideoContainerStretch.FIT_WIDTH,
-              centerHorizontal: true,
-              centerVertical: true,
-            },
-          );
-        } else if (project.image) {
+        if (project.image) {
           spriteContainer = new RelatedImageContainer(
             element,
             project.image,
@@ -338,7 +336,7 @@ export default class ProjectsSection extends Vue {
 
   private getSpriteContainer(
     id: string,
-  ): RelatedImageContainer|RelatedVideoContainer|undefined {
+  ): RelatedImageContainer|undefined {
     return (this.spriteContainers[id] || {}).container;
   }
 
@@ -357,7 +355,6 @@ export default class ProjectsSection extends Vue {
     const sprite = this.getSpriteContainer(project.id);
     const spriteDisplacement = this.getSpriteDisplacement(project.id);
     const text = this.getTextContainer(project.id);
-    const videoSprite = sprite instanceof RelatedVideoContainer ? sprite : null;
 
     if (sprite) {
       sprite.enableMouseTwist(enabled, {
@@ -368,15 +365,8 @@ export default class ProjectsSection extends Vue {
 
       if (spriteDisplacement) {
         if (enabled) {
-          spriteDisplacement.scaleFilter(0, 0, 1000).then(() => {
-            if (videoSprite) {
-              videoSprite.play();
-            }
-          })
+          spriteDisplacement.scaleFilter(0, 0, 1000);
         } else {
-          if (videoSprite) {
-            videoSprite.pause();
-          }
 
           spriteDisplacement.scaleFilter(100, 100, 1000);
         }

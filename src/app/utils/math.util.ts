@@ -29,7 +29,7 @@ export function scrollTween(
   let inStart = elementPosition - viewportSize + minOffset;
   const inEnd = elementPosition + elementSize + maxOffset;
 
-  if (elementPosition + elementSize < viewportSize) {
+  if (elementPosition < viewportSize) {
     inStart = 0;
     minValue = 0;
   }

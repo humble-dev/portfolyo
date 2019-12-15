@@ -36,6 +36,30 @@
     "extras": [ "pixi" ]
   },
   {
+    "name": "projects.mackmedia.title",
+    "type": "image",
+    "path": "/resources/projects/mackmedia/title.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "projects.ammolite.title",
+    "type": "image",
+    "path": "/resources/projects/ammolite/title.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "projects.roots.title",
+    "type": "image",
+    "path": "/resources/projects/roots/title.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
+    "name": "projects.bandevier.title",
+    "type": "image",
+    "path": "/resources/projects/bandevier/title.jpg",
+    "extras": [ "pixi" ]
+  },
+  {
     "name": "projects.grape-garage.title",
     "type": "image",
     "path": "/resources/projects/grape-garage/title.jpg",

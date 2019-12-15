@@ -1,4 +1,5 @@
 import * as _filterMotionBlur from '@pixi/filter-motion-blur';
+import { easings, Tween } from '@smoovy/tween';
 
 import { ContainerExtra, ContainerExtraConfig } from '../default.container';
 
@@ -10,7 +11,7 @@ export class MotionBlur implements ContainerExtra {
   public name = motionBlurExtraName;
   private enabled: boolean = false;
   private filter?: _filterMotionBlur.MotionBlurFilter;
-  private velocityTween?: smoovy.Tween;
+  private velocityTween?: Tween;
 
   public constructor(
     protected target: PIXI.Container,
@@ -49,7 +50,7 @@ export class MotionBlur implements ContainerExtra {
       }
 
       if (process.browser) {
-        this.velocityTween = smoovy.Tween.to(
+        this.velocityTween = Tween.fromTo(
           {
             x: this.filter.velocity.x,
             y: this.filter.velocity.y,
@@ -58,16 +59,18 @@ export class MotionBlur implements ContainerExtra {
             x,
             y,
           },
-          duration,
           {
-            easing: smoovy.easings.Sine.out,
-            update: (velocity) => {
-              if (this.filter) {
-                this.filter.velocity.x = velocity.x;
-                this.filter.velocity.y = velocity.y;
-              }
-            },
-          },
+            duration,
+            easing: easings.Sine.out,
+            on: {
+              update: (velocity) => {
+                if (this.filter) {
+                  this.filter.velocity.x = velocity.x;
+                  this.filter.velocity.y = velocity.y;
+                }
+              },
+            }
+          }
         );
       }
     }

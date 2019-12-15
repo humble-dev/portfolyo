@@ -1,7 +1,11 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
+import { Scroller, smoothScroll } from '@smoovy/scroller';
+import { Coordinate, Browser } from '@smoovy/utils';
+
 import { ElementState } from '../providers/element-state.provider';
+import { Ticker } from '@smoovy/ticker';
 
 export enum ScrollStateTriggerType {
   USER = 'user',
@@ -10,8 +14,8 @@ export enum ScrollStateTriggerType {
 
 export interface ScrollState {
   triggeredBy: ScrollStateTriggerType;
-  position: smoovy.Position;
-  lastPosition: smoovy.Position;
+  position: Coordinate;
+  lastPosition: Coordinate;
   currentTime: number;
   lastTime: number;
 }
@@ -26,9 +30,8 @@ const initialState: ScrollState = {
 
 export class ScrollerService {
   private static instance: ScrollerService;
-  private smoovyEnabled: boolean = (process as any).browser;
   private rootElement!: HTMLElement;
-  private scroller?: smoovy.Scroller;
+  private scroller?: Scroller;
   private initialized: boolean = false;
   private wrapperState!: ElementState;
   private containerState!: ElementState;
@@ -87,72 +90,32 @@ export class ScrollerService {
   }
 
   private createScroller() {
-    if (this.smoovyEnabled) {
-      if (this.scroller) {
-        this.scroller.deactivate();
-      }
+    if (Browser.client) {
+      const ticker = new Ticker();
+      ticker.override = true;
 
-      this.scroller = smoovy.Scroller.init({
-        container: this.rootElement,
-        mobileNative: false,
-        controllers: {
-          output: {
-            default: smoovy.TweenSectionController,
-          },
+      this.scroller = smoothScroll({ element: this.rootElement }, {
+        lerp: {
+          ticker,
         },
-        on: {
-          scroll: (
-            position: smoovy.Position,
-            lastPosition: smoovy.Position,
-          ) => {
-            this.triggerScroll(
-              ScrollStateTriggerType.USER,
-              position,
-              lastPosition,
-            );
-          },
-        },
-        input: {
-          mouse: {
-            multiplier: 0.5,
-            multiplierFirefox: 50
-          },
-          touch: {
-            multiplier: 2.5,
-          },
-        },
-        output: {
-          default: {
-            easing: smoovy.easings.Expo.out,
-            speed: 1500,
-            selector: 'section,footer',
-            on: {
-              animation: (
-                position: smoovy.Position,
-              ) => {
-                this.triggerScroll(
-                  ScrollStateTriggerType.ANIMATION,
-                  position,
-                );
-              },
-            },
-          },
-        },
+        mouse: {
+          multiplier: 0.8,
+          multiplierFirefox: 50
+        }
       });
 
-      this.wrapperState = new ElementState(
-        this.scroller.dom.getWrapper(),
-        {
-          includeBounds: true,
-        },
-      );
+      PIXI.ticker.shared.add((delta) => ticker.tick(delta));
 
-      this.containerState = new ElementState(
-        this.scroller.dom.getContainer(),
-        {
-          includeBounds: true,
-        },
-      );
+      this.scroller.onVirtual((position) => {
+        this.triggerScroll(ScrollStateTriggerType.USER, position);
+      });
+
+      this.scroller.onScroll((position) => {
+        this.triggerScroll(
+          ScrollStateTriggerType.ANIMATION,
+          position
+        );
+      });
 
       this.initialized = true;
     }
@@ -160,49 +123,46 @@ export class ScrollerService {
 
   public update() {
     if (this.scroller) {
-      this.scroller.update();
+      this.scroller.recalc();
     }
   }
 
-  public get wrapper(): HTMLElement {
-    return this.wrapperState.element;
+  public get wrapper() {
+    return this.scroller && this.scroller.dom.wrapper.element;
   }
 
-  public get container(): HTMLElement {
-    return this.containerState.element;
+  public get container() {
+    return this.scroller && this.scroller.dom.container.element;
   }
 
   public get wrapperHeight(): number {
-    return this.wrapperState
-      ? this.wrapperState.bounds.height
+    return this.scroller
+      ? this.scroller.dom.wrapper.size.height
       : 0;
   }
 
-  public get wrapperWidth(): number {
-    return this.wrapperState
-      ? this.wrapperState.bounds.width
+  public get wrapperWidth() {
+    return this.scroller
+      ? this.scroller.dom.wrapper.size.width
       : 0;
   }
 
   public get containerHeight(): number {
-    return this.containerState
-      ? this.containerState.bounds.height
+    return this.scroller
+      ? this.scroller.dom.container.size.height
       : 0;
   }
 
-  public scrollToY(
-    y: number,
-    duration: number = 0,
-  ) {
+  public scrollToY(y: number) {
     if (this.initialized && this.scroller) {
-      this.scroller.scrollToY(y, duration);
+      this.scroller.scrollTo({ y });
     }
   }
 
   private triggerScroll(
     triggeredBy: ScrollStateTriggerType,
-    position: smoovy.Position,
-    lastPosition: smoovy.Position = position,
+    position: Coordinate,
+    lastPosition: Coordinate = position,
   ) {
     const last = this.scrollSubject.value;
 

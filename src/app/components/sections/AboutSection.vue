@@ -160,7 +160,7 @@ export default class AboutSection extends Vue {
                 { active: myselfEnabled, default: showDefault },
                 `p${activePersonality + 1}`
               ]" ref="name">
-                <no-ssr>
+                <client-only>
                   <Parallax
                     @translate="handleNameTranslation"
                     v-bind="{ speed: nameSpeed, minValue: 0 }"
@@ -173,7 +173,7 @@ export default class AboutSection extends Vue {
                     >{{personality[0]}}</span>
                     <span class="default-text">Davide</span>
                   </Parallax>
-                </no-ssr>
+                </client-only>
               </span>
               <span>
                 <span>, a</span>

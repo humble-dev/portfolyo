@@ -2,6 +2,7 @@ import { fromEvent, Subscription } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
 import * as _twistFilter from '@pixi/filter-twist';
+import { easings, Tween } from '@smoovy/tween';
 
 import { ContainerExtra, ContainerExtraConfig } from '../default.container';
 
@@ -20,7 +21,7 @@ export class MouseTwist implements ContainerExtra {
   private filter!: _twistFilter.TwistFilter;
   private moved: boolean = false;
   private moveSubscription?: Subscription;
-  private lastTween?: smoovy.Tween;
+  private lastTween?: Tween;
 
   public constructor(
     protected target: PIXI.Container,
@@ -117,7 +118,7 @@ export class MouseTwist implements ContainerExtra {
       }
 
       if (process.browser) {
-        this.lastTween = smoovy.Tween.to(
+        this.lastTween = Tween.fromTo(
           {
             x: this.filter.offset.x || 0,
             y: this.filter.offset.y || 0,
@@ -126,17 +127,19 @@ export class MouseTwist implements ContainerExtra {
             x: position.x,
             y: position.y,
           },
-          typeof config.duration === 'number'
-            ? config.duration
-            : 3000,
           {
             mutate: false,
-            easing: smoovy.easings.Quint.out,
-            update: (pos) => {
-              this.filter.offset.x = pos.x;
-              this.filter.offset.y = pos.y;
-            },
-          },
+            easing: easings.Quint.out,
+            duration: typeof config.duration === 'number'
+              ? config.duration
+              : 3000,
+            on: {
+              update: (pos) => {
+                this.filter.offset.x = pos.x;
+                this.filter.offset.y = pos.y;
+              }
+            }
+          }
         );
       }
     }

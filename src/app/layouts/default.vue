@@ -11,7 +11,7 @@ import { MainCursorContainer } from '~~/canvas/containers/main-cursor.container'
 import { ElementStateProvider } from '~~/providers/element-state.provider';
 import { ViewportProvider } from '~~/providers/viewport.provider';
 
-import { Browser } from '~~/utils/browser.util';
+import { Browser } from '@smoovy/utils';
 
 import Section from '~~/components/Section.vue';
 import Canvas from '~~/components/Canvas.vue';
@@ -51,9 +51,9 @@ export default class App extends Vue {
 
   private isGlEnabled() {
     if (process.browser) {
-      return ! smoovy.BrowserSupport.IS_MOBILE_OR_TABLET &&
-        ! smoovy.BrowserSupport.IS_FIREFOX &&
-        ! Browser.IS_EDGE &&
+      return ! Browser.mobile &&
+        ! Browser.firefox &&
+        ! Browser.edge &&
         this.viewport.size.width > 768;
     } else {
       return false;
@@ -63,8 +63,9 @@ export default class App extends Vue {
   public created() {
     if (process.browser) {
       this.glConfig.enabled = this.isGlEnabled();
-      this.glConfig.partially = (smoovy.BrowserSupport.IS_FIREFOX ||
-        Browser.IS_EDGE) && !smoovy.BrowserSupport.IS_MOBILE_OR_TABLET;
+      this.glConfig.partially = (
+        Browser.firefox || Browser.edge
+      ) && !Browser.mobile;
 
       if ( ! this.glConfig.enabled) {
         document.documentElement.classList.add('gl-disabled');
@@ -74,11 +75,11 @@ export default class App extends Vue {
         document.documentElement.classList.add('gl-disabled-partially');
       }
 
-      if (smoovy.BrowserSupport.IS_MOBILE_OR_TABLET) {
+      if (Browser.mobile) {
         document.documentElement.classList.add('is-mobile');
       }
 
-      if (smoovy.BrowserSupport.IS_TOUCH_DEVICE) {
+      if (Browser.touchDevice) {
         document.documentElement.classList.add('is-touch');
       }
     }
@@ -87,13 +88,6 @@ export default class App extends Vue {
   public mounted() {
     if (process.browser) {
       PIXI.utils.skipHello();
-
-      smoovy.Ticker.override = true;
-      PIXI.ticker.shared.add((delta) => {
-        if (smoovy) {
-          smoovy.Ticker.tick(delta);
-        }
-      });
 
       // Prevent from tab scrolling
       document.addEventListener('keydown', (event) => {
@@ -166,7 +160,7 @@ export default class App extends Vue {
   <div class="page-wrapper">
     <Scrollbar></Scrollbar>
     <Header></Header>
-    <no-ssr>
+    <client-only>
       <Canvas
         :enabled="glConfig.enabled"
         :index="0"
@@ -179,7 +173,7 @@ export default class App extends Vue {
         :index="200"
         name="foreground"
       />
-    </no-ssr>
+    </client-only>
     <div class="content-wrapper" ref="contentWrapper">
       <nuxt />
       <Footer @clickImprint="enableImprint(true)" />

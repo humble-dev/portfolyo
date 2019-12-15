@@ -1,5 +1,7 @@
 import { mapRange } from '~~/utils/math.util';
 
+import { easings, Tween } from '@smoovy/tween';
+
 import { ContainerExtra, ContainerExtraConfig } from '../default.container';
 
 export interface MouseMotionConfig extends ContainerExtraConfig {
@@ -19,8 +21,8 @@ export class MouseMotion implements ContainerExtra {
   private globalStartPosition!: { x: number, y: number };
   private initialPosition!: { x: number, y: number };
   private moveListener!: (event: MouseEvent) => void;
-  private moveTween?: smoovy.Tween;
-  private backTween?: smoovy.Tween;
+  private moveTween?: Tween;
+  private backTween?: Tween;
 
   public constructor(
     protected target: PIXI.Container,
@@ -70,7 +72,7 @@ export class MouseMotion implements ContainerExtra {
       }
 
       if (process.browser) {
-        this.backTween = smoovy.Tween.to(
+        this.backTween = Tween.fromTo(
           {
             x: this.target.x,
             y: this.target.y,
@@ -79,13 +81,15 @@ export class MouseMotion implements ContainerExtra {
             x: this.initialPosition.x,
             y: this.initialPosition.y,
           },
-          config.duration || 2000,
           {
-            update: (pos) => {
-              this.target.x = pos.x;
-              this.target.y = pos.y;
-            },
-          },
+            duration: config.duration || 2000,
+            on: {
+              update: (pos) => {
+                this.target.x = pos.x;
+                this.target.y = pos.y;
+              },
+            }
+          }
         );
 
         if (this.moveListener) {
@@ -134,7 +138,7 @@ export class MouseMotion implements ContainerExtra {
       }
 
       if (process.browser) {
-        this.moveTween = smoovy.Tween.to(
+        this.moveTween = Tween.fromTo(
           {
             x: this.target.x,
             y: this.target.y,
@@ -143,14 +147,16 @@ export class MouseMotion implements ContainerExtra {
             x: this.startPosition.x + moveX,
             y: this.startPosition.y + moveY,
           },
-          config.duration || 2000,
           {
-            easing: smoovy.easings.Expo.out,
-            update: (pos) => {
-              this.target.x = pos.x;
-              this.target.y = pos.y;
-            },
-          },
+            duration: config.duration || 2000,
+            easing: easings.Expo.out,
+            on: {
+              update: (pos) => {
+                this.target.x = pos.x;
+                this.target.y = pos.y;
+              },
+            }
+          }
         );
       }
     }

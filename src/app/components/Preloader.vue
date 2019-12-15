@@ -2,12 +2,14 @@
 import { Component, Prop, Vue, Inject } from 'nuxt-property-decorator';
 import { map, delay, tap, filter } from 'rxjs/operators';
 
+import { Tween, easings } from '@smoovy/tween';
+import { Browser } from '@smoovy/utils';
+
 import { ResourceProvider } from '~~/providers/resource.provider';
 import { clamp, mapRange } from '~~/utils/math.util';
 import { CursorService } from '~~/services/cursor.service';
 import { ViewportProvider } from '~~/providers/viewport.provider';
 import { PreloaderService } from '~~/services/preloader.service';
-import { Browser } from '~~/utils/browser.util';
 
 @Component<Preloader>({
   subscriptions(this) {
@@ -35,13 +37,13 @@ export default class Preloader extends Vue {
   private loadingProgress: number = 0;
   private totalProgress: number = 0;
   private clicked: boolean = false;
-  private progressTween?: smoovy.Tween;
+  private progressTween?: Tween;
   private ready: boolean = false;
   private loaded: boolean = false;
   private touchDevice: boolean = false;
   private moveProg = { x: 0, y: 0 };
-  private pointTween?: smoovy.Tween;
-  private circleTween?: smoovy.Tween;
+  private pointTween?: Tween;
+  private circleTween?: Tween;
   private chromeNotice: boolean = false;
 
   @Inject('glConfig')
@@ -49,8 +51,8 @@ export default class Preloader extends Vue {
 
   public mounted() {
     if (process.browser) {
-      this.touchDevice = smoovy.BrowserSupport.IS_TOUCH_DEVICE;
-      this.chromeNotice = smoovy.BrowserSupport.IS_FIREFOX || Browser.IS_EDGE;
+      this.touchDevice = Browser.touchDevice;
+      this.chromeNotice = Browser.firefox || Browser.edge;
     }
 
     if (this.glConfig.enabled) {
@@ -97,29 +99,31 @@ export default class Preloader extends Vue {
     }
 
     if (process.browser) {
-      this.progressTween = smoovy.Tween.to(
+      this.progressTween = Tween.fromTo(
         {
           value: this.totalProgress,
         },
         {
           value: progress,
         },
-        duration,
         {
-          easing: smoovy.easings.Quad.out,
-          update: ({ value }) => {
-            this.totalProgress = clamp(value, 0, 1);
-            this.loaded = this.totalProgress === 1;
+          duration,
+          easing: easings.Quad.out,
+          on: {
+            update: ({ value }) => {
+              this.totalProgress = clamp(value, 0, 1);
+              this.loaded = this.totalProgress === 1;
 
-            if (this.loaded) {
-              document.documentElement.classList.add('preloader-ready');
+              if (this.loaded) {
+                document.documentElement.classList.add('preloader-ready');
 
-              if (smoovy.BrowserSupport.IS_MOBILE_OR_TABLET) {
-                setTimeout(() => this.handleCircleDown());
+                if (Browser.mobile) {
+                  setTimeout(() => this.handleCircleDown());
+                }
               }
-            }
-          },
-        },
+            },
+          }
+        }
       );
     }
   }
@@ -166,7 +170,7 @@ export default class Preloader extends Vue {
   }
 
   private handleMouseMove(event: MouseEvent) {
-    if ( ! this.clicked && smoovy && ! smoovy.BrowserSupport.IS_TOUCH_DEVICE) {
+    if ( ! this.clicked && ! Browser.touchDevice) {
       const point = this.$refs.point as HTMLElement;
       const circle = this.$refs.circle as HTMLElement;
 
@@ -190,22 +194,24 @@ export default class Preloader extends Vue {
         this.pointTween.stop();
       }
 
-      smoovy.Tween.to(
+      Tween.fromTo(
         this.moveProg,
         {
           x, y
         },
-        500,
         {
-          easing: smoovy.easings.Back.out,
-          update: ({ x, y }) => {
-            point.style.transform = `
-              translate3d(${x}px, ${y}px, 0)
-            `;
+          duration: 500,
+          easing: easings.Back.out,
+          on: {
+            update: ({ x, y }) => {
+              point.style.transform = `
+                translate3d(${x}px, ${y}px, 0)
+              `;
 
-            circle.style.transform = `
-              translate3d(${x * .08}px, ${y * .08}px, 0)
-            `;
+              circle.style.transform = `
+                translate3d(${x * .08}px, ${y * .08}px, 0)
+              `;
+            }
           }
         }
       );

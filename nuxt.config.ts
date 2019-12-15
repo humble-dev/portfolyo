@@ -76,19 +76,18 @@ export default {
   },
   plugins: [
     '~plugins/vue-rx.plugin',
-    { src: '~/plugins/smoovy.plugin', mode: 'client' },
     { src: '~/plugins/pixi.plugin', mode: 'client' }
   ],
   modules: [
     '@nuxtjs/pwa',
     '@nuxtjs/style-resources'
   ],
+  buildModules: ['@nuxt/typescript-build'],
   build: {
-    transpile: ['@smoovy/core'],
     extend(config) {
       if (config.resolve && config.resolve.alias) {
         config.resolve.alias['~~'] = path.resolve(__dirname, 'src', 'app');
       }
     }
   }
-} as NuxtConfiguration;
+} as typeof NuxtConfiguration;

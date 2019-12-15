@@ -6,12 +6,6 @@ import { ScrollerService } from '~~/services/scroller.service';
 export default class Footer extends Vue {
   private scroller = ScrollerService.getInstance();
 
-  private scrollUp(event: Event) {
-    event.preventDefault();
-
-    this.scroller.scrollToY(0);
-  }
-
   private handleImprintClick(event: Event) {
     event.preventDefault();
 
@@ -26,7 +20,7 @@ export default class Footer extends Vue {
       <div class="footer-wrapper fg-row fg-between-lg fg-middle-lg">
         <p class="size-md bold">Website &copy;2019</p>
         <p class="size-sm">
-          <a href="//norman-dubois.de/" target="_blank" rel="noopener">des. Norman Dubois</a>, dev. Davide Perozzi
+          <a href="http://norman-dubois.de/" target="_blank" rel="noopener">des. Norman Dubois</a>, dev. Davide Perozzi
         </p>
         <p class="size-sm">
           <a href="#imprint" @click="handleImprintClick" class="no-underline">imprint</a>

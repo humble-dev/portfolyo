@@ -1,7 +1,6 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator';
 import { map, tap, startWith, distinctUntilChanged, filter } from 'rxjs/operators';
-import anime from 'animejs';
 
 import { NavigationService } from '~~/services/navigation.service';
 import { ScrollerService } from '~~/services/scroller.service';

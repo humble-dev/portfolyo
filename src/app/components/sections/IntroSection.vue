@@ -1,6 +1,8 @@
 <script lang="ts">
 import { Component, Vue, Inject } from 'nuxt-property-decorator';
 
+import { Tween, easings } from '@smoovy/tween';
+
 import { clamp } from '~~/utils/math.util';
 import { ViewportProvider } from '~~/providers/viewport.provider';
 import { ScrollerService } from '~~/services/scroller.service';
@@ -125,11 +127,14 @@ export default class IntroSection extends Vue {
           text1.enableVisibility(true, { duration: 1800 });
 
           if (process.browser) {
-            smoovy.Tween.to({ x: 0 }, { x: moveX1 }, 3000, {
-              easing: smoovy.easings.Expo.out,
-              update: (pos) => {
-                text1.context.x = textX1 + moveX1 - pos.x;
-              },
+            Tween.fromTo({ x: 0 }, { x: moveX1 }, {
+              duration: 3000,
+              easing: easings.Expo.out,
+              on: {
+                update: (pos) => {
+                  text1.context.x = textX1 + moveX1 - pos.x;
+                }
+              }
             });
           }
 
@@ -137,11 +142,14 @@ export default class IntroSection extends Vue {
             text2.enableVisibility(true, { duration: 1800 });
 
             if (process.browser) {
-              smoovy.Tween.to({ x: 0 }, { x: moveX2 }, 3000, {
-                easing: smoovy.easings.Expo.out,
-                update: (pos) => {
-                  text2.context.x = textX2 - moveX2 + pos.x;
-                },
+              Tween.fromTo({ x: 0 }, { x: moveX2 }, {
+                duration: 3000,
+                easing: easings.Expo.out,
+                on: {
+                  update: (pos) => {
+                    text2.context.x = textX2 - moveX2 + pos.x;
+                  }
+                }
               });
             }
           }, 200);
@@ -158,7 +166,7 @@ export default class IntroSection extends Vue {
   <Section name="intro" class="intro-wrapper">
     <div class="fg-row">
       <p class="teaser-text upper fg-col-xs-18 fg-col-lg-3 fg-col-lg-offset-1">
-        <no-ssr>
+        <client-only>
           <Parallax v-bind:speed="glConfig.enabled ? -100 : -50" class="line">
             <span>Available</span>
           </Parallax>
@@ -171,7 +179,7 @@ export default class IntroSection extends Vue {
           <Parallax v-bind:speed="glConfig.enabled ? -100 : -50" class="line">
             <span>projects</span>
           </Parallax>
-        </no-ssr>
+        </client-only>
       </p>
       <div
         ref="desLine1"
