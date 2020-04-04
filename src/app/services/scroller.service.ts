@@ -97,9 +97,11 @@ export class ScrollerService {
       this.scroller = smoothScroll({ element: this.rootElement }, {
         lerp: {
           ticker,
+          damping: 0.09,
         },
         mouse: {
-          multiplier: 0.8,
+          target: this.rootElement,
+          multiplier: 0.65,
           multiplierFirefox: 50
         }
       });
